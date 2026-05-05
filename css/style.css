@@ -1,0 +1,108 @@
+
+:root {
+            --bleu-france: #000091;
+            --bleu-hover: #1212ff;
+            --gris-fond: #f6f6f6;
+            --texte: #161616;
+            --blanc: #ffffff;
+        }
+
+body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            color: var(--texte);
+            line-height: 1.6;
+            background-color: var(--blanc);
+        }
+
+        /* --- Header --- */
+header {
+            border-bottom: 2px solid var(--bleu-france);
+            padding: 20px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+.logo {
+            font-weight: bold;
+            font-size: 1.5rem;
+            color: var(--bleu-france);
+            text-transform: uppercase;
+            border-left: 4px solid var(--bleu-france);
+            padding-left: 15px;
+        }
+nav {
+    display: flex;
+    margin-left: auto;
+    margin-right: auto;
+    gap:100px;
+}
+
+nav a {
+            text-decoration: none;
+            color: var(--bleu-france);
+            margin-left: 20px;
+            font-weight: 500;
+        }
+
+        /* --- Hero Section --- */
+.hero {
+            background-color: var(--gris-fond);
+            padding: 80px 5%;
+            text-align: center;
+        }
+
+.hero h1 {
+            font-size: 2.5rem;
+            color: var(--bleu-france);
+            margin-bottom: 20px;
+        }
+
+.btn-principal {
+            background-color: var(--bleu-france);
+            color: white;
+            padding: 12px 24px;
+            text-decoration: none;
+            border-radius: 4px;
+            display: inline-block;
+            margin-top: 20px;
+            transition: background 0.3s;
+        }
+
+.btn-principal:hover {
+            background-color: var(--bleu-hover);
+        }
+
+        /* --- Sections --- */
+.container {
+            padding: 60px 5%;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+.card {
+            border: 1px solid #ddd;
+            padding: 25px;
+            border-radius: 8px;
+            transition: transform 0.2s;
+        }
+
+.card:hover {
+            transform: translateY(-5px);
+            border-color: var(--bleu-france);
+        }
+
+.card h3 {
+            color: var(--bleu-france);
+            margin-top: 0;
+        }
+
+footer {
+            background: var(--bleu-france);
+            color: white;
+            text-align: center;
+            padding: 40px 0;
+            margin-top: 50px;
+        }
