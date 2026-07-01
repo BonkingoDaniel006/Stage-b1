@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
-
+    
     // --- ANIMATION DES COMPTEURS DE STATISTIQUES ---
     let countersAnimated = false;
 
@@ -15,43 +15,57 @@ document.addEventListener("DOMContentLoaded", () => {
             const target = parseInt(counter.getAttribute("data-target"));
             if (isNaN(target)) return;
 
-            let count = 0;
-            const duration = 2000; // Durée de l'animation en ms
-            const stepTime = Math.abs(Math.floor(duration / target));
+            const duration = 1500; // Durée de l'animation en ms
+            let startTimestamp = null;
 
-            const updateCount = () => {
-                const increment = Math.ceil(target / (duration / 15));
-                
-                if (count < target) {
-                    count += increment;
-                    if (count > target) count = target; // Assure de ne pas dépasser la cible
-                    counter.innerText = count.toLocaleString('fr-FR');
-                    setTimeout(updateCount, 15);
+            const step = (timestamp) => {
+                if (!startTimestamp) startTimestamp = timestamp;
+                const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+                const currentValue = Math.floor(progress * target);
+                counter.innerText = currentValue.toLocaleString('fr-FR');
+
+                if (progress < 1) {
+                    window.requestAnimationFrame(step);
                 } else {
                     counter.innerText = target.toLocaleString('fr-FR');
-                    // Ajoute le "+" ou "ans" si nécessaire après l'animation
-                    if (target === 1200) counter.innerText += "+";
                 }
             };
-            updateCount();
+
+            window.requestAnimationFrame(step);
         });
     };
 
-    // --- DÉCLENCHEMENT AU SCROLL ---
-    // On utilise IntersectionObserver pour de meilleures performances
-    const statsSection = document.querySelector('.stats');
+    // --- ANIMATION D'APPARITION AU SCROLL (FADE UP) ---
+    const sectionsToAnimate = document.querySelectorAll('section[id]');
 
-    if (statsSection) {
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                // Si la section est visible à l'écran
-                if (entry.isIntersecting) {
-                    animateCounters();
-                    observer.unobserve(entry.target); // On arrête d'observer une fois l'animation lancée
+    const revealObserver = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                // Ajoute la classe 'is-visible' pour déclencher l'animation CSS
+                entry.target.classList.add('is-visible');
+
+                // Déclenche l'animation des compteurs si la section stats est visible
+                const statsSection = document.querySelector('.stats');
+                if (statsSection && statsSection.contains(entry.target) || entry.target.classList.contains('stats')) {
+                    // Un peu complexe car .stats n'est pas une <section>
+                    // On vérifie si l'élément observé est dans .stats
+                    // ou si c'est le conteneur .stats lui-même (au cas où on l'observerait)
+                    const statsWrap = document.querySelector('.stats .wrap');
+                    if(statsWrap.getBoundingClientRect().top < window.innerHeight) {
+                       animateCounters();
+                    }
                 }
-            });
-        }, { threshold: 0.5 }); // Déclenche quand 50% de la section est visible
+            }
+        });
+    }, {
+        threshold: 0.1 // Déclenche l'animation quand 10% de la section est visible
+    });
 
-        observer.observe(statsSection);
-    }
+    // Observe chaque section
+    sectionsToAnimate.forEach(section => {
+        revealObserver.observe(section);
+    });
+    // Observe aussi la section des stats qui n'est pas une <section>
+    const statsSection = document.querySelector('.stats');
+    if (statsSection) revealObserver.observe(statsSection);
 });

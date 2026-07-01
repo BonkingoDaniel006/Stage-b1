@@ -3,52 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Autisme Hauts-de-France - Événements</title>
+    <title>Evenements</title>
     <link rel="stylesheet" href="css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest" defer></script>
+
 </head>
 <body>
-
     <header>
-        <nav class="navbar">
-            <div class="logo-placeholder">
-                <img src="/logo.png" alt="Logo Autisme Hauts-de-France" class="puzzle-icon">
-                <span>Autisme <span style="font-weight: 300;">Hauts-de-France</span></span>
-            </div>
-            <ul class="nav-links">
-                <li><a href="/home/bokingo/Documents/STAGE-B1/exemple.html" class="active">Accueil</a></li>
-                <li><a href="/home/bokingo/Documents/STAGE-B1/index.html">Événements</a></li>
-                <li><a href="#">Ressources</a></li>
-                <li><a href="#">Contact</a></li>
+        <div class="nav wrap">
+        <a href="#" class="logo">
+            <img src="/logo.png" alt="">
+        </a>
+        <nav aria-label="Navigation principale">
+            <ul>
+                <li><a href="#mission">Notre mission</a></li>
+                <li><a href="#actions">Nos actions</a></li>
+                <li><a href="#temoignages">Témoignages</a></li>
+                <li><a href="#ressources">Ressources</a></li>
+                <li><a href="#contact">Contact</a></li>
+                <li><a href="">Événements</a></li>
             </ul>
-            <a href="#" class="btn-add">+ Faire un don</a>
         </nav>
+        <a href="#don" class="nav-cta">Faire un don</a>
+        </div>
     </header>
-
-    <section class="hero">
-        <h1>Agenda Communautaire</h1>
-        <p>Découvrez, partagez et participez aux événements, ateliers et rencontres autour de l'autisme dans notre région.</p>
-    </section>
-
-    <div class="filters-container">
-        <select class="filter-select">
-            <option value="">Tous les départements (59, 62, 80...)</option>
-            <option value="59">Nord (59)</option>
-            <option value="62">Pas-de-Calais (62)</option>
-            <option value="80">Somme (80)</option>
-        </select>
-        <select class="filter-select">
-            <option value="">Type d'événement</option>
-            <option value="atelier">Atelier & Formation</option>
-            <option value="rencontre">Café-Rencontre</option>
-            <option value="loisir">Loisirs & Culture</option>
-        </select>
-        <select class="filter-select">
-            <option value="">Période</option>
-            <option value="ce-week-end">Ce week-end</option>
-            <option value="ce-mois-ci">Ce mois-ci</option>
-        </select>
-    </div>
-
     <main class="main-content">
         <h2 class="section-title">Événements à venir</h2>
 
@@ -63,14 +44,14 @@
                     <div class="event-date">Samedi 10 Octobre à 14:00</div>
                     <h3 class="event-title">Atelier d'initiation à la communication alternative</h3>
                     <div class="event-info-row">
-                        <span>📍</span> Lille (59)
+                        <span><i data-lucide="map-pin"></i></span> Lille (59)
                     </div>
                     <div class="event-info-row">
-                        <span>👥</span> Organisé par : Asso Grandir Ensemble
+                        <span><i data-lucide="users"></i></span> Organisé par : Asso Grandir Ensemble
                     </div>
                     <div class="event-footer">
                         <span style="color: #2ecc71; font-weight: 500;">Gratuit</span>
-                        <a href="#" class="btn-view">En savoir plus →</a>
+                        
                     </div>
                 </div>
             </div>
@@ -84,14 +65,14 @@
                     <div class="event-date">Mardi 13 Octobre à 18:30</div>
                     <h3 class="event-title">Café-Parents : Partage d'expériences et d'écoute</h3>
                     <div class="event-info-row">
-                        <span>📍</span> Amiens (80)
+                        <span><i data-lucide="map-pin"></i></span> Amiens (80)
                     </div>
                     <div class="event-info-row">
-                        <span>👥</span> Organisé par : Antenne Somme
+                        <span><i data-lucide="users"></i></span> Organisé par : Antenne Somme
                     </div>
                     <div class="event-footer">
                         <span style="color: #666;">Sur inscription</span>
-                        <a href="#" class="btn-view">En savoir plus →</a>
+                        
                     </div>
                 </div>
             </div>
@@ -105,24 +86,26 @@
                     <div class="event-date">Dimanche 25 Octobre à 10:00</div>
                     <h3 class="event-title">Matinée Sportive et Inclusive en Famille</h3>
                     <div class="event-info-row">
-                        <span>📍</span> Arras (62)
+                        <span><i data-lucide="map-pin"></i></span> Arras (62)
                     </div>
                     <div class="event-info-row">
-                        <span>👥</span> Organisé par : Émulsion
+                        <span><i data-lucide="users"></i></span> Organisé par : Émulsion
                     </div>
                     <div class="event-footer">
                         <span style="color: #2ecc71; font-weight: 500;">5 € / famille</span>
-                        <a href="#" class="btn-view">En savoir plus →</a>
+                        
                     </div>
                 </div>
             </div>
 
         </div>
     </main>
-
-    <footer>
-        <p>&copy; 2026 Autisme Hauts-de-France. Plateforme collaborative d'événements.</p>
-    </footer>
+    
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    lucide.createIcons();
+  });
+</script>
 
 </body>
 </html>
