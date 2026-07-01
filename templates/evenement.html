@@ -4,11 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Détail de l'événement - Autisme Hauts-de-France</title>
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet">
-    <script src="https://unpkg.com/lucide@latest" defer></script>
 </head>
 <body>
 
@@ -17,7 +17,7 @@
 <header>
   <div class="nav wrap">
     <a href="index.html" class="logo">
-      <img src="/logo.png" alt="Logo Autisme Hauts-de-France">
+      <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo Autisme Hauts-de-France">
     </a>
     <nav aria-label="Navigation principale">
       <ul>
@@ -72,11 +72,11 @@
         <aside class="event-sidebar">
           <div class="info-card">
             <h3>Informations</h3>
-            <div class="info-line"><i data-lucide="calendar"></i> <span>Samedi 26 Octobre 2024</span></div>
-            <div class="info-line"><i data-lucide="clock"></i> <span>14:00 – 17:00</span></div>
-            <div class="info-line"><i data-lucide="map-pin"></i> <span>14 rue des Tilleuls, 59000 Lille</span></div>
-            <div class="info-line"><i data-lucide="tag"></i> <span>Prix : <strong>15,00 €</strong></span></div>
-            <div class="info-line"><i data-lucide="users"></i> <span>12 places disponibles</span></div>
+            <div class="info-line"><i class="fa-solid fa-calendar-days"></i> <span>Samedi 26 Octobre 2024</span></div>
+            <div class="info-line"><i class="fa-solid fa-clock"></i> <span>14:00 – 17:00</span></div>
+            <div class="info-line"><i class="fa-solid fa-map-marker-alt"></i> <span>14 rue des Tilleuls, 59000 Lille</span></div>
+            <div class="info-line"><i class="fa-solid fa-tag"></i> <span>Prix : <strong>15,00 €</strong></span></div>
+            <div class="info-line"><i class="fa-solid fa-users"></i> <span>12 places disponibles</span></div>
             <a href="https://paypal.me/DanielBokingo" target="_blank" class="btn btn-primary" style="width: 100%; justify-content: center; margin-top: 20px;">Faire une réservation</a>
           </div>
         </aside>
@@ -93,13 +93,6 @@
     </div>
   </div>
 </footer>
-
-<script src="js/main.js"></script>
-<script>
-  document.addEventListener('DOMContentLoaded', function() {
-    lucide.createIcons();
-  });
-</script>
 
 </body>
 </html>

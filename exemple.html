@@ -1,394 +1,265 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Autisme Hauts-de-France - Événements</title>
-    <style>
-        /* --- VARIABLES DE COULEURS (Inspirées du logo) --- */
-        :root {
-            --primary-dark: #0f4c81;  /* Bleu marine */
-            --primary-blue: #00a8e8;  /* Bleu ciel */
-            --accent-purple: #b500d7; /* Violet */
-            --bg-light: #f4f7f9;
-            --text-dark: #333333;
-            --white: #ffffff;
-        }
-
-        /* --- STYLES GÉNÉRAUX --- */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
-        body {
-            background-color: var(--bg-light);
-            color: var(--text-dark);
-            line-height: 1.6;
-        }
-
-        header {
-            background-color: var(--white);
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-        }
-
-        .navbar {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 1rem 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .logo-placeholder {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-weight: bold;
-            font-size: 1.4rem;
-            color: var(--primary-dark);
-        }
-
-        /* Simulation des pièces de puzzle du logo en CSS */
-        .puzzle-icon {
-            width: 30px;
-            height: 30px;
-            background: linear-gradient(135deg, var(--primary-blue), var(--accent-purple));
-            border-radius: 6px;
-        }
-
-        .nav-links {
-            display: flex;
-            list-style: none;
-            gap: 20px;
-        }
-
-        .nav-links a {
-            text-decoration: none;
-            color: var(--text-dark);
-            font-weight: 500;
-            transition: color 0.3s;
-        }
-
-        .nav-links a:hover, .nav-links a.active {
-            color: var(--primary-blue);
-        }
-
-        .btn-add {
-            background-color: var(--accent-purple);
-            color: var(--white);
-            padding: 0.6rem 1.2rem;
-            border-radius: 20px;
-            text-decoration: none;
-            font-weight: bold;
-            transition: transform 0.2s, background-color 0.3s;
-        }
-
-        .btn-add:hover {
-            background-color: #9200ad;
-            transform: translateY(-2px);
-        }
-
-        /* --- HERO SECTION --- */
-        .hero {
-            background: linear-gradient(135deg, var(--primary-dark) 0%, #072a4b 100%);
-            color: var(--white);
-            padding: 4rem 2rem;
-            text-align: center;
-        }
-
-        .hero h1 {
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
-        }
-
-        .hero p {
-            font-size: 1.2rem;
-            max-width: 600px;
-            margin: 0 auto 2rem auto;
-            opacity: 0.9;
-        }
-
-        /* --- FILTRES --- */
-        .filters-container {
-            max-width: 1200px;
-            margin: -20px auto 2rem auto;
-            padding: 1.5rem;
-            background: var(--white);
-            border-radius: 10px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-            display: flex;
-            gap: 15px;
-            flex-wrap: wrap;
-        }
-
-        .filter-select {
-            flex: 1;
-            min-width: 200px;
-            padding: 0.75rem;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            outline: none;
-            font-size: 1rem;
-        }
-
-        /* --- GRILLE D'ÉVÉNEMENTS --- */
-        .main-content {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 2rem 4rem 2rem;
-        }
-
-        .section-title {
-            margin-bottom: 2rem;
-            color: var(--primary-dark);
-            border-left: 5px solid var(--primary-blue);
-            padding-left: 10px;
-        }
-
-        .events-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-            gap: 30px;
-        }
-
-        .event-card {
-            background: var(--white);
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.03);
-            border-top: 4px solid var(--primary-blue);
-            transition: transform 0.3s, box-shadow 0.3s;
-        }
-
-        .event-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
-        }
-
-        /* Version violette pour varier */
-        .event-card.purple-theme {
-            border-top-color: var(--accent-purple);
-        }
-
-        .event-image {
-            height: 180px;
-            background-color: #e2e8f0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #a0aec0;
-            font-weight: bold;
-            position: relative;
-        }
-
-        .event-tag {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            background: var(--white);
-            color: var(--primary-dark);
-            padding: 0.2rem 0.8rem;
-            border-radius: 15px;
-            font-size: 0.8rem;
-            font-weight: bold;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-
-        .event-details {
-            padding: 1.5rem;
-        }
-
-        .event-date {
-            color: var(--primary-blue);
-            font-weight: bold;
-            font-size: 0.9rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .event-card.purple-theme .event-date {
-            color: var(--accent-purple);
-        }
-
-        .event-title {
-            font-size: 1.3rem;
-            color: var(--primary-dark);
-            margin-bottom: 0.75rem;
-        }
-
-        .event-info-row {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-bottom: 0.5rem;
-            font-size: 0.9rem;
-            color: #666;
-        }
-
-        .event-footer {
-            margin-top: 1.5rem;
-            padding-top: 1rem;
-            border-top: 1px solid #eee;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .btn-view {
-            color: var(--primary-dark);
-            text-decoration: none;
-            font-weight: bold;
-            font-size: 0.95rem;
-        }
-
-        .btn-view:hover {
-            text-decoration: underline;
-        }
-
-        /* --- FOOTER --- */
-        footer {
-            background-color: var(--primary-dark);
-            color: var(--white);
-            text-align: center;
-            padding: 2rem;
-            margin-top: auto;
-        }
-
-        /* --- RESPONSIVE --- */
-        @media (max-width: 768px) {
-            .navbar {
-                flex-direction: column;
-                gap: 15px;
-            }
-            .filters-container {
-                flex-direction: column;
-            }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Autisme Hauts-de-France — Association d'accompagnement</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@latest" defer></script>
 </head>
+
 <body>
 
-    <header>
-        <nav class="navbar">
-            <div class="logo-placeholder">
-                <div class="puzzle-icon"></div>
-                <span>Autisme <span style="font-weight: 300;">Hauts-de-France</span></span>
-            </div>
-            <ul class="nav-links">
-                <li><a href="#" class="active">Accueil</a></li>
-                <li><a href="#">Événements</a></li>
-                <li><a href="#">Ressources</a></li>
-                <li><a href="#">Contact</a></li>
-            </ul>
-            <a href="#" class="btn-add">+ Publier un événement</a>
-        </nav>
-    </header>
+<a href="#main" class="skip-link">Aller au contenu principal</a>
 
-    <section class="hero">
-        <h1>Agenda Communautaire</h1>
-        <p>Découvrez, partagez et participez aux événements, ateliers et rencontres autour de l'autisme dans notre région.</p>
-    </section>
+<header>
+  <div class="nav wrap">
+    <a href="#" class="logo">
+      <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo Autisme Hauts-de-France">
+    </a>
+    <nav aria-label="Navigation principale">
+      <ul>
+        <li><a href="#mission">Notre mission</a></li>
+        <li><a href="#actions">Nos actions</a></li>
+        <li><a href="#temoignages">Témoignages</a></li>
+        <li><a href="#ressources">Ressources</a></li>
+        <li><a href="#contact">Contact</a></li>
+        <li><a href="{{ url_for('evenements') }}">Événements</a></li>
+      </ul>
+    </nav>
+    <a href="https://paypal.me/DanielBokingo" class="nav-cta" target="_blank" rel="noopener noreferrer"> <i data-lucide="hand-heart"></i> Faire un don</a>
+  </div>
+</header>
 
-    <div class="filters-container">
-        <select class="filter-select">
-            <option value="">Tous les départements (59, 62, 80...)</option>
-            <option value="59">Nord (59)</option>
-            <option value="62">Pas-de-Calais (62)</option>
-            <option value="80">Somme (80)</option>
-        </select>
-        <select class="filter-select">
-            <option value="">Type d'événement</option>
-            <option value="atelier">Atelier & Formation</option>
-            <option value="rencontre">Café-Rencontre</option>
-            <option value="loisir">Loisirs & Culture</option>
-        </select>
-        <select class="filter-select">
-            <option value="">Période</option>
-            <option value="ce-week-end">Ce week-end</option>
-            <option value="ce-mois-ci">Ce mois-ci</option>
-        </select>
-    </div>
+<main id="main">
 
-    <main class="main-content">
-        <h2 class="section-title">Événements à venir</h2>
-
-        <div class="events-grid">
-            
-            <div class="event-card">
-                <div class="event-image">
-                    [ Illustration Atelier ]
-                    <span class="event-tag">Formation</span>
-                </div>
-                <div class="event-details">
-                    <div class="event-date">Samedi 10 Octobre à 14:00</div>
-                    <h3 class="event-title">Atelier d'initiation à la communication alternative</h3>
-                    <div class="event-info-row">
-                        <span>📍</span> Lille (59)
-                    </div>
-                    <div class="event-info-row">
-                        <span>👥</span> Organisé par : Asso Grandir Ensemble
-                    </div>
-                    <div class="event-footer">
-                        <span style="color: #2ecc71; font-weight: 500;">Gratuit</span>
-                        <a href="#" class="btn-view">En savoir plus →</a>
-                    </div>
-                </div>
-            </div>
-
-            <div class="event-card purple-theme">
-                <div class="event-image">
-                    [ Illustration Café ]
-                    <span class="event-tag">Rencontre</span>
-                </div>
-                <div class="event-details">
-                    <div class="event-date">Mardi 13 Octobre à 18:30</div>
-                    <h3 class="event-title">Café-Parents : Partage d'expériences et d'écoute</h3>
-                    <div class="event-info-row">
-                        <span>📍</span> Amiens (80)
-                    </div>
-                    <div class="event-info-row">
-                        <span>👥</span> Organisé par : Antenne Somme
-                    </div>
-                    <div class="event-footer">
-                        <span style="color: #666;">Sur inscription</span>
-                        <a href="#" class="btn-view">En savoir plus →</a>
-                    </div>
-                </div>
-            </div>
-
-            <div class="event-card">
-                <div class="event-image">
-                    [ Illustration Sport ]
-                    <span class="event-tag">Loisirs</span>
-                </div>
-                <div class="event-details">
-                    <div class="event-date">Dimanche 25 Octobre à 10:00</div>
-                    <h3 class="event-title">Matinée Sportive et Inclusive en Famille</h3>
-                    <div class="event-info-row">
-                        <span>📍</span> Arras (62)
-                    </div>
-                    <div class="event-info-row">
-                        <span>👥</span> Organisé par : Émulsion
-                    </div>
-                    <div class="event-footer">
-                        <span style="color: #2ecc71; font-weight: 500;">5 € / famille</span>
-                        <a href="#" class="btn-view">En savoir plus →</a>
-                    </div>
-                </div>
-            </div>
-
+  <!-- HERO -->
+  <section id="hero" class="hero is-visible">
+    <div class="wrap hero-grid">
+      <div>
+        <span class="eyebrow">Ensemble,</span>
+        <h1>Chaque <span class="accent">différence</span> a sa place.</h1>
+        <p class="lead">Autisme Hauts-de-France accompagne les personnes autistes et leurs proches à chaque étape de la vie : du diagnostic à vie quotidienne. Avec respect, sans normaliser.</p>
+        <div class="btn-row">
+          <a href="#actions" class="btn btn-primary">Découvrir nos actions</a>
+          <a href="#contact" class="btn btn-ghost">Demander un accompagnement</a>
         </div>
-    </main>
+      </div>
+      <div class="hero-visual">
+        ici photo 
+      </div>
+    </div>
+    <!-- STATS -->
+    <div class="stats">
+      <div class="wrap">
+        <div class="stat"><div class="num" data-target="15">0</div><div class="label">familles accompagnées</div></div>
+        <div class="stat"><div class="num" data-target="25">0</div><div class="label">bénévoles et professionnels</div></div>
+        <div class="stat"><div class="num" data-target="20">0</div><div class="label">Adherents</div></div>
+        <div class="stat"><div class="num" data-target="10">0</div><div class="label">ans d'engagement</div></div>
+      </div>
+    </div>
+  </section>
 
-    <footer>
-        <p>&copy; 2026 Autisme Hauts-de-France. Plateforme collaborative d'événements.</p>
-    </footer>
+  <!-- MISSION -->
+  <section id="mission">
+    <div class="wrap">
+      <div class="section-head">
+        <h2>Une approche centrée sur la personne, pas sur le déficit</h2>
+        <p>Nous partons du principe que l'autisme est une façon différente de percevoir et de traiter le monde, pas un problème à corriger. Notre rôle est de réduire les obstacles, pas les personnes.</p>
+      </div>
+      <div class="mission-grid">
+        <div class="mission-card">
+          <div class="dot" style="background:#13B7EA;">
+            <i data-lucide="heart-handshake" stroke="white" stroke-width="2.5"></i>
+          </div>
+          <h3>Écoute sans jugement</h3>
+          <p>Des permanences tenues par des pairs-aidants autistes et des professionnels formés, pour parler librement de ce qui compte vraiment pour vous.</p>
+        </div>
+        <div class="mission-card">
+          <div class="dot" style="background:#C724E0;">
+            <i data-lucide="calendar-check" stroke="white" stroke-width="2.5"></i>
+          </div>
+          <h3>Organisation d'événements & Ateliers éducatifs</h3>
+          <p>Des activités conçues pour favoriser l'inclusion, le partage d'expériences et le développement de compétences.</p>
+        </div>
+        <div class="mission-card">
+          <div class="dot" style="background:#163B73;">
+            <i data-lucide="shield-check" stroke="white" stroke-width="2.5"></i>
+          </div>
+          <h3>Communautés sûres</h3>
+          <p>Des espaces sensoriellement adaptés où les comportements autistiques — stimming, pauses, scripts — sont accueillis sans explication à donner.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ACTIONS -->
+  <section id="actions">
+    <div class="wrap">
+      <div class="section-head">
+        <h2>Nos actions, étape par étape</h2>
+        <p>Le parcours d'une famille avec l'association suit rarement une ligne droite — voici comment nous intervenons à chaque moment clé.</p>
+      </div>
+      <div class="path-list">
+        <div class="path-item">
+          <div class="path-step">01</div>
+          <div>
+            <h3>Premier contact &amp; orientation</h3>
+            <p>Un entretien gratuit pour comprendre votre situation et vous orienter vers les bons interlocuteurs : MDPH, soutien psychologique.</p>
+          </div>
+        </div>
+        <div class="path-item">
+          <div class="path-step">02</div>
+          <div>
+            <h3>Accompagnement au diagnostic</h3>
+            <p>Liste de professionnels formés à l'autisme adulte et enfant, préparation aux rendez-vous, relecture des comptes-rendus avec vous.</p>
+          </div>
+        </div>
+        <div class="path-item">
+          <div class="path-step">03</div>
+          <div>
+            <h3>Scolarité &amp; vie professionnelle</h3>
+            <p>Médiation avec les établissements scolaires, aide à la rédaction des PPS, accompagnement vers l'emploi adapté ou en milieu ordinaire.</p>
+          </div>
+        </div>
+        <div class="path-item">
+          <div class="path-step">04</div>
+          <div>
+            <h3>Groupes de pair-aidance</h3>
+            <p>Rencontres mensuelles animées par des personnes autistes, en présentiel et en ligne, dans des formats courts et prévisibles.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TEMOIGNAGES -->
+  <section class="testimonials" id="temoignages">
+    <div class="wrap">
+      <div class="section-head"><h2>Ce que nos membres en disent</h2></div>
+      <div class="t-grid">
+        <div class="t-card">
+          <p class="quote">« On m'a enfin parlé sans chercher à me faire ressembler à quelqu'un d'autre. Ça a tout changé. »</p>
+          <div class="who">Léa, 27 ans, diagnostiquée en 2023</div>
+        </div>
+        <div class="t-card">
+          <p class="quote">« L'équipe nous a aidés à monter le dossier MDPH de notre fils en moins de deux mois. »</p>
+          <div class="who">Karim, parent</div>
+        </div>
+        <div class="t-card">
+          <p class="quote">« Les groupes de pairs sont le seul endroit où je n'ai pas besoin de jouer un rôle. »</p>
+          <div class="who">Inès, 34 ans, bénévole</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- RESSOURCES -->
+  <section id="ressources">
+    <div class="wrap">
+      <div class="section-head" style="margin-bottom:40px;">
+        <h2>Ressources &amp; documentation</h2>
+        <p>Des guides clairs, écrits avec et par des personnes autistes.</p>
+      </div>
+      <ul class="res-list">
+        <li><span class="res-bullet"></span><div><strong>Guide du diagnostic adulte</strong><br>Comment trouver un professionnel formé et préparer son évaluation.</div></li>
+        <li><span class="res-bullet"></span><div><strong>Comprendre la MDPH</strong><br>Démarches, délais et modèles de courriers pour la reconnaissance du handicap.</div></li>
+        <li><span class="res-bullet"></span><div><strong>Aménagements scolaires</strong><br>Modèles de PPS/PAP et conseils pour dialoguer avec l'équipe pédagogique.</div></li>
+        <li><span class="res-bullet"></span><div><strong>Glossaire de l'autisme</strong><br>Vocabulaire courant expliqué simplement, sans jargon clinique.</div></li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- CTA DON -->
+  <section id="don" style="padding-top:0;">
+    <div class="cta-band">
+      <h2>Votre soutien finance nos permanences gratuites</h2>
+      <p>100% des dons servent directement nos actions de terrain : écoute, accompagnement administratif et groupes de pairs.</p>
+      <div class="btn-row">
+        <a href="#" class="btn btn-cyan">Faire un don ponctuel</a>
+        <a href="#" class="btn btn-ghost" style="border-color:#fff; color:#fff;">Devenir adhérent</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section id="contact">
+    <div class="wrap contact-grid">
+      <div>
+        <div class="section-head" style="margin-bottom:30px;">
+          <h2>Nous écrire</h2>
+          <p>Nous répondons sous 5 jours ouvrés. Pas d'urgence vitale ? Préférez le formulaire à l'appel si besoin.</p>
+        </div>
+        <form>
+          <div class="field"><label for="name">Nom</label><input id="name" type="text" autocomplete="name"></div>
+          <div class="field"><label for="email">E-mail</label><input id="email" type="email" autocomplete="email"></div>
+          <div class="field"><label for="subject">Sujet</label><input id="subject" type="text"></div>
+          <div class="field"><label for="message">Message</label><textarea id="message" rows="5"></textarea></div>
+          
+          <button type="submit" class="btn btn-primary">Envoyer le message</button>
+        </form>
+      </div>
+      <div class="contact-info">
+        <h3>Permanence téléphonique</h3>
+        <p>Du lundi au vendredi, 10h–17h. Ligne calme, pas de musique d'attente.</p>
+        <div class="info-line"><i data-lucide="phone"></i> 03 20 00 00 00</div>
+        <div class="info-line"><i data-lucide="mail"></i> contact@autisme-hdf.fr</div>
+        <div class="info-line"><i data-lucide="map-pin"></i> 14 rue des Tilleuls, 59000 Lille</div>
+        <h3 style="margin-top:30px;">Espace d'accueil</h3>
+        <p>Salle calme avec éclairage tamisable, casques anti-bruit disponibles sur demande.</p>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="footer-grid">
+      <a href="#" class="logo"><i data-lucide="puzzle"></i></a>
+      <div class="footer-cols">
+        <div class="footer-col">
+          <h4>Association</h4>
+          <ul>
+            <li><a href="#mission">Notre mission</a></li>
+            <li><a href="#actions">Nos actions</a></li>
+            <li><a href="#">Équipe</a></li>
+            <li><a href="#">Rapports annuels</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Ressources</h4>
+          <ul>
+            <li><a href="#ressources">Guides</a></li>
+            <li><a href="#">Glossaire</a></li>
+            <li><a href="#temoignages">Témoignages</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Nous suivre</h4>
+          <ul>
+            <li><a href="#">Instagram</a></li>
+            <li><a href="#">LinkedIn</a></li>
+            <li><a href="#">Newsletter</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 Autisme Hauts-de-France — Association loi 1901</span>
+      <span>Mentions légales · Accessibilité · Confidentialité</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    lucide.createIcons();
+  });
+</script>
 
 </body>
 </html>

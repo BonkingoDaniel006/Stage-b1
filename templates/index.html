@@ -4,11 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Autisme Hauts-de-France — Association d'accompagnement</title>
-<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet">
-<script src="https://unpkg.com/lucide@latest" defer></script>
 </head>
 
 <body>
@@ -18,7 +18,7 @@
 <header>
   <div class="nav wrap">
     <a href="#" class="logo">
-      <img src="/logo.png" alt="">
+      <img src="{{ url_for('static', filename='/uploads/logo.png') }}" alt="Logo Autisme Hauts-de-France">
     </a>
     <nav aria-label="Navigation principale">
       <ul>
@@ -27,11 +27,10 @@
         <li><a href="#temoignages">Témoignages</a></li>
         <li><a href="#ressources">Ressources</a></li>
         <li><a href="#contact">Contact</a></li>
-        <li><a href="">Événements</a></li>
+        <li><a href="{{ url_for('evenements') }}">Événements</a></li>
       </ul>
     </nav>
-    <a href="https://paypal.me/DanielBokingo" class="nav-cta"> <i class="fa-solid fa-hand-holding-dollar"></i> Faire un don</a>
-    <a href="https://paypal.me/DanielBokingo" class="nav-cta"> <i data-lucide="hand-heart"></i> Faire un don</a>
+    <a href="https://paypal.me/DanielBokingo" class="nav-cta" target="_blank" rel="noopener noreferrer"><i class="fa-solid fa-hand-holding-heart"></i> Faire un don</a>
   </div>
 </header>
 
@@ -48,24 +47,23 @@
           <a href="#actions" class="btn btn-primary">Découvrir nos actions</a>
           <a href="#contact" class="btn btn-ghost">Demander un accompagnement</a>
         </div>
+        <div class="stats">
+          <div class="wrap">
+            <div class="stat"><div class="num" data-target="15">0</div><div class="label">familles accompagnées</div></div>
+            <div class="stat"><div class="num" data-target="25">0</div><div class="label">bénévoles et professionnels</div></div>
+            <div class="stat"><div class="num" data-target="20">0</div><div class="label">Adhérents</div></div>
+            <div class="stat"><div class="num" data-target="10">0</div><div class="label">ans d'engagement</div></div>
+          </div>
+        </div>
       </div>
       <div class="hero-visual">
         ici photo 
       </div>
     </div>
-    <!-- STATS -->
-    <div class="stats">
-      <div class="wrap">
-        <div class="stat"><div class="num" data-target="15">0</div><div class="label">familles accompagnées</div></div>
-        <div class="stat"><div class="num" data-target="25">0</div><div class="label">bénévoles et professionnels</div></div>
-        <div class="stat"><div class="num" data-target="20">0</div><div class="label">Adherents</div></div>
-        <div class="stat"><div class="num" data-target="10">0</div><div class="label">ans d'engagement</div></div>
-      </div>
-    </div>
   </section>
 
   <!-- MISSION -->
-  <section id="mission" class="reveal">
+  <section id="mission">
     <div class="wrap">
       <div class="section-head">
         <h2>Une approche centrée sur la personne, pas sur le déficit</h2>
@@ -74,21 +72,21 @@
       <div class="mission-grid">
         <div class="mission-card">
           <div class="dot" style="background:#13B7EA;">
-            <i data-lucide="heart-handshake" stroke="white" stroke-width="2.5"></i>
+            <i class="fa-solid fa-hands-helping" style="color: white;"></i>
           </div>
           <h3>Écoute sans jugement</h3>
           <p>Des permanences tenues par des pairs-aidants autistes et des professionnels formés, pour parler librement de ce qui compte vraiment pour vous.</p>
         </div>
         <div class="mission-card">
           <div class="dot" style="background:#C724E0;">
-            <i data-lucide="calendar-check" stroke="white" stroke-width="2.5"></i>
+            <i class="fa-solid fa-calendar-check" style="color: white;"></i>
           </div>
           <h3>Organisation d'événements & Ateliers éducatifs</h3>
           <p>Des activités conçues pour favoriser l'inclusion, le partage d'expériences et le développement de compétences.</p>
         </div>
         <div class="mission-card">
           <div class="dot" style="background:#163B73;">
-            <i data-lucide="shield-check" stroke="white" stroke-width="2.5"></i>
+            <i class="fa-solid fa-shield-halved" style="color: white;"></i>
           </div>
           <h3>Communautés sûres</h3>
           <p>Des espaces sensoriellement adaptés où les comportements autistiques — stimming, pauses, scripts — sont accueillis sans explication à donner.</p>
@@ -172,15 +170,11 @@
         <li><span class="res-bullet"></span><div><strong>Glossaire de l'autisme</strong><br>Vocabulaire courant expliqué simplement, sans jargon clinique.</div></li>
       </ul>
     </div>
-  </section>
-
-  <!-- CTA DON -->
-  <section id="don" style="padding-top:0;">
     <div class="cta-band">
       <h2>Votre soutien finance nos permanences gratuites</h2>
       <p>100% des dons servent directement nos actions de terrain : écoute, accompagnement administratif et groupes de pairs.</p>
       <div class="btn-row">
-        <a href="#" class="btn btn-cyan">Faire un don ponctuel</a>
+        <a href="https://paypal.me/DanielBokingo" target="_blank" rel="noopener noreferrer" class="btn btn-cyan">Faire un don ponctuel</a>
         <a href="#" class="btn btn-ghost" style="border-color:#fff; color:#fff;">Devenir adhérent</a>
       </div>
     </div>
@@ -206,9 +200,9 @@
       <div class="contact-info">
         <h3>Permanence téléphonique</h3>
         <p>Du lundi au vendredi, 10h–17h. Ligne calme, pas de musique d'attente.</p>
-        <div class="info-line"><i data-lucide="phone"></i> 03 20 00 00 00</div>
-        <div class="info-line"><i data-lucide="mail"></i> contact@autisme-hdf.fr</div>
-        <div class="info-line"><i data-lucide="map-pin"></i> 14 rue des Tilleuls, 59000 Lille</div>
+        <div class="info-line"><i class="fa-solid fa-phone"></i> 03 20 00 00 00</div>
+        <div class="info-line"><i class="fa-solid fa-envelope"></i> contact@autisme-hdf.fr</div>
+        <div class="info-line"><i class="fa-solid fa-map-marker-alt"></i> 14 rue des Tilleuls, 59000 Lille</div>
         <h3 style="margin-top:30px;">Espace d'accueil</h3>
         <p>Salle calme avec éclairage tamisable, casques anti-bruit disponibles sur demande.</p>
       </div>
@@ -220,7 +214,7 @@
 <footer>
   <div class="wrap">
     <div class="footer-grid">
-      <a href="#" class="logo"><i data-lucide="puzzle"></i></a>
+      <img src="{{ url_for('static', filename='/uploads/logo.png') }}" alt="Logo Autisme Hauts-de-France" class="logo">
       <div class="footer-cols">
         <div class="footer-col">
           <h4>Association</h4>
@@ -256,12 +250,7 @@
   </div>
 </footer>
 
-<script src="js/main.js"></script>
-<script>
-  document.addEventListener('DOMContentLoaded', function() {
-    lucide.createIcons();
-  });
-</script>
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
 
 </body>
 </html>

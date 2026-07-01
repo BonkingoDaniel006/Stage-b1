@@ -4,27 +4,27 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Evenements</title>
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet">
-    <script src="https://unpkg.com/lucide@latest" defer></script>
 
 </head>
 <body>
     <header>
         <div class="nav wrap">
-        <a href="#" class="logo">
-            <img src="/logo.png" alt="">
+        <a href="{{ url_for('index') }}" class="logo">
+            <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo Autisme Hauts-de-France">
         </a>
         <nav aria-label="Navigation principale">
             <ul>
-                <li><a href="#mission">Notre mission</a></li>
-                <li><a href="#actions">Nos actions</a></li>
-                <li><a href="#temoignages">Témoignages</a></li>
-                <li><a href="#ressources">Ressources</a></li>
-                <li><a href="#contact">Contact</a></li>
-                <li><a href="">Événements</a></li>
+                <li><a href="{{ url_for('index') }}#mission">Notre mission</a></li>
+                <li><a href="{{ url_for('index') }}#actions">Nos actions</a></li>
+                <li><a href="{{ url_for('index') }}#temoignages">Témoignages</a></li>
+                <li><a href="{{ url_for('index') }}#ressources">Ressources</a></li>
+                <li><a href="{{ url_for('index') }}#contact">Contact</a></li>
+                <li><a href="{{ url_for('evenements') }}">Événements</a></li>
             </ul>
         </nav>
         <a href="#don" class="nav-cta">Faire un don</a>
@@ -44,10 +44,10 @@
                     <div class="event-date">Samedi 10 Octobre à 14:00</div>
                     <h3 class="event-title">Atelier d'initiation à la communication alternative</h3>
                     <div class="event-info-row">
-                        <span><i data-lucide="map-pin"></i></span> Lille (59)
+                        <span><i class="fa-solid fa-map-marker-alt"></i></span> Lille (59)
                     </div>
                     <div class="event-info-row">
-                        <span><i data-lucide="users"></i></span> Organisé par : Asso Grandir Ensemble
+                        <span><i class="fa-solid fa-users"></i></span> Organisé par : Asso Grandir Ensemble
                     </div>
                     <div class="event-footer">
                         <span style="color: #2ecc71; font-weight: 500;">Gratuit</span>
@@ -65,10 +65,10 @@
                     <div class="event-date">Mardi 13 Octobre à 18:30</div>
                     <h3 class="event-title">Café-Parents : Partage d'expériences et d'écoute</h3>
                     <div class="event-info-row">
-                        <span><i data-lucide="map-pin"></i></span> Amiens (80)
+                        <span><i class="fa-solid fa-map-marker-alt"></i></span> Amiens (80)
                     </div>
                     <div class="event-info-row">
-                        <span><i data-lucide="users"></i></span> Organisé par : Antenne Somme
+                        <span><i class="fa-solid fa-users"></i></span> Organisé par : Antenne Somme
                     </div>
                     <div class="event-footer">
                         <span style="color: #666;">Sur inscription</span>
@@ -86,10 +86,10 @@
                     <div class="event-date">Dimanche 25 Octobre à 10:00</div>
                     <h3 class="event-title">Matinée Sportive et Inclusive en Famille</h3>
                     <div class="event-info-row">
-                        <span><i data-lucide="map-pin"></i></span> Arras (62)
+                        <span><i class="fa-solid fa-map-marker-alt"></i></span> Arras (62)
                     </div>
                     <div class="event-info-row">
-                        <span><i data-lucide="users"></i></span> Organisé par : Émulsion
+                        <span><i class="fa-solid fa-users"></i></span> Organisé par : Émulsion
                     </div>
                     <div class="event-footer">
                         <span style="color: #2ecc71; font-weight: 500;">5 € / famille</span>
@@ -101,11 +101,5 @@
         </div>
     </main>
     
-<script>
-  document.addEventListener('DOMContentLoaded', function() {
-    lucide.createIcons();
-  });
-</script>
-
 </body>
 </html>

@@ -13,7 +13,6 @@
   *{box-sizing:border-box; margin:0; padding:0;}
   html{
     scroll-behavior:smooth;
-    scroll-snap-type: y mandatory;
   }
   body{
     background:var(--white);
@@ -52,7 +51,6 @@
   }
   .logo{display:flex; align-items:center; gap:10px; text-decoration:none;}
   .logo i{width:5px; height:5px; color:var(--cyan);}
-  header .logo img{height:40px;}
   nav ul{list-style:none; display:flex; gap:30px;}
   nav ul a{text-decoration:none; font-weight:700; font-size:0.98rem; color:var(--navy); opacity:0.85; font-family:'Baloo 2';}
   nav ul a:hover{opacity:1; text-decoration:underline; text-underline-offset:4px;}
@@ -107,10 +105,10 @@
 
   /* Stats */
   .stats{
+    border-top:1px solid var(--line); 
+    background:var(--cloud);
     width: 100%;
-  }
-  .hero .stats {
-    margin-top: 50px;
+    padding: 24px 0;
   }
   .hero .stats { scroll-snap-align: end; } /* Le snap se fait sur la fin de la section hero */
   .stats .wrap{display:flex; justify-content:space-between; flex-wrap:wrap; gap:24px;}
@@ -118,12 +116,11 @@
   .stat .num{font-family:'Baloo 2'; font-size:2.1rem; font-weight:800; color:var(--cyan);}
   .stat .label{font-size:0.92rem; color:#4a5e78;}
 
-  section[id]{
+  section{
     padding:60px 0;
     display: flex;
     align-items: center;
     position: relative;
-    min-height: 100vh; /* Chaque section prend au moins toute la hauteur de l'écran */
   }
   .section-head{max-width:640px; margin-bottom:50px;}
   .section-head h2{font-size:clamp(1.8rem,3vw,2.4rem); font-weight:700; letter-spacing:-0.01em; margin-bottom:16px; color:var(--navy-deep);}
@@ -168,10 +165,9 @@
 
   /* CTA */
   .cta-band{
-    background: linear-gradient(135deg, var(--navy) 0%, var(--navy-deep) 100%);
-    color: var(--white); border-radius: 28px; padding: 64px 48px; text-align: center;
-    position: relative; overflow: hidden;
-    margin-top: 60px; /* Ajout d'un espace au-dessus */
+    background:linear-gradient(135deg, var(--navy) 0%, var(--navy-deep) 100%);
+    color:var(--white); border-radius:28px; margin:0 28px; padding:64px 48px; text-align:center;
+    position:relative; overflow:hidden;
   }
   .cta-band h2{font-size:clamp(1.7rem,3.5vw,2.3rem); font-weight:700; margin-bottom:16px;}
   .cta-band p{max-width:54ch; margin:0 auto 30px; opacity:0.92; font-size:1.05rem;}
@@ -200,7 +196,7 @@
 
   @media (max-width: 880px){
     nav ul{display:none;}
-    section[id] { min-height: auto; padding: 40px 0; /* Ajustement pour mobile */ }
+    section { height: auto; padding: 40px 0; /* Ajustement pour mobile */ }
     .hero-grid{grid-template-columns:1fr;}
     .hero-visual{order:-1; max-width:280px; margin:0 auto;}
     .mission-grid, .t-grid{grid-template-columns:1fr;}
@@ -211,34 +207,30 @@
   @media (prefers-reduced-motion: reduce){ *{animation:none !important; transition:none !important;} }
 
   /* --- Animations d'apparition au scroll --- */
-  section[id], .stats, .cta-band {
+  section[id], .stats {
     opacity: 0;
-    transition: opacity 0.6s ease-out;
+    transition: opacity 0.5s ease-in;
   }
-  section[id].is-visible, .stats.is-visible, .cta-band.is-visible {
+  section[id].is-visible, .stats.is-visible {
     opacity: 1;
-  }
-
-  /* Points d'ancrage pour le scroll snap */
-  section[id], .stats, footer {
-    scroll-snap-align: start;
   }
 
   /* Cible les éléments à animer à l'intérieur des sections visibles */
   .is-visible .section-head,
-  .is-visible .lead,
   .is-visible .btn-row,
-  .is-visible .hero-visual,
+  .is-visible .lead,
   .is-visible .mission-card,
   .is-visible .path-item,
   .is-visible .t-card,
   .is-visible .res-list li,
   .is-visible form,
   .is-visible .contact-info {
+    transform: translateY(20px);
     animation: fade-up 0.8s forwards cubic-bezier(0.165, 0.84, 0.44, 1);
   }
 
-  @keyframes fade-up { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes fade-up { to { opacity: 1; transform: translateY(0); } }
+
 
   .main-content {
             max-width: 1200px;
@@ -405,4 +397,4 @@
 }
 .reservation-steps li { margin-bottom: 10px; }
 .reservation-steps ul { margin-top: 8px; margin-left: 20px; }
-        
+        }

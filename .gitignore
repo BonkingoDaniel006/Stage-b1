@@ -25,3 +25,8 @@ dist/
 
 # --- Fichiers de logs ---
 *.log
+
+
+# variables d'environnement
+
+.env
