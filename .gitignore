@@ -1,0 +1,27 @@
+# --- Environnements Virtuels ---
+# Le vôtre est déjà là, mais on peut en ajouter d'autres courants
+venv/
+env/
+.venv/
+ENV/
+
+# --- Fichiers Python compilés et cache ---
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# --- Fichiers de distribution/packaging ---
+build/
+dist/
+*.egg-info/
+
+# --- Fichiers de configuration d'IDE/Éditeur ---
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+.DS_Store
+
+# --- Fichiers de logs ---
+*.log
