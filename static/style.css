@@ -348,6 +348,16 @@
     .contact-grid{grid-template-columns:1fr;}
     .path-item{grid-template-columns:1fr;}
     .cta-band{margin:0 16px; padding:48px 24px;}
+
+    /* Responsive pour la page événement unique */
+    .event-layout {
+      grid-template-columns: 1fr;
+    }
+    .event-sidebar .info-card {
+      position: static;
+      margin-top: 30px;
+    }
+
   }
   @media (prefers-reduced-motion: reduce){ *{animation:none !important; transition:none !important;} }
 
