@@ -1,6 +1,8 @@
 from flask import Flask, render_template
 from config import Config
 from ext import init_extensions
+from visiteurs.route import index_bp
+import os
 
 def create_app(config_class=Config):
     """
@@ -16,16 +18,11 @@ def create_app(config_class=Config):
         init_extensions(app)
 
     # 3. Définir les routes
-    @app.route('/')
-    def index():
-        return render_template('index.html')
-
-    @app.route('/evenements')
-    def evenements():
-        return render_template('evenements.html')
+    app.register_blueprint(index_bp)
 
     return app
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     app = create_app()
-    app.run()
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)

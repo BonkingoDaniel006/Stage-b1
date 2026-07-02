@@ -30,3 +30,7 @@ def init_extensions(app):
         password=app.config['DB_PASSWORD'],
         database=app.config['DB_NAME']
     )
+
+
+def get_db_connection():
+    return db_pool.get_connection()

@@ -13,90 +13,53 @@
 </head>
 <body>
     <header>
-        <div class="nav wrap">
-        <a href="{{ url_for('index') }}" class="logo">
-            <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo Autisme Hauts-de-France">
+      <div class="nav wrap">
+        <a href="{{ url_for('index.index') }}" class="logo">
+          <img src="{{ url_for('static', filename='/uploads/logo.png') }}" alt="Logo Autisme Hauts-de-France">
         </a>
         <nav aria-label="Navigation principale">
-            <ul>
-                <li><a href="{{ url_for('index') }}#mission">Notre mission</a></li>
-                <li><a href="{{ url_for('index') }}#actions">Nos actions</a></li>
-                <li><a href="{{ url_for('index') }}#temoignages">Témoignages</a></li>
-                <li><a href="{{ url_for('index') }}#ressources">Ressources</a></li>
-                <li><a href="{{ url_for('index') }}#contact">Contact</a></li>
-                <li><a href="{{ url_for('evenements') }}">Événements</a></li>
-            </ul>
+          <ul>
+            <li><a href="{{ url_for('index.index') }}#mission">Notre mission</a></li>
+            <li><a href="{{ url_for('index.index') }}#actions">Nos actions</a></li>
+            <li><a href="{{ url_for('index.index') }}#temoignages">Témoignages</a></li>
+            <li><a href="{{ url_for('index.index') }}#ressources">Ressources</a></li>
+            <li><a href="{{ url_for('index.index') }}#contact">Contact</a></li>
+            <li><a href="{{ url_for('index.evenements') }}">Événements</a></li>
+          </ul>
         </nav>
-        <a href="#don" class="nav-cta">Faire un don</a>
-        </div>
+        <a href="https://paypal.me/DanielBokingo" class="nav-cta" target="_blank" rel="noopener noreferrer"><i class="fa-solid fa-hand-holding-heart"></i> Faire un don</a>
+      </div>
     </header>
     <main class="main-content">
         <h2 class="section-title">Événements à venir</h2>
 
         <div class="events-grid">
+            {% for event in events %}
+            <a href="{{ url_for('index.evenement', event_id=event.id) }}">
+               <div class="event-card">
+                <div class="event-image">
+                    <img src="{{ event.image_url }}" alt="Image de l'événement {{ event.title }}">
+                </div>
+                <div class="event-details">
+                    <div class="event-date">{{ event.event_date }}</div>
+                    <h3 class="event-title">{{ event.title }}</h3>
+                    <div class="event-info-row">
+                        <span><i class="fa-solid fa-map-marker-alt"></i></span> {{ event.location }}
+                    </div>
+                    <div class="event-info-row">
+                        <span><i class="fa-solid fa-users"></i></span> Organisé par : {{ event.organizer }}
+                    </div>
+                    <div class="event-footer">
+                        <span style="color: #2ecc71; font-weight: 500;">{{ event.price_info }}</span>
+                        
+                    </div>
+                </div>
+            </div> 
+            </a>
             
-            <div class="event-card">
-                <div class="event-image">
-                    [ Illustration Atelier ]
-                    <span class="event-tag">Formation</span>
-                </div>
-                <div class="event-details">
-                    <div class="event-date">Samedi 10 Octobre à 14:00</div>
-                    <h3 class="event-title">Atelier d'initiation à la communication alternative</h3>
-                    <div class="event-info-row">
-                        <span><i class="fa-solid fa-map-marker-alt"></i></span> Lille (59)
-                    </div>
-                    <div class="event-info-row">
-                        <span><i class="fa-solid fa-users"></i></span> Organisé par : Asso Grandir Ensemble
-                    </div>
-                    <div class="event-footer">
-                        <span style="color: #2ecc71; font-weight: 500;">Gratuit</span>
-                        
-                    </div>
-                </div>
-            </div>
+            {% endfor %}
 
-            <div class="event-card purple-theme">
-                <div class="event-image">
-                    [ Illustration Café ]
-                    <span class="event-tag">Rencontre</span>
-                </div>
-                <div class="event-details">
-                    <div class="event-date">Mardi 13 Octobre à 18:30</div>
-                    <h3 class="event-title">Café-Parents : Partage d'expériences et d'écoute</h3>
-                    <div class="event-info-row">
-                        <span><i class="fa-solid fa-map-marker-alt"></i></span> Amiens (80)
-                    </div>
-                    <div class="event-info-row">
-                        <span><i class="fa-solid fa-users"></i></span> Organisé par : Antenne Somme
-                    </div>
-                    <div class="event-footer">
-                        <span style="color: #666;">Sur inscription</span>
-                        
-                    </div>
-                </div>
-            </div>
-
-            <div class="event-card">
-                <div class="event-image">
-                    [ Illustration Sport ]
-                    <span class="event-tag">Loisirs</span>
-                </div>
-                <div class="event-details">
-                    <div class="event-date">Dimanche 25 Octobre à 10:00</div>
-                    <h3 class="event-title">Matinée Sportive et Inclusive en Famille</h3>
-                    <div class="event-info-row">
-                        <span><i class="fa-solid fa-map-marker-alt"></i></span> Arras (62)
-                    </div>
-                    <div class="event-info-row">
-                        <span><i class="fa-solid fa-users"></i></span> Organisé par : Émulsion
-                    </div>
-                    <div class="event-footer">
-                        <span style="color: #2ecc71; font-weight: 500;">5 € / famille</span>
-                        
-                    </div>
-                </div>
-            </div>
+            
 
         </div>
     </main>

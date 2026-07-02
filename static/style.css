@@ -10,10 +10,12 @@
     --line:#DCE7F0;
     --radius:20px;
   }
-  *{box-sizing:border-box; margin:0; padding:0;}
+  *{
+    box-sizing:border-box; 
+    margin:0; 
+    padding:0;}
   html{
     scroll-behavior:smooth;
-    scroll-snap-type: y mandatory;
   }
   body{
     background:var(--white);
@@ -24,9 +26,18 @@
     -webkit-font-smoothing:antialiased;
   }
   h1,h2,h3,.eyebrow,.logo-text{font-family:'Baloo 2', sans-serif;}
-  a{color:inherit;}
-  img,svg{display:block; max-width:100%;}
-  .wrap{max-width:1120px; margin:0 auto; padding:0 28px;}
+  a{
+    color:inherit;
+  }
+  img,svg{
+    display:block; 
+    max-width:100%;
+  }
+  .wrap{
+    max-width:1120px; 
+    margin:0 auto; 
+    padding:0 28px;
+  }
 
   a:focus-visible, button:focus-visible{
     outline:3px solid var(--cyan);
@@ -34,10 +45,18 @@
     border-radius:6px;
   }
   .skip-link{
-    position:absolute; left:-999px; top:0; background:var(--navy); color:var(--white);
-    padding:10px 16px; border-radius:0 0 10px 0; z-index:100;
+    position:absolute; 
+    left:-999px; 
+    top:0; 
+    background:var(--navy); 
+    color:var(--white);
+    padding:10px 16px; 
+    border-radius:0 0 10px 0; 
+    z-index:100;
   }
-  .skip-link:focus{left:0;}
+  .skip-link:focus{
+    left:0;
+  }
 
   /* Header */
   header{
@@ -47,53 +66,139 @@
     border-bottom:1px solid var(--line);
   }
   .nav{
-    display:flex; align-items:center; justify-content:space-between;
+    display:flex; 
+    align-items:center; 
+    justify-content:space-between;
     padding:14px 28px;
   }
-  .logo{display:flex; align-items:center; gap:10px; text-decoration:none;}
-  .logo i{width:5px; height:5px; color:var(--cyan);}
-  header .logo img{height:40px;}
-  nav ul{list-style:none; display:flex; gap:30px;}
-  nav ul a{text-decoration:none; font-weight:700; font-size:0.98rem; color:var(--navy); opacity:0.85; font-family:'Baloo 2';}
-  nav ul a:hover{opacity:1; text-decoration:underline; text-underline-offset:4px;}
-  .nav-cta{
-    background:var(--magenta); color:var(--white); padding:11px 22px; border-radius:999px;
-    font-weight:700; text-decoration:none; font-size:0.95rem; white-space:nowrap; font-family:'Baloo 2';
+  .logo{
+    display:flex; 
+    align-items:center; 
+    gap:10px; 
+    text-decoration:none;
   }
-  .nav-cta:hover{background:var(--navy);}
+  .logo i{
+    width:5px; 
+    height:5px; 
+    color:var(--cyan);
+  }
+  header .logo img{
+    height:40px;
+  }
+  nav ul{l
+    ist-style:none; 
+    display:flex; 
+    gap:30px;}
+  nav ul a{
+    text-decoration:none; 
+    font-weight:700; 
+    font-size:0.98rem; 
+    color:var(--navy); 
+    opacity:0.85; 
+    font-family:'Baloo 2';}
+  nav ul a:hover{
+    opacity:1; 
+    text-decoration:underline; 
+    text-underline-offset:4px;
+  }
+  .nav-cta{
+    background:var(--magenta); 
+    color:var(--white); 
+    padding:11px 22px; 
+    border-radius:999px;
+    font-weight:700; 
+    text-decoration:none; 
+    font-size:0.95rem; 
+    white-space:nowrap; 
+    font-family:'Baloo 2';
+  }
+  .nav-cta:hover{
+    background:var(--navy);
+  }
 
   /* Hero */
   .hero{
     background:
       radial-gradient(circle at 85% 10%, rgba(199,36,224,0.08), transparent 45%),
       radial-gradient(circle at 0% 90%, rgba(19,183,234,0.10), transparent 50%);
-    padding-top: 60px; /* Ajout d'un padding haut */
+    padding-top: 60px;
+    display: flex;
+    flex-direction: column;
   }
-  .hero-grid{display:grid; grid-template-columns:1.1fr 0.9fr; gap:50px; align-items:center; flex-grow: 1; display: flex;}
+  .hero-grid{
+    display:grid; 
+    grid-template-columns:1fr 1fr; 
+    align-items:center; 
+    flex-grow: 1; 
+  }
   .eyebrow{
-    display:inline-block; font-size:0.85rem; font-weight:700; letter-spacing:0.04em;
-    text-transform:uppercase; color:var(--magenta); margin-bottom:18px;
+    display:inline-block; 
+    font-size:0.85rem; 
+    font-weight:700; l
+    etter-spacing:0.04em;
+    text-transform:uppercase; 
+    color:var(--magenta); 
+    margin-bottom:18px;
   }
   .hero h1{
     font-size:clamp(2.3rem, 4.6vw, 3.5rem);
-    font-weight:700; line-height:1.1; letter-spacing:-0.01em;
-    margin-bottom:22px; color:var(--navy-deep);
+    font-weight:700; 
+    line-height:1.1; 
+    letter-spacing:-0.01em;
+    margin-bottom:22px; 
+    color:var(--navy-deep);
   }
-  .hero h1 .accent{color:var(--cyan); }
-  .hero p.lead{font-size:1.16rem; max-width:46ch; color:#3a4f6b; margin-bottom:32px;}
-  .btn-row{display:flex; gap:16px; flex-wrap:wrap;}
+  .hero h1 .accent{
+    color:var(--cyan); 
+  }
+  .hero p.lead{
+    font-size:1.16rem; 
+    max-width:46ch; 
+    color:#3a4f6b; 
+    margin-bottom:32px;
+  }
+  .btn-row{
+    display:flex; 
+    gap:16px; 
+    flex-wrap:wrap;
+  
+  }
   .btn{
-    display:inline-flex; align-items:center; gap:8px;
-    padding:14px 26px; border-radius:999px; font-weight:700; text-decoration:none;
-    font-size:1rem; border:2px solid transparent; transition:transform .15s ease;
+    display:inline-flex; 
+    align-items:center; 
+    gap:8px;
+    padding:14px 26px; 
+    border-radius:999px; 
+    font-weight:700; 
+    text-decoration:none;
+    font-size:1rem; 
+    border:2px solid transparent; 
+    transition:transform .15s ease;
     font-family:'Baloo 2';
   }
-  .btn:hover{transform:translateY(-2px);}
-  .btn-primary{background:var(--magenta); color:var(--white);}
-  .btn-cyan{background:var(--cyan); color:var(--navy-deep);}
-  .btn-ghost{border-color:var(--navy); color:var(--navy);}
+  .btn:hover{
+    transform:translateY(-2px);
+  }
+  .btn-primary{
+    background:var(--magenta); 
+    color:var(--white);
+  }
+  .btn-cyan{
+    background:var(--cyan); 
+    color:var(--navy-deep);
+  }
+  .btn-ghost{
+    border-color:var(--navy); 
+    color:var(--navy);
+  }
 
-  .hero-visual{position:relative; aspect-ratio:1/1;}
+  .hero-visual{
+    position:relative;
+    aspect-ratio: 4/3;
+    max-width: 700px;
+    max-height:500px;
+    margin: 50px auto 0; /* Centre l'image horizontalement et conserve la marge haute */
+  }
   .hero-visual i{
     position:absolute;
     animation: float 6s ease-in-out infinite;
@@ -108,11 +213,11 @@
   /* Stats */
   .stats{
     width: 100%;
+    padding: 40px 0;
   }
   .hero .stats {
     margin-top: 50px;
   }
-  .hero .stats { scroll-snap-align: end; } /* Le snap se fait sur la fin de la section hero */
   .stats .wrap{display:flex; justify-content:space-between; flex-wrap:wrap; gap:24px;}
   .stat{flex:1; min-width:140px;}
   .stat .num{font-family:'Baloo 2'; font-size:2.1rem; font-weight:800; color:var(--cyan);}
@@ -123,7 +228,6 @@
     display: flex;
     align-items: center;
     position: relative;
-    min-height: 100vh; /* Chaque section prend au moins toute la hauteur de l'écran */
   }
   .section-head{max-width:640px; margin-bottom:50px;}
   .section-head h2{font-size:clamp(1.8rem,3vw,2.4rem); font-weight:700; letter-spacing:-0.01em; margin-bottom:16px; color:var(--navy-deep);}
@@ -209,36 +313,6 @@
     .cta-band{margin:0 16px; padding:48px 24px;}
   }
   @media (prefers-reduced-motion: reduce){ *{animation:none !important; transition:none !important;} }
-
-  /* --- Animations d'apparition au scroll --- */
-  section[id], .stats, .cta-band {
-    opacity: 0;
-    transition: opacity 0.6s ease-out;
-  }
-  section[id].is-visible, .stats.is-visible, .cta-band.is-visible {
-    opacity: 1;
-  }
-
-  /* Points d'ancrage pour le scroll snap */
-  section[id], .stats, footer {
-    scroll-snap-align: start;
-  }
-
-  /* Cible les éléments à animer à l'intérieur des sections visibles */
-  .is-visible .section-head,
-  .is-visible .lead,
-  .is-visible .btn-row,
-  .is-visible .hero-visual,
-  .is-visible .mission-card,
-  .is-visible .path-item,
-  .is-visible .t-card,
-  .is-visible .res-list li,
-  .is-visible form,
-  .is-visible .contact-info {
-    animation: fade-up 0.8s forwards cubic-bezier(0.165, 0.84, 0.44, 1);
-  }
-
-  @keyframes fade-up { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
   .main-content {
             max-width: 1200px;

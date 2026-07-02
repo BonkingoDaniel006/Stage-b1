@@ -37,21 +37,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
     /**
      * Utilise IntersectionObserver pour déclencher les animations au défilement.
+     * Cible uniquement la section des statistiques.
      */
-    const elementsToAnimate = document.querySelectorAll('section[id], .stats');
-    if (elementsToAnimate.length > 0) {
+    const statsSection = document.querySelector('.stats');
+    if (statsSection) {
         const observer = new IntersectionObserver((entries, observer) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
-                    entry.target.classList.add('is-visible');
-                    if (entry.target.classList.contains('stats')) {
-                        animateCounters();
-                    }
+                    animateCounters();
                     observer.unobserve(entry.target); // On arrête d'observer une fois l'animation lancée
                 }
             });
-        }, { threshold: 0.15 }); // Déclenche quand 15% de la section est visible
-
-        elementsToAnimate.forEach(el => observer.observe(el));
+        }, { threshold: 0.5 }); // Déclenche quand 50% de la section est visible
+        observer.observe(statsSection);
     }
 });
