@@ -51,4 +51,21 @@ document.addEventListener("DOMContentLoaded", () => {
         }, { threshold: 0.5 }); // Déclenche quand 50% de la section est visible
         observer.observe(statsSection);
     }
+
+    /**
+     * Gère l'ouverture et la fermeture du menu de navigation mobile.
+     */
+    const navToggle = document.getElementById('nav-toggle');
+    const navMenu = document.getElementById('nav-menu');
+
+    if (navToggle && navMenu) {
+        navToggle.addEventListener('click', () => {
+            // Ajoute/retire la classe 'is-open' pour afficher/masquer le menu
+            navMenu.classList.toggle('is-open');
+            // Ajoute/retire la classe 'is-active' pour l'animation du bouton
+            navToggle.classList.toggle('is-active');
+            // Met à jour l'attribut pour l'accessibilité
+            navToggle.setAttribute('aria-expanded', navMenu.classList.contains('is-open'));
+        });
+    }
 });

@@ -19,17 +19,20 @@
         <a href="{{ url_for('index.index') }}" class="logo">
           <img src="{{ url_for('static', filename='/uploads/logo.png') }}" alt="Logo Autisme Hauts-de-France">
         </a>
-        <nav aria-label="Navigation principale">
-          <ul>
-            <li><a href="{{ url_for('index.index') }}#mission">Notre mission</a></li>
-            <li><a href="{{ url_for('index.index') }}#actions">Nos actions</a></li>
-            <li><a href="{{ url_for('index.index') }}#temoignages">Témoignages</a></li>
-            <li><a href="{{ url_for('index.index') }}#ressources">Ressources</a></li>
-            <li><a href="{{ url_for('index.index') }}#contact">Contact</a></li>
-            <li><a href="{{ url_for('index.evenements') }}">Événements</a></li>
-          </ul>
-        </nav>
-        <a href="https://paypal.me/DanielBokingo" class="nav-cta" target="_blank" rel="noopener noreferrer"><i class="fa-solid fa-hand-holding-heart"></i> Faire un don</a>
+        <div class="nav-menu" id="nav-menu">
+          <nav aria-label="Navigation principale">
+            <ul>
+              <li><a href="{{ url_for('index.index') }}#mission">Notre mission</a></li>
+              <li><a href="{{ url_for('index.index') }}#actions">Nos actions</a></li>
+              <li><a href="{{ url_for('index.index') }}#temoignages">Témoignages</a></li>
+              <li><a href="{{ url_for('index.index') }}#ressources">Ressources</a></li>
+              <li><a href="{{ url_for('index.index') }}#contact">Contact</a></li>
+              <li><a href="{{ url_for('index.evenements') }}">Événements</a></li>
+            </ul>
+          </nav>
+          <a href="https://paypal.me/DanielBokingo" class="nav-cta" target="_blank" rel="noopener noreferrer"><i class="fa-solid fa-hand-holding-heart"></i> Faire un don</a>
+        </div>
+        <button class="nav-toggle" id="nav-toggle" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="nav-menu"><span class="hamburger"></span></button>
       </div>
     </header>
 
