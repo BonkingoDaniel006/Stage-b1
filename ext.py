@@ -1,4 +1,5 @@
 from flask_bcrypt import Bcrypt
+from flask_mail import Mail
 from flask_wtf import CSRFProtect
 import mysql.connector.pooling
 import redis
@@ -7,7 +8,7 @@ import redis
 # Cela permet d'éviter les importations circulaires
 bcrypt = Bcrypt()
 csrf = CSRFProtect()
-
+mail = Mail()
 #initialisation du client Redis
 redis_client = None
 #initialisation du pool de connexion (une seule connexion sera utilisée pour toutes les requêtes)

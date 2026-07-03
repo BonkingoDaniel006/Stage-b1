@@ -14,8 +14,7 @@ def create_app(config_class=Config):
     app.config.from_object(config_class)
     
     # 2. Initialiser les extensions (DB pool, LoginManager, etc.)
-    with app.app_context():
-        init_extensions(app)
+    init_extensions(app)
 
     # 3. Définir les routes
     app.register_blueprint(index_bp)
