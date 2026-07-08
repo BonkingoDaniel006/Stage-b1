@@ -1,26 +1,24 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>connexion - Admin</title>
-    <link rel="stylesheet" href="/static/connexion.css">
-</head>
-<body>
-    
-    <main>
-        <h1>Connexion au profil administrateur</h1>
-        <form action="" method="post">
-            <label for="username">Nom d'utilisateur :</label>
-            <input type="text" id="username" name="username" required>
-            <br><br>
-            <label for="password">Mot de passe :</label>
-            <input type="password" id="password" name="password" required>
-            <br><br>
-            <input type="submit" value="Se connecter" class="button-formulaire">
-        </form>
-    </main>
-    
-    
-</body>
-</html>
+{% extends 'base.html' %}
+
+{% block title %}Connexion{% endblock %}
+
+{% block content %}
+<h2>Connexion</h2>
+<form method="POST" action="{{ url_for('auth.connexion') }}">
+    {{ form.hidden_tag() }}
+    <div>
+        {{ form.email.label }}
+        {{ form.email(required=True, placeholder="exemple@domaine.com") }}
+    </div>
+
+    <div>
+        {{ form.password.label }}
+        {{ form.password(required=True, placeholder="••••••••") }}
+    </div>
+
+    <div>
+        {{ form.submit() }}
+    </div>
+</form>
+<p>Pas encore de compte ? <a href="{{ url_for('auth.inscription') }}">Inscrivez-vous ici</a>.</p>
+{% endblock %}
