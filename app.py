@@ -1,7 +1,6 @@
-from flask import Flask, render_template
+from flask import Flask
 from config import Config
 from ext import init_extensions
-from visiteurs.route import index_bp
 import os
 
 def create_app(config_class=Config):
@@ -17,7 +16,11 @@ def create_app(config_class=Config):
     init_extensions(app)
 
     # 3. Définir les routes
+    from visiteurs.route import index_bp
+    from auth.routes import auth_bp
+
     app.register_blueprint(index_bp)
+    app.register_blueprint(auth_bp)
 
     return app
 

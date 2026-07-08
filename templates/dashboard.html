@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Admin</title>
+    <link rel="stylesheet" href="/static/dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <img src="/static/uploads/logo.png" alt="">
+        </div>
+        <nav>
+            <ul>
+                <li><a href="">Planning</a></li>
+                <li><a href="">Notifications</a></li>
+                <li><a href="">Profil</a></li>
+            </ul>
+        </nav>
+        <a href="https://paypal.me/DanielBokingo" class="nav-cta" target="_blank" rel="noopener noreferrer"><i class="fa-solid fa-dollar-sign"></i> Voir les revenus</a>
+        
+    </header>
+    <main>
+        <h1>je suis le main</h1>
+    </main>
+    <footer>
+        <h1>je suis le footer</h1>
+        <a href="{{ url_for('auth.deconnexion') }}" class="secondary">Se déconnecter</a>
+    </footer>
+</body>
+</html>
