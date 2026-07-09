@@ -131,3 +131,151 @@
 
 
   /*fin de l'exemple à reproduire*/
+
+/* --- Dashboard --- */
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.dashboard-header h1 {
+  color: var(--navy-deep);
+}
+
+.btn-add {
+  background: var(--cyan);
+  color: var(--white);
+  padding: 12px 24px;
+  border-radius: 999px;
+  font-weight: 700;
+  text-decoration: none;
+  font-size: 1rem;
+  border: none;
+  cursor: pointer;
+  font-family: 'Baloo 2';
+  transition: background-color 0.2s;
+}
+
+.btn-add:hover {
+  background: var(--cyan-light);
+}
+
+.events-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--white);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+}
+
+.events-table th, .events-table td {
+  padding: 16px 20px;
+  text-align: left;
+  border-bottom: 1px solid var(--line);
+}
+
+.events-table thead {
+  background: var(--cloud);
+}
+
+.events-table th {
+  font-family: 'Baloo 2', sans-serif;
+  font-weight: 700;
+  color: var(--navy);
+}
+
+.events-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.actions-cell {
+  display: flex;
+  gap: 10px;
+}
+
+.btn-action {
+  border: none;
+  background: none;
+  cursor: pointer;
+  padding: 5px;
+  border-radius: 5px;
+  transition: background-color 0.2s;
+}
+.btn-action:hover {
+  background-color: var(--line);
+}
+.btn-action i {
+  font-size: 1.1rem;
+}
+.btn-edit { color: var(--cyan); }
+.btn-delete { color: var(--magenta); }
+
+/* --- Modal --- */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(14, 43, 88, 0.6);
+  backdrop-filter: blur(5px);
+}
+
+.modal-content {
+  background-color: var(--white);
+  margin: 10% auto;
+  padding: 30px;
+  border-radius: var(--radius);
+  width: 90%;
+  max-width: 500px;
+  position: relative;
+  box-shadow: 0 5px 25px rgba(0,0,0,0.2);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid var(--line);
+}
+
+.modal-header h2 {
+  color: var(--navy-deep);
+  font-family: 'Baloo 2', sans-serif;
+}
+
+.close-button {
+  color: #aaa;
+  font-size: 28px;
+  font-weight: bold;
+  cursor: pointer;
+  border: none;
+  background: none;
+}
+
+.close-button:hover,
+.close-button:focus {
+  color: var(--navy-deep);
+}
+
+.modal-body .field {
+  margin-bottom: 15px;
+}
+
+.modal-footer {
+  margin-top: 25px;
+  text-align: right;
+}
+
+.btn-save {
+  background: var(--magenta);
+  color: var(--white);
+}

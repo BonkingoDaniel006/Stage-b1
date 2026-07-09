@@ -7,8 +7,7 @@ load_dotenv()
 class Config:
     SECRET_KEY = os.environ.get('SECRET_KEY')
     FLASK_DEBUG = os.environ.get('FLASK_DEBUG', 'False').lower() in ('true', '1', 't')
-    # Désactive la protection CSRF pour le développement
-    WTF_CSRF_ENABLED = False
+    WTF_CSRF_ENABLED = True
 
     PERMANENT_SESSION_LIFETIME = timedelta(minutes=30) #deconnexion automatique après 30 minutes d'inactivité
     

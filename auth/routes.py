@@ -9,7 +9,7 @@ from .services import _generer_code_verification, _envoyer_otp_brevo, process_lo
 @auth_bp.route('/inscription', methods=['GET', 'POST'])
 def inscription():
     if current_user.is_authenticated:
-        return redirect(url_for('auth.dashboard'))
+        return redirect(url_for('admin.dashboard'))
     
     form = RegistrationForm()
     if form.validate_on_submit():
@@ -25,7 +25,7 @@ def inscription():
 @auth_bp.route('/connexion', methods=['GET', 'POST'])
 def connexion():
     if current_user.is_authenticated:
-        return redirect(url_for('auth.dashboard'))
+        return redirect(url_for('admin.dashboard'))
 
     form = LoginForm()
     if form.validate_on_submit():
@@ -63,7 +63,7 @@ def verification():
 
         if result == "success":
             flash('Vérification réussie. Vous êtes maintenant connecté.', 'success')
-            return redirect(url_for('auth.dashboard'))
+            return redirect(url_for('admin.dashboard'))
         elif result == "incorrect_code":
             flash('Code de vérification incorrect. Veuillez réessayer.', 'danger')
         elif result == "expired_or_max_attempts":
@@ -92,8 +92,3 @@ def verification():
 def deconnexion():
     logout_user()
     return redirect(url_for('auth.connexion'))
-
-@auth_bp.route('/dashboard')
-@login_required
-def dashboard():
-    return render_template('dashboard.html')
