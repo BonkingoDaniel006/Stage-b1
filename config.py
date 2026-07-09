@@ -7,8 +7,7 @@ load_dotenv()
 class Config:
     SECRET_KEY = os.environ.get('SECRET_KEY')
     FLASK_DEBUG = os.environ.get('FLASK_DEBUG', 'False').lower() in ('true', '1', 't')
-    # Désactive la protection CSRF pour le développement
-    WTF_CSRF_ENABLED = False
+    WTF_CSRF_ENABLED = True
 
     PERMANENT_SESSION_LIFETIME = timedelta(minutes=30) #deconnexion automatique après 30 minutes d'inactivité
     
@@ -16,6 +15,10 @@ class Config:
     DB_USER = os.environ.get('DB_USER')
     DB_PASSWORD = os.environ.get('DB_PASSWORD')
     DB_NAME = os.environ.get('DB_NAME')
+
+    # Configuration de Redis pour le rate limiting
+    REDIS_HOST = os.environ.get('REDIS_HOST', 'localhost')
+    REDIS_PORT = int(os.environ.get('REDIS_PORT', 6379))
 
     #configuariotn des mails
     MAIL_SERVER = os.environ.get('MAIL_SERVER')

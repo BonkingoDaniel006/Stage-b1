@@ -17,10 +17,12 @@ def create_app(config_class=Config):
 
     # 3. Définir les routes
     from visiteurs.route import index_bp
-    from auth.routes import auth_bp
+    from auth import auth_bp
+    from admin import admin_bp
 
     app.register_blueprint(index_bp)
     app.register_blueprint(auth_bp)
+    app.register_blueprint(admin_bp)
 
     return app
 

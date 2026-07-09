@@ -3,31 +3,214 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - Admin</title>
-    <link rel="stylesheet" href="/static/dashboard.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <title>Tableau de Bord - Gestion des Événements</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='dashboard.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Baloo+2:wght@700&display=swap" rel="stylesheet">
 </head>
 <body>
+
     <header>
-        <div class="logo">
-            <img src="/static/uploads/logo.png" alt="">
-        </div>
-        <nav>
-            <ul>
-                <li><a href="">Planning</a></li>
-                <li><a href="">Notifications</a></li>
-                <li><a href="">Profil</a></li>
-            </ul>
+        <a href="{{ url_for('admin.dashboard') }}" class="logo">
+            <img src="{{ url_for('static', filename='uploads/logo.png') }}" alt="Logo Elikya">
+        </a>
+        <nav class="nav-menu">
+            <span>Bonjour, {{ current_user.email }}</span>
+            <a href="{{ url_for('auth.deconnexion') }}" class="nav-cta">Déconnexion</a>
         </nav>
-        <a href="https://paypal.me/DanielBokingo" class="nav-cta" target="_blank" rel="noopener noreferrer"><i class="fa-solid fa-dollar-sign"></i> Voir les revenus</a>
-        
     </header>
+
     <main>
-        <h1>je suis le main</h1>
+        <div class="dashboard-header">
+            <h1>Gestion des Événements</h1>
+            <button id="addEventBtn" class="btn-add">+ Ajouter un événement</button>
+        </div>
+
+        <table class="events-table">
+            <thead>
+                <tr>
+                    <th>Titre</th>
+                    <th>Date</th>
+                    <th>Lieu</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for event in events %}
+                <tr data-id="{{ event.id }}"
+                    data-title="{{ event.title }}"
+                    data-description="{{ event.description }}"
+                    data-date="{{ event.event_date.strftime('%Y-%m-%dT%H:%M') }}"
+                    data-location="{{ event.location }}">
+                    <td>{{ event.title }}</td>
+                    <td>{{ event.event_date.strftime('%d/%m/%Y à %Hh%M') }}</td>
+                    <td>{{ event.location }}</td>
+                    <td class="actions-cell">
+                        <button class="btn-action btn-edit" title="Modifier"><i class="fas fa-pencil-alt"></i></button>
+                        <button class="btn-action btn-delete" title="Supprimer"><i class="fas fa-trash-alt"></i></button>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="4" style="text-align: center; padding: 30px;">Aucun événement à afficher.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </main>
-    <footer>
-        <h1>je suis le footer</h1>
-        <a href="{{ url_for('auth.deconnexion') }}" class="secondary">Se déconnecter</a>
-    </footer>
+
+    <!-- Le Modal -->
+    <div id="eventModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">Ajouter un événement</h2>
+                <button class="close-button">&times;</button>
+            </div>
+            <form id="eventForm">
+                <div class="modal-body">
+                    <input type="hidden" id="eventId" name="id">
+                    <div class="field">
+                        <label for="title">Titre</label>
+                        <input type="text" id="title" name="title" required>
+                    </div>
+                    <div class="field">
+                        <label for="event_date">Date et Heure</label>
+                        <input type="datetime-local" id="event_date" name="event_date" required>
+                    </div>
+                    <div class="field">
+                        <label for="location">Lieu</label>
+                        <input type="text" id="location" name="location" required>
+                    </div>
+                    <div class="field">
+                        <label for="description">Description</label>
+                        <textarea id="description" name="description" rows="5" required></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn-add btn-save">Enregistrer</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const modal = document.getElementById('eventModal');
+        const addEventBtn = document.getElementById('addEventBtn');
+        const closeButton = document.querySelector('.close-button');
+        const eventForm = document.getElementById('eventForm');
+        const modalTitle = document.getElementById('modalTitle');
+        const eventIdInput = document.getElementById('eventId');
+
+        // --- Fonctions pour ouvrir/fermer le modal ---
+        function openModal() {
+            modal.style.display = 'block';
+        }
+
+        function closeModal() {
+            modal.style.display = 'none';
+            eventForm.reset();
+            eventIdInput.value = '';
+        }
+
+        // --- Événements d'ouverture/fermeture ---
+        addEventBtn.onclick = function() {
+            modalTitle.textContent = 'Ajouter un événement';
+            openModal();
+        }
+
+        closeButton.onclick = closeModal;
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                closeModal();
+            }
+        }
+
+        // --- Gestion de la soumission du formulaire (Ajout/Modification) ---
+        eventForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const eventId = eventIdInput.value;
+            const url = eventId ? `/admin/events/update/${eventId}` : '/admin/events/add';
+            const method = 'POST';
+
+            const formData = new FormData(eventForm);
+            const data = Object.fromEntries(formData.entries());
+
+            fetch(url, {
+                method: method,
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token() }}' // Important pour la sécurité
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(result => {
+                if (result.success) {
+                    alert(result.message);
+                    window.location.reload();
+                } else {
+                    alert('Erreur: ' + result.message);
+                }
+            })
+            .catch(error => {
+                console.error('Erreur:', error);
+                alert('Une erreur est survenue.');
+            });
+        });
+
+        // --- Gestion des boutons d'action (Modifier/Supprimer) ---
+        document.querySelectorAll('.events-table tbody tr').forEach(row => {
+            const eventId = row.dataset.id;
+            if (!eventId) return;
+
+            // Bouton Modifier
+            const editBtn = row.querySelector('.btn-edit');
+            if (editBtn) {
+                editBtn.addEventListener('click', function() {
+                    modalTitle.textContent = 'Modifier l'événement';
+                    eventIdInput.value = eventId;
+                    document.getElementById('title').value = row.dataset.title;
+                    document.getElementById('description').value = row.dataset.description;
+                    document.getElementById('event_date').value = row.dataset.date;
+                    document.getElementById('location').value = row.dataset.location;
+                    openModal();
+                });
+            }
+
+            // Bouton Supprimer
+            const deleteBtn = row.querySelector('.btn-delete');
+            if (deleteBtn) {
+                deleteBtn.addEventListener('click', function() {
+                    if (!confirm('Êtes-vous sûr de vouloir supprimer cet événement ?')) {
+                        return;
+                    }
+
+                    fetch(`/admin/events/delete/${eventId}`, {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRFToken': '{{ csrf_token() }}'
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(result => {
+                        if (result.success) {
+                            alert(result.message);
+                            window.location.reload();
+                        } else {
+                            alert('Erreur: ' + result.message);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Erreur:', error);
+                        alert('Une erreur est survenue lors de la suppression.');
+                    });
+                });
+            }
+        });
+    });
+    </script>
+
 </body>
 </html>

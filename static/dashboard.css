@@ -1,0 +1,281 @@
+  :root{
+    --white:#FFFFFF;
+    --cloud:#F3F8FC;
+    --navy:#163B73;
+    --navy-deep:#0E2B58;
+    --cyan:#13B7EA;
+    --cyan-light:#5FD0F2;
+    --magenta:#C724E0;
+    --line:#DCE7F0;
+    --radius:20px;
+  }
+  *{
+    box-sizing:border-box; 
+    margin:0; 
+    padding:0;}
+  html{
+    scroll-behavior:smooth;
+  }
+  body{
+    
+    background-color:var(--cloud);
+    color:var(--navy-deep);
+    font-family:'Atkinson Hyperlegible', sans-serif;
+    font-size:18px;
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+    display:flex;
+    flex-direction: column;
+    /* align-items: center; a été retiré pour permettre aux enfants de prendre toute la largeur */
+    min-height:100vh;
+    margin: 0; /* Le margin sur le body est souvent source de barres de défilement non désirées */
+    padding: 10px;
+ 
+  }
+  header, main, footer{
+    width: 100%;
+    padding: 1rem 2rem; /* Ajout d'un padding pour que le contenu ne colle pas aux bords */
+  }
+  main {
+    flex-grow: 1; /* Permet au main de prendre tout l'espace vertical disponible */
+  }
+  header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--line);
+    flex-direction: row;
+  }
+  header .logo img{
+    height:40px;
+  }
+  .nav-cta{
+    background:var(--magenta); 
+    color:var(--white); 
+    padding:11px 22px; 
+    border-radius:999px;
+    font-weight:700; 
+    text-decoration:none; 
+    font-size:0.95rem; 
+    white-space:nowrap; 
+    font-family:'Baloo 2';
+  }
+  .nav-cta:hover{
+    background:var(--navy);
+  }
+    .nav{
+    display:flex; 
+    align-items:center; 
+    justify-content:space-between;
+    padding:14px 28px;
+  }
+  .logo{
+    display:flex; 
+    align-items:center; 
+    gap:10px; 
+    text-decoration:none;
+  }
+  .logo i{
+    width:5px; 
+    height:5px; 
+    color:var(--cyan);
+  }
+  header .logo img{
+    height:40px;
+  }
+  .nav-menu{
+    display: flex;
+    align-items: center;
+    gap: 30px;
+  }
+  nav ul{
+    list-style:none; 
+    display:flex; 
+    gap:30px;}
+  nav ul a{
+    text-decoration:none; 
+    font-weight:700; 
+    font-size:0.98rem; 
+    color:var(--navy); 
+    opacity:0.85; 
+    font-family:'Baloo 2';}
+  nav ul a:hover{
+    opacity:1; 
+    text-decoration:underline; 
+    text-underline-offset:4px;
+  }
+  .nav-cta{
+    background:var(--magenta); 
+    color:var(--white); 
+    padding:11px 22px; 
+    border-radius:999px;
+    font-weight:700; 
+    text-decoration:none; 
+    font-size:0.95rem; 
+    white-space:nowrap; 
+    font-family:'Baloo 2';
+  }
+  .nav-cta:hover{
+    background:var(--navy);
+  }
+  .nav-toggle{
+    display: none; /* Caché par défaut sur grand écran */
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 10px;
+  }
+  .hamburger, .hamburger::before, .hamburger::after {
+    content: ''; display: block; background: var(--navy); height: 3px; width: 25px; border-radius: 3px; transition: all 0.3s ease-in-out;
+  } .hamburger::before { transform: translateY(-8px); } .hamburger::after { transform: translateY(8px); }
+
+
+  /*fin de l'exemple à reproduire*/
+
+/* --- Dashboard --- */
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.dashboard-header h1 {
+  color: var(--navy-deep);
+}
+
+.btn-add {
+  background: var(--cyan);
+  color: var(--white);
+  padding: 12px 24px;
+  border-radius: 999px;
+  font-weight: 700;
+  text-decoration: none;
+  font-size: 1rem;
+  border: none;
+  cursor: pointer;
+  font-family: 'Baloo 2';
+  transition: background-color 0.2s;
+}
+
+.btn-add:hover {
+  background: var(--cyan-light);
+}
+
+.events-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--white);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+}
+
+.events-table th, .events-table td {
+  padding: 16px 20px;
+  text-align: left;
+  border-bottom: 1px solid var(--line);
+}
+
+.events-table thead {
+  background: var(--cloud);
+}
+
+.events-table th {
+  font-family: 'Baloo 2', sans-serif;
+  font-weight: 700;
+  color: var(--navy);
+}
+
+.events-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.actions-cell {
+  display: flex;
+  gap: 10px;
+}
+
+.btn-action {
+  border: none;
+  background: none;
+  cursor: pointer;
+  padding: 5px;
+  border-radius: 5px;
+  transition: background-color 0.2s;
+}
+.btn-action:hover {
+  background-color: var(--line);
+}
+.btn-action i {
+  font-size: 1.1rem;
+}
+.btn-edit { color: var(--cyan); }
+.btn-delete { color: var(--magenta); }
+
+/* --- Modal --- */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(14, 43, 88, 0.6);
+  backdrop-filter: blur(5px);
+}
+
+.modal-content {
+  background-color: var(--white);
+  margin: 10% auto;
+  padding: 30px;
+  border-radius: var(--radius);
+  width: 90%;
+  max-width: 500px;
+  position: relative;
+  box-shadow: 0 5px 25px rgba(0,0,0,0.2);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid var(--line);
+}
+
+.modal-header h2 {
+  color: var(--navy-deep);
+  font-family: 'Baloo 2', sans-serif;
+}
+
+.close-button {
+  color: #aaa;
+  font-size: 28px;
+  font-weight: bold;
+  cursor: pointer;
+  border: none;
+  background: none;
+}
+
+.close-button:hover,
+.close-button:focus {
+  color: var(--navy-deep);
+}
+
+.modal-body .field {
+  margin-bottom: 15px;
+}
+
+.modal-footer {
+  margin-top: 25px;
+  text-align: right;
+}
+
+.btn-save {
+  background: var(--magenta);
+  color: var(--white);
+}

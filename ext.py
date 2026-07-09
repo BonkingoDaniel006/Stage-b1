@@ -26,12 +26,21 @@ db_pool = None
 
 def init_extensions(app):
     """Initialise les extensions Flask et le pool de connexions."""
-    global db_pool
+    global db_pool, redis_client
     
     # Initialisation des extensions avec l'application Flask
     bcrypt.init_app(app)
     csrf.init_app(app)
     login_manager.init_app(app)
+
+    # Initialisation du client Redis
+    try:
+        redis_client = redis.Redis(host=app.config['REDIS_HOST'], port=app.config['REDIS_PORT'], db=0, decode_responses=True)
+        redis_client.ping()
+        app.logger.info("Redis connection successful.")
+    except redis.exceptions.ConnectionError as e:
+        redis_client = None # Assure que le client est None si la connexion échoue
+        app.logger.error(f"Failed to connect to Redis: {e}")
     
     try:
         # Création du pool de connexions à la base de données
