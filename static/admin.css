@@ -1,0 +1,63 @@
+/* Scrollbar sobre */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: #f0f9ff; }
+::-webkit-scrollbar-thumb { background: #7dd3fc; border-radius: 8px; }
+::-webkit-scrollbar-thumb:hover { background: #38bdf8; }
+
+body { -webkit-font-smoothing: antialiased; }
+
+/* Transition des onglets */
+.tab-panel { display: none; animation: fadeIn .35s ease; }
+.tab-panel.active { display: block; }
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Animation d'insertion d'un nouveau ticket */
+@keyframes slideInTicket {
+  from { opacity: 0; transform: translateY(-16px) scale(0.98); background-color: #e0f2fe; }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+.ticket-new { animation: slideInTicket .6s ease; }
+
+/* Toast */
+#toast-container { position: fixed; top: 5rem; right: 1rem; z-index: 60; display: flex; flex-direction: column; gap: .5rem; }
+@keyframes toastIn { from { opacity:0; transform: translateX(30px);} to {opacity:1; transform: translateX(0);} }
+.toast { animation: toastIn .35s ease; }
+
+/* Pulse pastille réseau */
+.pulse-dot { animation: pulseDot 1.6s infinite; }
+@keyframes pulseDot {
+  0% { box-shadow: 0 0 0 0 rgba(34,197,94,0.5); }
+  70% { box-shadow: 0 0 0 6px rgba(34,197,94,0); }
+  100% { box-shadow: 0 0 0 0 rgba(34,197,94,0); }
+}
+.pulse-dot.offline {
+  animation: pulseDotOrange 1.6s infinite;
+}
+@keyframes pulseDotOrange {
+  0% { box-shadow: 0 0 0 0 rgba(249,115,22,0.5); }
+  70% { box-shadow: 0 0 0 6px rgba(249,115,22,0); }
+  100% { box-shadow: 0 0 0 0 rgba(249,115,22,0); }
+}
+
+/* Sidebar mobile off-canvas */
+#sidebar { transition: transform .3s ease; }
+@media (max-width: 1023px) {
+  #sidebar { position: fixed; inset: 0 auto 0 0; transform: translateX(-100%); z-index: 50; }
+  #sidebar.open { transform: translateX(0); }
+}
+
+/* Styles pour les boutons de navigation actifs/inactifs (déplacé depuis JS) */
+.nav-btn.active {
+  background-color: #0284c7; /* bg-sky-600 */
+  color: white;
+  box-shadow: 0 1px 3px 0 rgba(2, 132, 199, 0.08), 0 1px 2px -1px rgba(2, 132, 199, 0.08); /* shadow-card */
+}
+.nav-btn:not(.active) {
+  color: #64748b; /* text-slate-500 */
+}
+.nav-btn:not(.active):hover {
+  background-color: #f0f9ff; /* hover:bg-sky-50 */
+}
