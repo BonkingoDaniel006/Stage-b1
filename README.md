@@ -107,7 +107,37 @@ Suivez ces étapes pour mettre en place un environnement de développement local
 
 ---
 
-## 5. Variables d'Environnement (`.env`)
+## 5. Utilisation de l'Application
+
+Une fois l'application lancée, voici comment l'utiliser.
+
+### 5.1. Création du premier compte administrateur
+
+1.  Naviguez vers l'URL `/inscription` (ex: `http://127.0.0.1:5000/inscription`).
+2.  Remplissez le formulaire avec une adresse email valide et un mot de passe fort.
+3.  Une fois le compte créé, vous serez redirigé vers la page de connexion.
+
+**Note de sécurité importante :** La route `/inscription` est ouverte par défaut. Pour un site en production, il est fortement recommandé de la désactiver ou de la protéger après la création du premier compte administrateur pour empêcher la création de comptes non autorisés.
+
+### 5.2. Connexion au tableau de bord
+
+1.  Naviguez vers l'URL `/connexion`.
+2.  Entrez l'email et le mot de passe de votre compte administrateur.
+3.  Si les identifiants sont corrects, vous serez redirigé vers une page de vérification. Un **code à 6 chiffres (OTP)** vous sera envoyé par email.
+4.  Entrez ce code sur la page de vérification pour finaliser la connexion et accéder au tableau de bord.
+
+### 5.3. Fonctionnalités du tableau de bord
+
+Le tableau de bord est une application monopage (SPA) organisée par onglets :
+
+*   **Tableau de bord :** Affiche une vue d'ensemble et des statistiques clés sur le contenu du site.
+*   **Événements :** Permet de créer, lister, modifier et supprimer les événements de l'association.
+*   **Témoignages & Messages :** Sections prévues pour gérer les témoignages de la page d'accueil et les messages reçus via le formulaire de contact.
+*   **Profil :** Permet à l'administrateur de gérer son propre compte (ex: changer son mot de passe).
+
+---
+
+## 6. Variables d'Environnement (`.env`)
 
 Ces variables sont nécessaires au bon fonctionnement de l'application.
 
