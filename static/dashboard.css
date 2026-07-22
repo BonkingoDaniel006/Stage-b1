@@ -6,6 +6,7 @@
     --cyan:#13B7EA;
     --cyan-light:#5FD0F2;
     --magenta:#C724E0;
+    --green: #22c55e; /* Ajout de la couleur verte */
     --line:#DCE7F0;
     --radius:20px;
   }
@@ -210,7 +211,7 @@
 .btn-action i {
   font-size: 1.1rem;
 }
-.btn-edit { color: var(--cyan); }
+.btn-edit { color: var(--green); }
 .btn-delete { color: var(--magenta); }
 
 /* --- Modal --- */

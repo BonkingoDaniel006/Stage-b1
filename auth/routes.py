@@ -4,7 +4,7 @@ from flask_login import login_user, logout_user, login_required, current_user
 from . import auth_bp
 from .forms import LoginForm, RegistrationForm
 from .models import User
-from .services import _generer_code_verification, _envoyer_otp_brevo, process_login, check_login_lockout, handle_failed_login
+from .services import process_login, check_login_lockout, handle_failed_login
 
 @auth_bp.route('/inscription', methods=['GET', 'POST'])
 def inscription():
@@ -36,19 +36,10 @@ def connexion():
 
         user = User.find_by_email(email)
         if user and user.check_password(form.password.data):
-            # Ne pas connecter l'utilisateur tout de suite.
-            # Générer et envoyer l'OTP.
-            verification_code = _generer_code_verification()
-            if not _envoyer_otp_brevo(user.email, None, verification_code):
-                flash("Une erreur est survenue lors de l'envoi de l'e-mail de vérification. Veuillez réessayer.", "error")
-                return render_template('connexion.html', form=form)
-
-            # Stocker les informations nécessaires dans la session
-            session['otp_login'] = {'code': verification_code, 'expires_at': time.time() + 1200, 'attempts': 0} # 20 minutes
-            session['user_id_to_verify'] = user.id
-
-            flash('Un code de vérification a été envoyé à votre adresse e-mail.', 'info')
-            return redirect(url_for('auth.verification'))
+            # Connexion directe de l'utilisateur
+            login_user(user, remember=True)
+            flash('Vous êtes maintenant connecté.', 'success')
+            return redirect(url_for('admin.dashboard'))
         else:
             # 2. Gérer la tentative échouée
             handle_failed_login(email)
