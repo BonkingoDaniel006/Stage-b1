@@ -1,11 +1,20 @@
 from ext import get_db_connection
+import os
+import uuid
 
 class Event:
-    def __init__(self, id, title, event_date, location, **kwargs):
+    def __init__(self, id, title, description, event_date, location, organizer, price_info, tag, image_url, max_attendees, **kwargs):
         self.id = id
         self.title = title
+        self.description = description
         self.event_date = event_date
         self.location = location
+        self.organizer = organizer
+        self.price_info = price_info
+        self.tag = tag
+        self.image_url = image_url
+        self.max_attendees = max_attendees
+
         # Accepte d'autres champs pour une utilisation future
         for key, value in kwargs.items():
             setattr(self, key, value)
@@ -47,6 +56,67 @@ class Event:
             return Event(**event_data)
         return None
 
+    @staticmethod
+    def create(data):
+        """Crée un nouvel événement dans la base de données et retourne son ID."""
+        # Champs obligatoires pour la création
+        if not data.get('title') or not data.get('event_date'):
+            raise ValueError("Le titre et la date de l'événement sont obligatoires.")
+
+        # Liste des champs autorisés à l'insertion
+        allowed_fields = ['title', 'description', 'event_date', 'location', 'organizer', 'price_info', 'tag', 'image_url', 'max_attendees']
+        
+        fields_to_insert = []
+        values = []
+        placeholders = []
+
+        for field in allowed_fields:
+            if field in data:
+                fields_to_insert.append(f"`{field}`")
+                placeholders.append('%s')
+                # Gère le cas où un champ non obligatoire est vide (ex: max_attendees)
+                values.append(data[field] if data[field] != '' else None)
+
+        query = f"INSERT INTO evenements ({', '.join(fields_to_insert)}) VALUES ({', '.join(placeholders)})"
+
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute(query, tuple(values))
+        new_id = cursor.lastrowid
+        conn.commit()
+        cursor.close()
+        conn.close()
+        return new_id
+
+    def update(self, data):
+        """Met à jour l'événement dans la base de données avec les nouvelles données."""
+        if not self.id:
+            return
+
+        # Liste des champs autorisés à la mise à jour
+        allowed_fields = ['title', 'description', 'event_date', 'location', 'organizer', 'price_info', 'tag', 'image_url', 'max_attendees']
+        
+        # Construction dynamique de la requête SQL
+        fields_to_update = []
+        values = []
+        for field in allowed_fields:
+            if field in data:
+                fields_to_update.append(f"{field} = %s")
+                values.append(data[field])
+
+        if not fields_to_update:
+            return # Rien à mettre à jour
+
+        values.append(self.id)
+        query = f"UPDATE evenements SET {', '.join(fields_to_update)} WHERE id = %s"
+
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute(query, tuple(values))
+        conn.commit()
+        cursor.close()
+        conn.close()
+
     def delete(self):
         """Supprime l'événement de la base de données."""
         if not self.id:
@@ -54,30 +124,6 @@ class Event:
         conn = get_db_connection()
         cursor = conn.cursor()
         cursor.execute("DELETE FROM evenements WHERE id = %s", (self.id,))
-        conn.commit()
-        cursor.close()
-        conn.close()
-
-    def update(self, data):
-        """Met à jour l'événement avec les nouvelles données."""
-        if not self.id:
-            return
-
-        # Mettre à jour les attributs de l'objet
-        for key, value in data.items():
-            if hasattr(self, key):
-                setattr(self, key, value)
-
-        conn = get_db_connection()
-        cursor = conn.cursor()
-        # Note: Cette requête est un exemple. Pour une application en production,
-        # il serait préférable de construire la requête dynamiquement pour ne mettre
-        # à jour que les champs modifiés.
-        query = """
-            UPDATE evenements SET title=%s, description=%s, event_date=%s, location=%s, organizer=%s, price_info=%s, tag=%s, max_attendees=%s, image_url=%s
-            WHERE id=%s
-        """
-        cursor.execute(query, (self.title, self.description, self.event_date, self.location, self.organizer, self.price_info, self.tag, self.max_attendees, self.image_url, self.id))
         conn.commit()
         cursor.close()
         conn.close()

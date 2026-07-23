@@ -12,6 +12,13 @@
     <!-- Styles locaux pour les animations et ajustements -->
     <link rel="stylesheet" href="/static/admin.css">
 
+    <style>
+        /* Pour les messages flash */
+        .flash-message {
+            animation: fadeOut 5s forwards;
+        }
+        @keyframes fadeOut { from { opacity: 1; } to { opacity: 0; display: none; } }
+    </style>
     <script>
       // Configuration de Tailwind pour correspondre à la charte graphique
       tailwind.config = {
@@ -63,7 +70,7 @@
             <button data-tab="dashboard" class="nav-btn active w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition">
                 <i class="fa-solid fa-gauge-high w-5 text-center"></i> Tableau de bord
             </button>
-            <button data-tab="events" class="nav-btn {% if event_to_view %}active{% endif %} w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition">
+            <button data-tab="events" class="nav-btn {% if event_to_view or event_to_edit or event_to_create %}active{% endif %} w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition">
                 <i class="fa-solid fa-calendar-days w-5 text-center"></i> Événements
             </button>
 
@@ -110,11 +117,24 @@
             <h1 id="page-title" class="font-semibold text-slate-800 hidden sm:block">Tableau de bord</h1>
         </header>
 
+        <!-- Zone pour les messages Flash -->
+        <div class="px-4 sm:px-6 lg:px-8 pt-4">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="flash-message bg-{{ 'emerald' if category == 'success' else 'red' }}-100 border-l-4 border-{{ 'emerald' if category == 'success' else 'red' }}-500 text-{{ 'emerald' if category == 'success' else 'red' }}-700 p-4 rounded-lg" role="alert">
+                            <p>{{ message }}</p>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+        </div>
+
         <!-- Zone de contenu avec les onglets -->
-        <main class="flex-1 p-4 sm:p-6 lg:p-8 space-y-6">
+        <main class="flex-1 p-4 sm:p-6 lg:p-8 space-y-6 -mt-4">
 
             <!-- ONGLET 1 : TABLEAU DE BORD -->
-            <section id="tab-dashboard" class="tab-panel {% if not event_to_view %}active{% endif %} space-y-6">
+            <section id="tab-dashboard" class="tab-panel {% if not event_to_view and not event_to_edit and not event_to_create %}active{% endif %} space-y-6">
                 <div>
                     <h2 class="text-xl font-bold text-slate-800 capitalize">
                         Bonjour, {{ current_user.username }} 👋
@@ -159,9 +179,9 @@
                 <div class="bg-white rounded-xl p-5 sm:p-6 shadow-card border border-sky-100">
                     <h3 class="font-semibold text-slate-800 mb-4">Actions rapides</h3>
                     <div class="flex flex-wrap gap-4">
-                        <button data-tab="events" class="nav-btn bg-sky-500 hover:bg-sky-600 text-white font-semibold py-2 px-4 rounded-lg text-sm transition">
+                        <a href="{{ url_for('admin.new_event') }}" class="bg-sky-500 hover:bg-sky-600 text-white font-semibold py-2 px-4 rounded-lg text-sm transition">
                             <i class="fa-solid fa-plus mr-2"></i> Ajouter un événement
-                        </button>
+                        </a>
                         <button data-tab="testimonials" class="nav-btn bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold py-2 px-4 rounded-lg text-sm transition">
                             <i class="fa-solid fa-plus mr-2"></i> Ajouter un témoignage
                         </button>
@@ -170,8 +190,8 @@
             </section>
 
             <!-- ONGLET 2 : GESTION DES ÉVÉNEMENTS -->
-            <section id="tab-events" class="tab-panel {% if event_to_view %}active{% endif %} space-y-6">
-                {% if event_to_view %}
+            <section id="tab-events" class="tab-panel {% if event_to_view or event_to_edit or event_to_create %}active{% endif %} space-y-6">
+                {% if event_to_view and not event_to_edit and not event_to_create %}
                 <!-- VUE DÉTAIL D'UN ÉVÉNEMENT -->
                 <div>
                     <a href="{{ url_for('admin.dashboard') }}" class="text-sm text-sky-600 hover:underline flex items-center gap-2 mb-4">
@@ -189,9 +209,9 @@
                             <p class="text-sm text-slate-500">Organisé par : {{ event_to_view.organizer or 'Non spécifié' }}</p>
                         </div>
                         <div class="flex items-center gap-2">
-                            <button data-action="edit" data-event-id="{{ event_to_view.id }}" class="bg-sky-600 hover:bg-sky-700 text-white font-semibold py-2 px-4 rounded-lg text-sm transition">
-                                <i class="fa-solid fa-pen-to-square mr-2"></i> Modifier
-                            </button>
+                            <a href="{{ url_for('admin.edit_event', event_id=event_to_view.id) }}" class="bg-sky-600 hover:bg-sky-700 text-white font-semibold py-2 px-4 rounded-lg text-sm transition">
+                                <i class="fa-solid fa-pencil mr-2"></i> Modifier
+                            </a>
                             <button data-action="delete" data-event-id="{{ event_to_view.id }}" class="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-lg text-sm transition">
                                 <i class="fa-solid fa-trash-can mr-2"></i> Supprimer
                             </button>
@@ -225,6 +245,134 @@
                     </div>
                 </div>
 
+                {% elif event_to_edit and not event_to_create %}
+                <!-- VUE MODIFICATION D'UN ÉVÉNEMENT -->
+                <div>
+                    <a href="{{ url_for('admin.view_event', event_id=event_to_edit.id) }}" class="text-sm text-sky-600 hover:underline flex items-center gap-2 mb-4">
+                        <i class="fa-solid fa-arrow-left"></i>
+                        Annuler et retourner au détail
+                    </a>
+                    <h2 class="text-xl font-bold text-slate-800">Modifier l'événement</h2>
+                    <p class="text-sm text-slate-500">Mise à jour des informations pour "{{ event_to_edit.title }}".</p>
+                </div>
+                <form action="{{ url_for('admin.edit_event', event_id=event_to_edit.id) }}" method="POST" class="bg-white rounded-xl shadow-card border border-sky-100">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                    <div class="p-6 space-y-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label for="title" class="block text-sm font-medium text-slate-700 mb-1">Titre de l'événement</label>
+                                <input type="text" name="title" id="title" value="{{ event_to_edit.title }}" class="w-full border border-sky-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-400 bg-sky-50/50" required>
+                            </div>
+                            <div>
+                                <label for="event_date" class="block text-sm font-medium text-slate-700 mb-1">Date et heure</label>
+                                <input type="datetime-local" name="event_date" id="event_date" value="{{ event_to_edit.to_dict().event_date }}" class="w-full border border-sky-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-400 bg-sky-50/50" required>
+                            </div>
+                        </div>
+                        <div>
+                            <label for="description" class="block text-sm font-medium text-slate-700 mb-1">Description</label>
+                            <textarea name="description" id="description" rows="6" class="w-full border border-sky-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-400 bg-sky-50/50">{{ event_to_edit.description }}</textarea>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label for="location" class="block text-sm font-medium text-slate-700 mb-1">Lieu</label>
+                                <input type="text" name="location" id="location" value="{{ event_to_edit.location }}" class="w-full border border-sky-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-400 bg-sky-50/50">
+                            </div>
+                            <div>
+                                <label for="organizer" class="block text-sm font-medium text-slate-700 mb-1">Organisateur</label>
+                                <input type="text" name="organizer" id="organizer" value="{{ event_to_edit.organizer }}" class="w-full border border-sky-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-400 bg-sky-50/50">
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <div>
+                                <label for="price_info" class="block text-sm font-medium text-slate-700 mb-1">Information sur le prix</p>
+                                <input type="text" name="price_info" id="price_info" value="{{ event_to_edit.price_info }}" placeholder="Ex: Gratuit, 5€, etc." class="w-full border border-sky-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-400 bg-sky-50/50">
+                            </div>
+                            <div>
+                                <label for="max_attendees" class="block text-sm font-medium text-slate-700 mb-1">Participants max</label>
+                                <input type="number" name="max_attendees" id="max_attendees" value="{{ event_to_edit.max_attendees or '' }}" class="w-full border border-sky-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-400 bg-sky-50/50">
+                            </div>
+                             <div>
+                                <label for="tag" class="block text-sm font-medium text-slate-700 mb-1">Catégorie (Tag)</label>
+                                <input type="text" name="tag" id="tag" value="{{ event_to_edit.tag }}" placeholder="Ex: Atelier, Rencontre" class="w-full border border-sky-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-400 bg-sky-50/50">
+                            </div>
+                        </div>
+                        <div>
+                            <label for="image_url" class="block text-sm font-medium text-slate-700 mb-1">URL de l'image</label>
+                            <input type="text" name="image_url" id="image_url" value="{{ event_to_edit.image_url }}" placeholder="Lien vers l'affiche de l'événement" class="w-full border border-sky-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-400 bg-sky-50/50">
+                        </div>
+                    </div>
+                    <div class="p-4 bg-slate-50 rounded-b-xl flex justify-end">
+                        <button type="submit" class="bg-sky-600 hover:bg-sky-700 text-white font-semibold py-2 px-5 rounded-lg text-sm transition">
+                            <i class="fa-solid fa-save mr-2"></i>
+                            Enregistrer les modifications
+                        </button>
+                    </div>
+                </form>
+
+                {% elif event_to_create %}
+                <!-- VUE CRÉATION D'UN ÉVÉNEMENT -->
+                <div>
+                    <a href="{{ url_for('admin.dashboard') }}" class="text-sm text-sky-600 hover:underline flex items-center gap-2 mb-4">
+                        <i class="fa-solid fa-arrow-left"></i>
+                        Annuler et retourner à la liste
+                    </a>
+                    <h2 class="text-xl font-bold text-slate-800">Ajouter un nouvel événement</h2>
+                    <p class="text-sm text-slate-500">Remplissez les informations ci-dessous pour créer un événement.</p>
+                </div>
+                <form action="{{ url_for('admin.new_event') }}" method="POST" class="bg-white rounded-xl shadow-card border border-sky-100">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                    <div class="p-6 space-y-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label for="title" class="block text-sm font-medium text-slate-700 mb-1">Titre de l'événement <span class="text-red-500">*</span></label>
+                                <input type="text" name="title" id="title" value="{{ form_data.title or '' }}" class="w-full border border-sky-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-400 bg-sky-50/50" required>
+                            </div>
+                            <div>
+                                <label for="event_date" class="block text-sm font-medium text-slate-700 mb-1">Date et heure <span class="text-red-500">*</span></label>
+                                <input type="datetime-local" name="event_date" id="event_date" value="{{ form_data.event_date or '' }}" class="w-full border border-sky-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-400 bg-sky-50/50" required>
+                            </div>
+                        </div>
+                        <div>
+                            <label for="description" class="block text-sm font-medium text-slate-700 mb-1">Description</label>
+                            <textarea name="description" id="description" rows="6" class="w-full border border-sky-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-400 bg-sky-50/50">{{ form_data.description or '' }}</textarea>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label for="location" class="block text-sm font-medium text-slate-700 mb-1">Lieu</label>
+                                <input type="text" name="location" id="location" value="{{ form_data.location or '' }}" class="w-full border border-sky-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-400 bg-sky-50/50">
+                            </div>
+                            <div>
+                                <label for="organizer" class="block text-sm font-medium text-slate-700 mb-1">Organisateur</label>
+                                <input type="text" name="organizer" id="organizer" value="{{ form_data.organizer or '' }}" class="w-full border border-sky-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-400 bg-sky-50/50">
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <div>
+                                <label for="price_info" class="block text-sm font-medium text-slate-700 mb-1">Information sur le prix</p>
+                                <input type="text" name="price_info" id="price_info" value="{{ form_data.price_info or '' }}" placeholder="Ex: Gratuit, 5€, etc." class="w-full border border-sky-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-400 bg-sky-50/50">
+                            </div>
+                            <div>
+                                <label for="max_attendees" class="block text-sm font-medium text-slate-700 mb-1">Participants max</label>
+                                <input type="number" name="max_attendees" id="max_attendees" value="{{ form_data.max_attendees or '' }}" min="0" class="w-full border border-sky-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-400 bg-sky-50/50">
+                            </div>
+                             <div>
+                                <label for="tag" class="block text-sm font-medium text-slate-700 mb-1">Catégorie (Tag)</label>
+                                <input type="text" name="tag" id="tag" value="{{ form_data.tag or '' }}" placeholder="Ex: Atelier, Rencontre" class="w-full border border-sky-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-400 bg-sky-50/50">
+                            </div>
+                        </div>
+                        <div>
+                            <label for="image_url" class="block text-sm font-medium text-slate-700 mb-1">URL de l'image</label>
+                            <input type="url" name="image_url" id="image_url" value="{{ form_data.image_url or '' }}" placeholder="https://..." class="w-full border border-sky-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-400 bg-sky-50/50">
+                        </div>
+                    </div>
+                    <div class="p-4 bg-slate-50 rounded-b-xl flex justify-end">
+                        <button type="submit" class="bg-sky-600 hover:bg-sky-700 text-white font-semibold py-2 px-5 rounded-lg text-sm transition">
+                            <i class="fa-solid fa-plus mr-2"></i>
+                            Créer l'événement
+                        </button>
+                    </div>
+                </form>
+
                 {% else %}
                 <!-- VUE LISTE DES ÉVÉNEMENTS -->
                 <div>
@@ -233,9 +381,9 @@
                 </div>
                 <div class="bg-white rounded-xl shadow-card border border-sky-100 overflow-x-auto">
                     <div class="p-4 flex justify-end">
-                        <button class="bg-sky-600 hover:bg-sky-700 text-white font-semibold py-2 px-4 rounded-lg text-sm transition" onclick="alert('Fonctionnalité à venir !');">
+                        <a href="{{ url_for('admin.new_event') }}" class="bg-sky-600 hover:bg-sky-700 text-white font-semibold py-2 px-4 rounded-lg text-sm transition">
                             <i class="fa-solid fa-plus mr-2"></i> Ajouter un événement
-                        </button>
+                        </a>
                     </div>
                     <table class="w-full text-sm text-left text-slate-500">
                         <thead class="text-xs text-slate-700 uppercase bg-sky-50">
@@ -254,7 +402,7 @@
                                 <td class="px-6 py-4">{{ event.location }}</td>
                                 <td class="px-6 py-4 text-right space-x-2">
                                     <a href="{{ url_for('admin.view_event', event_id=event.id) }}" class="font-medium text-emerald-600 hover:underline">Voir</a>
-                                    <button data-action="edit" data-event-id="{{ event.id }}" class="font-medium text-sky-600 hover:underline">Modifier</button>
+                                    <a href="{{ url_for('admin.edit_event', event_id=event.id) }}" class="font-medium text-sky-600 hover:underline">Modifier</a>
                                     <button data-action="delete" data-event-id="{{ event.id }}" class="font-medium text-red-600 hover:underline">Supprimer</button>
                                 </td>
                             </tr>
@@ -325,52 +473,6 @@
         </main>
 
         <!-- ================= MODALS ================= -->
-
-        <!-- Modal pour le formulaire d'événement (Ajout/Modification) -->
-        <div id="event-modal" class="hidden fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-            <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg transform transition-all opacity-0 -translate-y-10">
-                <div class="flex items-center justify-between p-4 border-b border-sky-100">
-                    <h3 id="modal-title" class="text-lg font-semibold text-slate-800">Modifier un événement</h3>
-                    <button data-action="close-modal" class="text-slate-400 hover:text-sky-600">
-                        <i class="fa-solid fa-xmark text-xl"></i>
-                    </button>
-                </div>
-                <form id="event-form" class="p-6 space-y-4">
-                    <input type="hidden" id="event-id" name="id">
-                    <div>
-                        <label for="title" class="text-sm font-semibold text-slate-600 mb-1 block">Titre</label>
-                        <input type="text" id="title" name="title" required class="w-full border border-sky-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-400 bg-sky-50/50">
-                    </div>
-                    <div>
-                        <label for="description" class="text-sm font-semibold text-slate-600 mb-1 block">Description</p>
-                        <textarea id="description" name="description" rows="4" required class="w-full border border-sky-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-400 bg-sky-50/50"></textarea>
-                    </div>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div>
-                            <label for="event_date" class="text-sm font-semibold text-slate-600 mb-1 block">Date et heure</label>
-                            <input type="datetime-local" id="event_date" name="event_date" required class="w-full border border-sky-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-400 bg-sky-50/50">
-                        </div>
-                        <div>
-                            <label for="location" class="text-sm font-semibold text-slate-600 mb-1 block">Lieu</label>
-                            <input type="text" id="location" name="location" required class="w-full border border-sky-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-400 bg-sky-50/50">
-                        </div>
-                    </div>
-                    <div>
-                        <label for="image_url" class="text-sm font-semibold text-slate-600 mb-1 block">URL de l'image</label>
-                        <input type="text" id="image_url" name="image_url" class="w-full border border-sky-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-400 bg-sky-50/50">
-                    </div>
-                    <!-- Autres champs (organizer, price_info, etc.) -->
-                    <input type="hidden" id="organizer" name="organizer">
-                    <input type="hidden" id="price_info" name="price_info">
-                    <input type="hidden" id="tag" name="tag">
-                    <input type="hidden" id="max_attendees" name="max_attendees">
-                    <div class="flex justify-end gap-3 pt-4">
-                        <button type="button" data-action="close-modal" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold py-2 px-4 rounded-lg text-sm transition">Annuler</button>
-                        <button id="save-event-btn" type="submit" class="bg-sky-600 hover:bg-sky-700 text-white font-semibold py-2 px-4 rounded-lg text-sm transition">Enregistrer les modifications</button>
-                    </div>
-                </form>
-            </div>
-        </div>
 
         <!-- Modal de confirmation de mot de passe -->
         <div id="password-modal" class="hidden fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
@@ -447,7 +549,7 @@
                 document.querySelectorAll(`.nav-btn[data-tab="${tabId}"]`).forEach(b => b.classList.add('active'));
 
                 // Si on clique sur un onglet, on s'assure de ne pas être sur une page de détail
-                if (window.location.pathname.startsWith('/admin/event/')) {
+                if (window.location.pathname.includes('/event/')) {
                     window.location.href = "{{ url_for('admin.dashboard') }}";
                     return; // Empêche le changement d'onglet JS avant le rechargement
                 }
@@ -485,7 +587,7 @@
         });
 
         // --- Gestion des Modals ---
-        const modals = document.querySelectorAll('#password-modal, #delete-modal, #event-modal');
+        const modals = document.querySelectorAll('#password-modal, #delete-modal');
         let eventIdToDelete = null;
         let passwordToDelete = null;
 
@@ -501,58 +603,6 @@
 
         document.querySelectorAll('[data-action="close-modal"]').forEach(btn => {
             btn.addEventListener('click', () => closeModal(btn.closest('.fixed')));
-        });
-
-        // --- Logique de Modification ---
-        const eventModal = document.getElementById('event-modal');
-        const eventForm = document.getElementById('event-form');
-
-        document.body.addEventListener('click', async (e) => {
-            if (e.target.closest('[data-action="edit"]')) {
-                const button = e.target.closest('[data-action="edit"]');
-                const eventId = button.dataset.eventId;
-
-                // 1. Récupérer les données de l'événement
-                const response = await fetch(`/admin/api/event/${eventId}`);
-                if (!response.ok) {
-                    alert("Erreur: Impossible de charger les données de l'événement.");
-                    return;
-                }
-                const eventData = await response.json();
-
-                // 2. Pré-remplir le formulaire
-                for (const key in eventData) {
-                    const input = eventForm.querySelector(`#${key}`);
-                    if (input) {
-                        input.value = eventData[key] || '';
-                    }
-                }
-
-                // 3. Ouvrir la modale
-                openModal(eventModal);
-            }
-        });
-
-        // Soumission du formulaire de modification
-        eventForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const eventId = eventForm.querySelector('#event-id').value;
-            if (!eventId) return;
-
-            const formData = new FormData(eventForm);
-            const response = await fetch(`/admin/event/${eventId}/update`, {
-                method: 'POST',
-                body: formData,
-                headers: { 'X-CSRFToken': window.csrfToken }
-            });
-
-            const result = await response.json();
-            if (result.success) {
-                alert(result.message);
-                window.location.reload(); // Recharger pour voir les changements
-            } else {
-                alert(`Erreur: ${result.message}`);
-            }
         });
 
         // --- Logique de Suppression ---

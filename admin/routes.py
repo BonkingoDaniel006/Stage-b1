@@ -1,5 +1,5 @@
-from flask import render_template, abort, request, jsonify, redirect, url_for, flash
-from flask_login import login_required, current_user
+from flask import render_template, abort, request, jsonify, redirect, url_for, flash, current_app
+from flask_login import login_required, current_user 
 from . import admin_bp
 from .models import Event
 
@@ -26,6 +26,55 @@ def view_event(event_id):
     
     return render_template('dashboard.html', events=all_events, event_to_view=event_to_view)
 
+@admin_bp.route('/event/new', methods=['GET', 'POST'])
+@login_required
+def new_event():
+    """Affiche le formulaire de création d'un événement et traite la soumission."""
+    if request.method == 'POST':
+        # 1. Récupérer les données du formulaire
+        data = request.form.to_dict()
+
+        # 2. Validation simple (les champs requis sont gérés par le formulaire HTML)
+        if not data.get('title') or not data.get('event_date'):
+            flash('Le titre et la date sont obligatoires.', 'error')
+            all_events = Event.get_all()
+            return render_template('dashboard.html', events=all_events, event_to_create=True, form_data=data)
+
+        # 3. Insérer dans la base de données
+        new_event_id = Event.create(data)
+        
+        # 4. Rediriger vers la page du nouvel événement avec un message de succès
+        flash('Événement créé avec succès !', 'success')
+        return redirect(url_for('admin.view_event', event_id=new_event_id))
+
+    # Si GET, on affiche le formulaire de création
+    all_events = Event.get_all()
+    return render_template('dashboard.html', events=all_events, event_to_create=True, form_data={})
+
+@admin_bp.route('/event/<int:event_id>/edit', methods=['GET', 'POST'])
+@login_required
+def edit_event(event_id):
+    """Affiche le formulaire de modification d'un événement et traite la soumission."""
+    event_to_edit = Event.get_by_id(event_id)
+    if not event_to_edit:
+        abort(404)
+
+    if request.method == 'POST':
+        # 1. Récupérer les données du formulaire
+        data = request.form.to_dict()
+        
+        # 2. Mettre à jour l'événement
+        event_to_edit.update(data)
+        
+        # 3. Rediriger vers la page de vue avec un message de succès
+        flash('Événement mis à jour avec succès.', 'success')
+        return redirect(url_for('admin.view_event', event_id=event_id))
+
+    # Si GET, on affiche le formulaire de modification
+    all_events = Event.get_all()
+    return render_template('dashboard.html', events=all_events, event_to_edit=event_to_edit)
+
+
 @admin_bp.route('/event/<int:event_id>/delete', methods=['POST'])
 @login_required
 def delete_event(event_id):
@@ -44,28 +93,3 @@ def delete_event(event_id):
     event.delete()
     
     return jsonify({'success': True, 'message': 'Événement supprimé avec succès.'})
-
-@admin_bp.route('/api/event/<int:event_id>', methods=['GET'])
-@login_required
-def get_event_data(event_id):
-    """Fournit les données d'un événement en format JSON."""
-    event = Event.get_by_id(event_id)
-    if not event:
-        return jsonify({'success': False, 'message': 'Événement non trouvé.'}), 404
-    return jsonify(event.to_dict())
-
-@admin_bp.route('/event/<int:event_id>/update', methods=['POST'])
-@login_required
-def update_event(event_id):
-    """Met à jour un événement."""
-    event = Event.get_by_id(event_id)
-    if not event:
-        return jsonify({'success': False, 'message': 'Événement non trouvé.'}), 404
-
-    data = request.form.to_dict()
-    # Convertir les champs numériques si nécessaire
-    if 'max_attendees' in data and data['max_attendees']:
-        data['max_attendees'] = int(data['max_attendees'])
-
-    event.update(data)
-    return jsonify({'success': True, 'message': 'Événement mis à jour avec succès.'})
