@@ -5,6 +5,7 @@ from flask_login import LoginManager
 import mysql.connector.pooling
 import redis
 
+import os
 # Instanciation des extensions Flask
 # Cela permet d'éviter les importations circulaires
 bcrypt = Bcrypt()
@@ -32,6 +33,11 @@ def init_extensions(app):
     bcrypt.init_app(app)
     csrf.init_app(app)
     login_manager.init_app(app)
+
+    # Configuration du dossier d'upload
+    upload_folder = os.path.join(app.static_folder, 'uploads')
+    os.makedirs(upload_folder, exist_ok=True)
+    app.config['UPLOAD_FOLDER'] = upload_folder
 
     # Initialisation du client Redis
     try:

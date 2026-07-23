@@ -3,210 +3,676 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tableau de Bord - Gestion des Événements</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='dashboard.css') }}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Baloo+2:wght@700&display=swap" rel="stylesheet">
+    <title>Tableau de Bord — Autisme Hauts-de-France</title>
+
+    <!-- Tailwind CSS pour la structure et le style -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome pour les icônes -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Styles locaux pour les animations et ajustements -->
+    <link rel="stylesheet" href="/static/admin.css">
+
+    <style>
+        /* Pour les messages flash */
+        .flash-message {
+            animation: fadeOut 5s forwards;
+        }
+        @keyframes fadeOut { from { opacity: 1; } to { opacity: 0; display: none; } }
+    </style>
+    <script>
+      // Configuration de Tailwind pour correspondre à la charte graphique
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ['Atkinson Hyperlegible', 'sans-serif'],
+              baloo: ['Baloo 2', 'cursive']
+            },
+            colors: {
+              sky: {
+                50: '#f0f9ff', 100: '#e0f2fe', 200: '#bae6fd', 300: '#7dd3fc', 400: '#38bdf8',
+                500: '#0ea5e9', 600: '#0284c7', 700: '#0369a1', 800: '#075985', 900: '#0c4a6e'
+              }
+            },
+            boxShadow: {
+              'card': '0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px -1px rgba(0, 0, 0, 0.05)'
+            }
+          }
+        }
+      }
+    </script>
 </head>
-<body>
 
-    <header>
-        <a href="{{ url_for('admin.dashboard') }}" class="logo">
-            <img src="{{ url_for('static', filename='uploads/logo.png') }}" alt="Logo Elikya">
-        </a>
-        <nav class="nav-menu">
-            <span>Bonjour, {{ current_user.email }}</span>
-            <a href="{{ url_for('auth.deconnexion') }}" class="nav-cta">Déconnexion</a>
-        </nav>
-    </header>
+<body class="bg-sky-50 text-slate-700 min-h-screen font-sans">
 
-    <main>
-        <div class="dashboard-header">
-            <h1>Gestion des Événements</h1>
-            <button id="addEventBtn" class="btn-add">+ Ajouter un événement</button>
-        </div>
+    <!-- Overlay pour le menu mobile -->
+    <div id="overlay" class="hidden fixed inset-0 bg-slate-900/40 z-40 lg:hidden" data-action="toggle-sidebar"></div>
 
-        <table class="events-table">
-            <thead>
-                <tr>
-                    <th>Titre</th>
-                    <th>Date</th>
-                    <th>Lieu</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for event in events %}
-                <tr data-id="{{ event.id }}"
-                    data-title="{{ event.title }}"
-                    data-description="{{ event.description }}"
-                    data-date="{{ event.event_date.strftime('%Y-%m-%dT%H:%M') }}"
-                    data-location="{{ event.location }}">
-                    <td>{{ event.title }}</td>
-                    <td>{{ event.event_date.strftime('%d/%m/%Y à %Hh%M') }}</td>
-                    <td>{{ event.location }}</td>
-                    <td class="actions-cell">
-                        <button class="btn-action btn-edit" title="Modifier"><i class="fas fa-pencil-alt"></i></button>
-                        <button class="btn-action btn-delete" title="Supprimer"><i class="fas fa-trash-alt"></i></button>
-                    </td>
-                </tr>
-                {% else %}
-                <tr>
-                    <td colspan="4" style="text-align: center; padding: 30px;">Aucun événement à afficher.</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </main>
+    <div class="flex min-h-screen">
 
-    <!-- Le Modal -->
-    <div id="eventModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 id="modalTitle">Ajouter un événement</h2>
-                <button class="close-button">&times;</button>
+      <!-- ================= BARRE LATÉRALE ================= -->
+      <aside id="sidebar" class="w-72 bg-white border-r border-sky-100 flex flex-col shrink-0">
+        <!-- Logo -->
+        <div class="h-16 flex items-center gap-3 px-6 border-b border-sky-100">
+            <img src="/static/uploads/logo.png" alt="Logo Autisme HDF" class="h-8">
+            <div class="leading-tight">
+                <p class="font-bold text-slate-800 text-sm tracking-wide">AUTISME HDF</p>
+                <p class="text-[11px] text-sky-500">Panneau d'Administration</p>
             </div>
-            <form id="eventForm">
-                <div class="modal-body">
-                    <input type="hidden" id="eventId" name="id">
-                    <div class="field">
-                        <label for="title">Titre</label>
-                        <input type="text" id="title" name="title" required>
-                    </div>
-                    <div class="field">
-                        <label for="event_date">Date et Heure</label>
-                        <input type="datetime-local" id="event_date" name="event_date" required>
-                    </div>
-                    <div class="field">
-                        <label for="location">Lieu</label>
-                        <input type="text" id="location" name="location" required>
-                    </div>
-                    <div class="field">
-                        <label for="description">Description</label>
-                        <textarea id="description" name="description" rows="5" required></textarea>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="submit" class="btn-add btn-save">Enregistrer</button>
-                </div>
-            </form>
+            <button data-action="toggle-sidebar" class="ml-auto lg:hidden text-slate-400 hover:text-sky-600">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
         </div>
+
+        <!-- Navigation -->
+        <nav class="flex-1 px-4 py-6 space-y-1 overflow-y-auto" id="main-nav">
+            <p class="px-3 text-[11px] font-semibold text-sky-400 uppercase tracking-wider mb-2">Principal</p>
+            <button data-tab="dashboard" class="nav-btn active w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition">
+                <i class="fa-solid fa-gauge-high w-5 text-center"></i> Tableau de bord
+            </button>
+            <button data-tab="events" class="nav-btn {% if event_to_view or event_to_edit or event_to_create %}active{% endif %} w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition">
+                <i class="fa-solid fa-calendar-days w-5 text-center"></i> Événements
+            </button>
+
+            <p class="px-3 text-[11px] font-semibold text-sky-400 uppercase tracking-wider mt-6 mb-2">Contenu du site</p>
+            <button data-tab="testimonials" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition">
+                <i class="fa-solid fa-comment-dots w-5 text-center"></i> Témoignages
+            </button>
+            <button data-tab="messages" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition">
+                <i class="fa-solid fa-envelope-open-text w-5 text-center"></i> Messages
+            </button>
+
+            <p class="px-3 text-[11px] font-semibold text-sky-400 uppercase tracking-wider mt-6 mb-2">Système</p>
+            <a href="#" target="_blank" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-500 hover:bg-sky-50">
+                <i class="fa-solid fa-arrow-up-right-from-square w-5 text-center"></i> Voir le site
+            </a>
+            <a href="{{ url_for('auth.deconnexion') }}" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-500 hover:bg-sky-50">
+                <i class="fa-solid fa-right-from-bracket w-5 text-center"></i> Déconnexion
+            </a>
+        </nav>
+
+        <!-- Profil -->
+        <button data-tab="profile" class="nav-btn w-full p-4 border-t border-sky-100 flex items-center gap-3 text-left">
+            <span class="w-10 h-10 rounded-full bg-sky-100 flex items-center justify-center text-sky-600 font-semibold shrink-0">
+                {{ current_user.username[0]|upper if current_user.username else 'U' }}
+            </span>
+            <span class="leading-tight flex-1 min-w-0">
+                <span class="text-sm font-semibold text-slate-800 truncate block" title="{{ current_user.email }}">
+                    {{ current_user.email }}
+                </span>
+                <span class="text-xs text-slate-400 truncate block">Administrateur</span>
+            </span>
+            <i class="fa-solid fa-chevron-right text-slate-300"></i>
+        </button>
+      </aside>
+
+      <!-- ================= CONTENU PRINCIPAL ================= -->
+      <div class="flex-1 flex flex-col min-w-0">
+
+        <!-- Barre supérieure -->
+        <header class="h-16 bg-white border-b border-sky-100 flex items-center gap-4 px-4 lg:px-8 sticky top-0 z-30">
+            <button data-action="toggle-sidebar" class="lg:hidden text-slate-500 hover:text-sky-600">
+                <i class="fa-solid fa-bars text-lg"></i>
+            </button>
+            <h1 id="page-title" class="font-semibold text-slate-800 hidden sm:block">Tableau de bord</h1>
+        </header>
+
+        <!-- Zone pour les messages Flash -->
+        <div class="px-4 sm:px-6 lg:px-8 pt-4">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="flash-message bg-{{ 'emerald' if category == 'success' else 'red' }}-100 border-l-4 border-{{ 'emerald' if category == 'success' else 'red' }}-500 text-{{ 'emerald' if category == 'success' else 'red' }}-700 p-4 rounded-lg" role="alert">
+                            <p>{{ message }}</p>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+        </div>
+
+        <!-- Zone de contenu avec les onglets -->
+        <main class="flex-1 p-4 sm:p-6 lg:p-8 space-y-6 -mt-4">
+
+            <!-- ONGLET 1 : TABLEAU DE BORD -->
+            <section id="tab-dashboard" class="tab-panel {% if not event_to_view and not event_to_edit and not event_to_create %}active{% endif %} space-y-6">
+                <div>
+                    <h2 class="text-xl font-bold text-slate-800 capitalize">
+                        Bonjour, {{ current_user.username }} 👋
+                    </h2>
+                    <p class="text-sm text-slate-500">Voici la synthèse de l'activité sur le site.</p>
+                </div>
+
+                <!-- Cartes de statistiques -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+                    <div class="bg-white rounded-xl p-5 shadow-card border border-sky-100">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="w-11 h-11 rounded-lg bg-sky-100 text-sky-600 flex items-center justify-center"><i class="fa-solid fa-calendar-check text-lg"></i></span>
+                        </div>
+                        <p class="text-2xl font-bold text-slate-800">5</p>
+                        <p class="text-sm text-slate-500">Événements à venir</p>
+                    </div>
+                    <div class="bg-white rounded-xl p-5 shadow-card border border-sky-100">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="w-11 h-11 rounded-lg bg-sky-100 text-sky-600 flex items-center justify-center"><i class="fa-solid fa-comment-dots text-lg"></i></span>
+                        </div>
+                        <p class="text-2xl font-bold text-slate-800">3</p>
+                        <p class="text-sm text-slate-500">Témoignages publiés</p>
+                    </div>
+                    <div class="bg-white rounded-xl p-5 shadow-card border border-sky-100">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="w-11 h-11 rounded-lg bg-sky-100 text-sky-600 flex items-center justify-center"><i class="fa-solid fa-envelope text-lg"></i></span>
+                            <span class="text-xs font-semibold text-orange-500 bg-orange-50 px-2 py-1 rounded-full">2 non lus</span>
+                        </div>
+                        <p class="text-2xl font-bold text-slate-800">12</p>
+                        <p class="text-sm text-slate-500">Messages reçus</p>
+                    </div>
+                    <div class="bg-white rounded-xl p-5 shadow-card border border-sky-100">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="w-11 h-11 rounded-lg bg-sky-100 text-sky-600 flex items-center justify-center"><i class="fa-solid fa-users text-lg"></i></span>
+                        </div>
+                        <p class="text-2xl font-bold text-slate-800">1</p>
+                        <p class="text-sm text-slate-500">Administrateur</p>
+                    </div>
+                </div>
+
+                <!-- Raccourcis rapides -->
+                <div class="bg-white rounded-xl p-5 sm:p-6 shadow-card border border-sky-100">
+                    <h3 class="font-semibold text-slate-800 mb-4">Actions rapides</h3>
+                    <div class="flex flex-wrap gap-4">
+                        <a href="{{ url_for('admin.new_event') }}" class="bg-sky-500 hover:bg-sky-600 text-white font-semibold py-2 px-4 rounded-lg text-sm transition">
+                            <i class="fa-solid fa-plus mr-2"></i> Ajouter un événement
+                        </a>
+                        <button data-tab="testimonials" class="nav-btn bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold py-2 px-4 rounded-lg text-sm transition">
+                            <i class="fa-solid fa-plus mr-2"></i> Ajouter un témoignage
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ONGLET 2 : GESTION DES ÉVÉNEMENTS -->
+            <section id="tab-events" class="tab-panel {% if event_to_view or event_to_edit or event_to_create %}active{% endif %} space-y-6">
+                {% if event_to_view and not event_to_edit and not event_to_create %}
+                <!-- VUE DÉTAIL D'UN ÉVÉNEMENT -->
+                <div>
+                    <a href="{{ url_for('admin.dashboard') }}" class="text-sm text-sky-600 hover:underline flex items-center gap-2 mb-4">
+                        <i class="fa-solid fa-arrow-left"></i>
+                        Retour à la liste des événements
+                    </a>
+                    <h2 class="text-xl font-bold text-slate-800">Détail de l'événement</h2>
+                    <p class="text-sm text-slate-500">Consultation des informations pour "{{ event_to_view.title }}".</p>
+                </div>
+                <div class="bg-white rounded-xl shadow-card border border-sky-100">
+                    <!-- En-tête avec titre et actions -->
+                    <div class="p-6 border-b border-sky-100 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                        <div>
+                            <h3 class="text-2xl font-bold text-slate-800">{{ event_to_view.title }}</h3>
+                            <p class="text-sm text-slate-500">Organisé par : {{ event_to_view.organizer or 'Non spécifié' }}</p>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <a href="{{ url_for('admin.edit_event', event_id=event_to_view.id) }}" class="bg-sky-600 hover:bg-sky-700 text-white font-semibold py-2 px-4 rounded-lg text-sm transition">
+                                <i class="fa-solid fa-pencil mr-2"></i> Modifier
+                            </a>
+                            <button data-action="delete" data-event-id="{{ event_to_view.id }}" class="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-lg text-sm transition">
+                                <i class="fa-solid fa-trash-can mr-2"></i> Supprimer
+                            </button>
+                        </div>
+                    </div>
+                    <!-- Corps avec les détails -->
+                    <div class="p-6 grid grid-cols-1 md:grid-cols-3 gap-8">
+                        <div class="md:col-span-2 space-y-6">
+                            <div>
+                                <h4 class="font-semibold text-slate-700 mb-2">Description</h4>
+                                <p class="text-slate-600 whitespace-pre-wrap">{{ event_to_view.description or 'Aucune description fournie.' }}</p>
+                            </div>
+                            {% if event_to_view.image_url %}
+                            <div>
+                                <h4 class="font-semibold text-slate-700 mb-2">Affiche</h4>
+                                {% if event_to_view.image_url.startswith('http') %}
+                                    <img src="{{ event_to_view.image_url }}" alt="Affiche de l'événement {{ event_to_view.title }}" class="rounded-lg border border-sky-100 max-w-sm w-full">
+                                {% else %}
+                                    <img src="{{ url_for('static', filename=event_to_view.image_url) }}" alt="Affiche de l'événement {{ event_to_view.title }}" class="rounded-lg border border-sky-100 max-w-sm w-full">
+                                {% endif %}
+                            </div>
+                            {% endif %}
+                        </div>
+                        <div class="space-y-4 text-sm">
+                            <div class="flex items-start gap-3"><i class="fa-solid fa-calendar-day w-4 text-center text-sky-500 pt-1"></i> <div><strong class="text-slate-700">Date :</strong><br>{{ event_to_view.event_date.strftime('%A %d %B %Y à %Hh%M') }}</div></div>
+                            <div class="flex items-start gap-3"><i class="fa-solid fa-location-dot w-4 text-center text-sky-500 pt-1"></i> <div><strong class="text-slate-700">Lieu :</strong><br>{{ event_to_view.location }}</div></div>
+                            <div class="flex items-start gap-3"><i class="fa-solid fa-users w-4 text-center text-sky-500 pt-1"></i> <div><strong class="text-slate-700">Participants max :</strong><br>{{ event_to_view.max_attendees or 'Non spécifié' }}</div></div>
+                            <div class="flex items-start gap-3"><i class="fa-solid fa-euro-sign w-4 text-center text-sky-500 pt-1"></i> <div><strong class="text-slate-700">Prix :</strong><br>{{ event_to_view.price_info or 'Gratuit / Non spécifié' }}</div></div>
+                            <div class="flex items-start gap-3"><i class="fa-solid fa-tag w-4 text-center text-sky-500 pt-1"></i> <div><strong class="text-slate-700">Catégorie :</strong><br><span class="bg-sky-100 text-sky-700 font-medium px-2 py-0.5 rounded">{{ event_to_view.tag or 'Général' }}</span></div></div>
+                        </div>
+                    </div>
+                </div>
+
+                {% elif event_to_edit and not event_to_create %}
+                <!-- VUE MODIFICATION D'UN ÉVÉNEMENT -->
+                <div>
+                    <a href="{{ url_for('admin.view_event', event_id=event_to_edit.id) }}" class="text-sm text-sky-600 hover:underline flex items-center gap-2 mb-4">
+                        <i class="fa-solid fa-arrow-left"></i>
+                        Annuler et retourner au détail
+                    </a>
+                    <h2 class="text-xl font-bold text-slate-800">Modifier l'événement</h2>
+                    <p class="text-sm text-slate-500">Mise à jour des informations pour "{{ event_to_edit.title }}".</p>
+                </div>
+                <form action="{{ url_for('admin.edit_event', event_id=event_to_edit.id) }}" method="POST" class="bg-white rounded-xl shadow-card border border-sky-100">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                    <div class="p-6 space-y-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label for="title" class="block text-sm font-medium text-slate-700 mb-1">Titre de l'événement</label>
+                                <input type="text" name="title" id="title" value="{{ event_to_edit.title }}" class="w-full border border-sky-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-400 bg-sky-50/50" required>
+                            </div>
+                            <div>
+                                <label for="event_date" class="block text-sm font-medium text-slate-700 mb-1">Date et heure</label>
+                                <input type="datetime-local" name="event_date" id="event_date" value="{{ event_to_edit.to_dict().event_date }}" class="w-full border border-sky-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-400 bg-sky-50/50" required>
+                            </div>
+                        </div>
+                        <div>
+                            <label for="description" class="block text-sm font-medium text-slate-700 mb-1">Description</label>
+                            <textarea name="description" id="description" rows="6" class="w-full border border-sky-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-400 bg-sky-50/50">{{ event_to_edit.description }}</textarea>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label for="location" class="block text-sm font-medium text-slate-700 mb-1">Lieu</label>
+                                <input type="text" name="location" id="location" value="{{ event_to_edit.location }}" class="w-full border border-sky-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-400 bg-sky-50/50">
+                            </div>
+                            <div>
+                                <label for="organizer" class="block text-sm font-medium text-slate-700 mb-1">Organisateur</label>
+                                <input type="text" name="organizer" id="organizer" value="{{ event_to_edit.organizer }}" class="w-full border border-sky-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-400 bg-sky-50/50">
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <div>
+                                <label for="price_info" class="block text-sm font-medium text-slate-700 mb-1">Information sur le prix</p>
+                                <input type="text" name="price_info" id="price_info" value="{{ event_to_edit.price_info }}" placeholder="Ex: Gratuit, 5€, etc." class="w-full border border-sky-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-400 bg-sky-50/50">
+                            </div>
+                            <div>
+                                <label for="max_attendees" class="block text-sm font-medium text-slate-700 mb-1">Participants max</label>
+                                <input type="number" name="max_attendees" id="max_attendees" value="{{ event_to_edit.max_attendees or '' }}" class="w-full border border-sky-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-400 bg-sky-50/50">
+                            </div>
+                             <div>
+                                <label for="tag" class="block text-sm font-medium text-slate-700 mb-1">Catégorie (Tag)</label>
+                                <input type="text" name="tag" id="tag" value="{{ event_to_edit.tag }}" placeholder="Ex: Atelier, Rencontre" class="w-full border border-sky-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-400 bg-sky-50/50">
+                            </div>
+                        </div>
+                        <div>
+                            <label for="image_url" class="block text-sm font-medium text-slate-700 mb-1">URL de l'image</label>
+                            <input type="text" name="image_url" id="image_url" value="{{ event_to_edit.image_url }}" placeholder="Lien vers l'affiche de l'événement" class="w-full border border-sky-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-400 bg-sky-50/50">
+                        </div>
+                    </div>
+                    <div class="p-4 bg-slate-50 rounded-b-xl flex justify-end">
+                        <button type="submit" class="bg-sky-600 hover:bg-sky-700 text-white font-semibold py-2 px-5 rounded-lg text-sm transition">
+                            <i class="fa-solid fa-save mr-2"></i>
+                            Enregistrer les modifications
+                        </button>
+                    </div>
+                </form>
+
+                {% elif event_to_create %}
+                <!-- VUE CRÉATION D'UN ÉVÉNEMENT -->
+                <div>
+                    <a href="{{ url_for('admin.dashboard') }}" class="text-sm text-sky-600 hover:underline flex items-center gap-2 mb-4">
+                        <i class="fa-solid fa-arrow-left"></i>
+                        Annuler et retourner à la liste
+                    </a>
+                    <h2 class="text-xl font-bold text-slate-800">Ajouter un nouvel événement</h2>
+                    <p class="text-sm text-slate-500">Remplissez les informations ci-dessous pour créer un événement.</p>
+                </div>
+                <form action="{{ url_for('admin.new_event') }}" method="POST" class="bg-white rounded-xl shadow-card border border-sky-100">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                    <div class="p-6 space-y-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label for="title" class="block text-sm font-medium text-slate-700 mb-1">Titre de l'événement <span class="text-red-500">*</span></label>
+                                <input type="text" name="title" id="title" value="{{ form_data.title or '' }}" class="w-full border border-sky-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-400 bg-sky-50/50" required>
+                            </div>
+                            <div>
+                                <label for="event_date" class="block text-sm font-medium text-slate-700 mb-1">Date et heure <span class="text-red-500">*</span></label>
+                                <input type="datetime-local" name="event_date" id="event_date" value="{{ form_data.event_date or '' }}" class="w-full border border-sky-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-400 bg-sky-50/50" required>
+                            </div>
+                        </div>
+                        <div>
+                            <label for="description" class="block text-sm font-medium text-slate-700 mb-1">Description</label>
+                            <textarea name="description" id="description" rows="6" class="w-full border border-sky-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-400 bg-sky-50/50">{{ form_data.description or '' }}</textarea>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label for="location" class="block text-sm font-medium text-slate-700 mb-1">Lieu</label>
+                                <input type="text" name="location" id="location" value="{{ form_data.location or '' }}" class="w-full border border-sky-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-400 bg-sky-50/50">
+                            </div>
+                            <div>
+                                <label for="organizer" class="block text-sm font-medium text-slate-700 mb-1">Organisateur</label>
+                                <input type="text" name="organizer" id="organizer" value="{{ form_data.organizer or '' }}" class="w-full border border-sky-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-400 bg-sky-50/50">
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <div>
+                                <label for="price_info" class="block text-sm font-medium text-slate-700 mb-1">Information sur le prix</p>
+                                <input type="text" name="price_info" id="price_info" value="{{ form_data.price_info or '' }}" placeholder="Ex: Gratuit, 5€, etc." class="w-full border border-sky-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-400 bg-sky-50/50">
+                            </div>
+                            <div>
+                                <label for="max_attendees" class="block text-sm font-medium text-slate-700 mb-1">Participants max</label>
+                                <input type="number" name="max_attendees" id="max_attendees" value="{{ form_data.max_attendees or '' }}" min="0" class="w-full border border-sky-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-400 bg-sky-50/50">
+                            </div>
+                             <div>
+                                <label for="tag" class="block text-sm font-medium text-slate-700 mb-1">Catégorie (Tag)</label>
+                                <input type="text" name="tag" id="tag" value="{{ form_data.tag or '' }}" placeholder="Ex: Atelier, Rencontre" class="w-full border border-sky-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-400 bg-sky-50/50">
+                            </div>
+                        </div>
+                        <div>
+                            <label for="image_url" class="block text-sm font-medium text-slate-700 mb-1">URL de l'image</label>
+                            <input type="url" name="image_url" id="image_url" value="{{ form_data.image_url or '' }}" placeholder="https://..." class="w-full border border-sky-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-400 bg-sky-50/50">
+                        </div>
+                    </div>
+                    <div class="p-4 bg-slate-50 rounded-b-xl flex justify-end">
+                        <button type="submit" class="bg-sky-600 hover:bg-sky-700 text-white font-semibold py-2 px-5 rounded-lg text-sm transition">
+                            <i class="fa-solid fa-plus mr-2"></i>
+                            Créer l'événement
+                        </button>
+                    </div>
+                </form>
+
+                {% else %}
+                <!-- VUE LISTE DES ÉVÉNEMENTS -->
+                <div>
+                    <h2 class="text-xl font-bold text-slate-800">Gestion des Événements</h2>
+                    <p class="text-sm text-slate-500">Ajoutez, modifiez ou supprimez les événements du site.</p>
+                </div>
+                <div class="bg-white rounded-xl shadow-card border border-sky-100 overflow-x-auto">
+                    <div class="p-4 flex justify-end">
+                        <a href="{{ url_for('admin.new_event') }}" class="bg-sky-600 hover:bg-sky-700 text-white font-semibold py-2 px-4 rounded-lg text-sm transition">
+                            <i class="fa-solid fa-plus mr-2"></i> Ajouter un événement
+                        </a>
+                    </div>
+                    <table class="w-full text-sm text-left text-slate-500">
+                        <thead class="text-xs text-slate-700 uppercase bg-sky-50">
+                            <tr>
+                                <th scope="col" class="px-6 py-3">Titre</th>
+                                <th scope="col" class="px-6 py-3">Date</th>
+                                <th scope="col" class="px-6 py-3">Lieu</th>
+                                <th scope="col" class="px-6 py-3"><span class="sr-only">Actions</span></th>
+                            </tr>
+                        </thead>
+                        <tbody id="events-table-body">
+                            {% for event in events %}
+                            <tr class="bg-white border-b hover:bg-sky-50">
+                                <th scope="row" class="px-6 py-4 font-medium text-slate-900 whitespace-nowrap">{{ event.title }}</th>
+                                <td class="px-6 py-4">{{ event.event_date.strftime('%d/%m/%Y') }}</td>
+                                <td class="px-6 py-4">{{ event.location }}</td>
+                                <td class="px-6 py-4 text-right space-x-2">
+                                    <a href="{{ url_for('admin.view_event', event_id=event.id) }}" class="font-medium text-emerald-600 hover:underline">Voir</a>
+                                    <a href="{{ url_for('admin.edit_event', event_id=event.id) }}" class="font-medium text-sky-600 hover:underline">Modifier</a>
+                                    <button data-action="delete" data-event-id="{{ event.id }}" class="font-medium text-red-600 hover:underline">Supprimer</button>
+                                </td>
+                            </tr>
+                            {% else %}
+                            <tr><td colspan="4" class="text-center py-6 text-slate-500">Aucun événement trouvé.</td></tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% endif %}
+            </section>
+
+            <!-- ONGLET 3 : TÉMOIGNAGES -->
+            <section id="tab-testimonials" class="tab-panel space-y-6">
+                <div>
+                    <h2 class="text-xl font-bold text-slate-800">Gestion des Témoignages</h2>
+                    <p class="text-sm text-slate-500">Gérez les témoignages affichés sur la page d'accueil.</p>
+                </div>
+                 <div class="bg-white rounded-xl shadow-card border border-sky-100 p-6">
+                    <p class="text-slate-500">Cette section est en cours de développement.</p>
+                </div>
+            </section>
+
+            <!-- ONGLET 4 : MESSAGES -->
+            <section id="tab-messages" class="tab-panel space-y-6">
+                <div>
+                    <h2 class="text-xl font-bold text-slate-800">Messages de Contact</h2>
+                    <p class="text-sm text-slate-500">Consultez les messages envoyés via le formulaire de contact.</p>
+                </div>
+                 <div class="bg-white rounded-xl shadow-card border border-sky-100 p-6">
+                    <p class="text-slate-500">Cette section est en cours de développement.</p>
+                </div>
+            </section>
+
+            <!-- ONGLET 5 : PROFIL -->
+            <section id="tab-profile" class="tab-panel space-y-6">
+                <div>
+                    <h2 class="text-xl font-bold text-slate-800">Mon Profil</h2>
+                    <p class="text-sm text-slate-500">Gérez vos informations de compte.</p>
+                </div>
+                <div class="bg-white rounded-xl shadow-card border border-sky-100">
+                    <div class="p-6 border-b border-sky-100 flex items-center gap-4">
+                        <div class="w-16 h-16 rounded-full bg-sky-100 flex items-center justify-center text-sky-600 font-semibold text-2xl">
+                            {{ current_user.username[0]|upper if current_user.username else 'U' }}
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-bold text-slate-800" title="{{ current_user.email }}">
+                                {{ current_user.email }}
+                            </h3>
+                            <p class="text-sm text-slate-500">Administrateur</p>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <h4 class="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-4">Sécurité</h4>
+                        <form class="max-w-sm space-y-4">
+                            <div>
+                                <label class="text-xs font-semibold text-slate-500 mb-1 block">Nouveau mot de passe</label>
+                                <input type="password" class="w-full border border-sky-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-400 bg-sky-50/50">
+                            </div>
+                            <button type="submit" class="bg-sky-600 hover:bg-sky-700 text-white font-semibold py-2 px-4 rounded-lg text-sm transition">
+                                Changer le mot de passe
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+
+        <!-- ================= MODALS ================= -->
+
+        <!-- Modal de confirmation de mot de passe -->
+        <div id="password-modal" class="hidden fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+            <div class="bg-white rounded-xl shadow-2xl w-full max-w-sm transform transition-all opacity-0 -translate-y-10">
+                <form id="password-form">
+                    <div class="p-6">
+                        <div class="w-16 h-16 rounded-full bg-sky-100 text-sky-500 flex items-center justify-center mx-auto mb-4">
+                            <i class="fa-solid fa-shield-halved text-3xl"></i>
+                        </div>
+                        <h3 class="text-lg font-semibold text-slate-800 text-center">Action sécurisée</h3>
+                        <p class="text-sm text-slate-500 mt-2 text-center">
+                            Pour confirmer la suppression, veuillez entrer votre mot de passe.
+                        </p>
+                        <div class="mt-4">
+                            <label for="password-input" class="sr-only">Mot de passe</label>
+                            <input type="password" id="password-input" required class="w-full text-center border border-sky-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-400 bg-sky-50/50" placeholder="••••••••">
+                        </div>
+                    </div>
+                    <div class="flex justify-center gap-3 p-4 bg-slate-50 rounded-b-xl">
+                        <button type="button" data-action="close-modal" class="bg-slate-200 hover:bg-slate-300 text-slate-700 font-semibold py-2 px-5 rounded-lg text-sm transition">Annuler</button>
+                        <button type="submit" class="bg-sky-600 hover:bg-sky-700 text-white font-semibold py-2 px-5 rounded-lg text-sm transition">Continuer</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Modal de confirmation de suppression finale -->
+        <div id="delete-modal" class="hidden fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+            <div class="bg-white rounded-xl shadow-2xl w-full max-w-md transform transition-all opacity-0 -translate-y-10">
+                <div class="p-6 text-center">
+                    <div class="w-16 h-16 rounded-full bg-red-50 text-red-500 flex items-center justify-center mx-auto mb-4">
+                        <i class="fa-solid fa-triangle-exclamation text-3xl"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold text-slate-800">Êtes-vous absolument sûr ?</h3>
+                    <p class="text-sm text-slate-500 mt-2">Cette action est irréversible. Toutes les données associées à cet événement seront définitivement perdues.</p>
+                </div>
+                <div class="flex justify-center gap-3 p-4 bg-slate-50 rounded-b-xl">
+                    <button type="button" data-action="close-modal" class="bg-slate-200 hover:bg-slate-300 text-slate-700 font-semibold py-2 px-5 rounded-lg text-sm transition">Annuler</button>
+                    <button id="confirm-delete-btn" type="button" class="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-5 rounded-lg text-sm transition">Oui, supprimer</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pied de page -->
+        <footer class="text-center text-xs text-slate-400 py-4">
+            Autisme Hauts-de-France &copy; 2024 — Panneau d'Administration
+        </footer>
+      </div>
     </div>
 
     <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const modal = document.getElementById('eventModal');
-        const addEventBtn = document.getElementById('addEventBtn');
-        const closeButton = document.querySelector('.close-button');
-        const eventForm = document.getElementById('eventForm');
-        const modalTitle = document.getElementById('modalTitle');
-        const eventIdInput = document.getElementById('eventId');
+        // Passer le token CSRF du backend (Flask) au frontend (JavaScript)
+        window.csrfToken = "{{ csrf_token() }}";
+    </script>
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('overlay');
+        const mainNav = document.getElementById('main-nav');
+        const pageTitle = document.getElementById('page-title');
 
-        // --- Fonctions pour ouvrir/fermer le modal ---
-        function openModal() {
-            modal.style.display = 'block';
-        }
+        // --- Gestion de la navigation par onglets ---
+        const navButtons = document.querySelectorAll('.nav-btn');
+        const tabPanels = document.querySelectorAll('.tab-panel');
 
-        function closeModal() {
-            modal.style.display = 'none';
-            eventForm.reset();
-            eventIdInput.value = '';
-        }
+        navButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const tabId = button.dataset.tab;
+                if (!tabId) return;
 
-        // --- Événements d'ouverture/fermeture ---
-        addEventBtn.onclick = function() {
-            modalTitle.textContent = 'Ajouter un événement';
-            openModal();
-        }
+                // Gérer l'état actif des boutons
+                navButtons.forEach(btn => btn.classList.remove('active'));
+                // Appliquer 'active' à tous les boutons avec le même data-tab
+                document.querySelectorAll(`.nav-btn[data-tab="${tabId}"]`).forEach(b => b.classList.add('active'));
 
-        closeButton.onclick = closeModal;
-        window.onclick = function(event) {
-            if (event.target == modal) {
-                closeModal();
-            }
-        }
-
-        // --- Gestion de la soumission du formulaire (Ajout/Modification) ---
-        eventForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-
-            const eventId = eventIdInput.value;
-            const url = eventId ? `/admin/events/update/${eventId}` : '/admin/events/add';
-            const method = 'POST';
-
-            const formData = new FormData(eventForm);
-            const data = Object.fromEntries(formData.entries());
-
-            fetch(url, {
-                method: method,
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken': '{{ csrf_token() }}' // Important pour la sécurité
-                },
-                body: JSON.stringify(data)
-            })
-            .then(response => response.json())
-            .then(result => {
-                if (result.success) {
-                    alert(result.message);
-                    window.location.reload();
-                } else {
-                    alert('Erreur: ' + result.message);
+                // Si on clique sur un onglet, on s'assure de ne pas être sur une page de détail
+                if (window.location.pathname.includes('/event/')) {
+                    window.location.href = "{{ url_for('admin.dashboard') }}";
+                    return; // Empêche le changement d'onglet JS avant le rechargement
                 }
-            })
-            .catch(error => {
-                console.error('Erreur:', error);
-                alert('Une erreur est survenue.');
+
+                tabPanels.forEach(panel => {
+                    panel.classList.toggle('active', panel.id === `tab-${tabId}`);
+                });
+
+                // Mettre à jour le titre de la page
+                if (pageTitle) {
+                    const titleMap = {
+                        'dashboard': 'Tableau de bord',
+                        'events': 'Gestion des Événements',
+                        'testimonials': 'Gestion des Témoignages',
+                        'messages': 'Messages de Contact',
+                        'profile': 'Mon Profil'
+                    };
+                    pageTitle.textContent = titleMap[tabId] || 'Tableau de bord';
+                }
+
+                // Fermer le menu sur mobile après un clic
+                if (sidebar.classList.contains('open')) {
+                    sidebar.classList.remove('open');
+                    overlay.classList.add('hidden');
+                }
             });
         });
 
-        // --- Gestion des boutons d'action (Modifier/Supprimer) ---
-        document.querySelectorAll('.events-table tbody tr').forEach(row => {
-            const eventId = row.dataset.id;
-            if (!eventId) return;
+        // --- Gestion du menu mobile (sidebar) ---
+        document.querySelectorAll('[data-action="toggle-sidebar"]').forEach(element => {
+            element.addEventListener('click', () => {
+                sidebar.classList.toggle('open');
+                overlay.classList.toggle('hidden');
+            });
+        });
 
-            // Bouton Modifier
-            const editBtn = row.querySelector('.btn-edit');
-            if (editBtn) {
-                editBtn.addEventListener('click', function() {
-                    modalTitle.textContent = 'Modifier l'événement';
-                    eventIdInput.value = eventId;
-                    document.getElementById('title').value = row.dataset.title;
-                    document.getElementById('description').value = row.dataset.description;
-                    document.getElementById('event_date').value = row.dataset.date;
-                    document.getElementById('location').value = row.dataset.location;
-                    openModal();
-                });
+        // --- Gestion des Modals ---
+        const modals = document.querySelectorAll('#password-modal, #delete-modal');
+        let eventIdToDelete = null;
+        let passwordToDelete = null;
+
+        const openModal = (modal) => {
+            modal.classList.remove('hidden');
+            setTimeout(() => modal.querySelector('.transform').classList.remove('opacity-0', '-translate-y-10'), 10);
+        };
+
+        const closeModal = (modal) => {
+            modal.querySelector('.transform').classList.add('opacity-0', '-translate-y-10');
+            setTimeout(() => modal.classList.add('hidden'), 300);
+        };
+
+        document.querySelectorAll('[data-action="close-modal"]').forEach(btn => {
+            btn.addEventListener('click', () => closeModal(btn.closest('.fixed')));
+        });
+
+        // --- Logique de Suppression ---
+        const passwordModal = document.getElementById('password-modal');
+        const deleteModal = document.getElementById('delete-modal');
+        const passwordForm = document.getElementById('password-form');
+        const confirmDeleteBtn = document.getElementById('confirm-delete-btn');
+
+        // 1. Clic sur un bouton "Supprimer"
+        document.body.addEventListener('click', (e) => {
+            if (e.target.closest('[data-action="delete"]')) {
+                const button = e.target.closest('[data-action="delete"]');
+                eventIdToDelete = button.dataset.eventId;
+                passwordForm.reset();
+                openModal(passwordModal);
+                document.getElementById('password-input').focus();
             }
+        });
 
-            // Bouton Supprimer
-            const deleteBtn = row.querySelector('.btn-delete');
-            if (deleteBtn) {
-                deleteBtn.addEventListener('click', function() {
-                    if (!confirm('Êtes-vous sûr de vouloir supprimer cet événement ?')) {
-                        return;
-                    }
+        // 2. Soumission du mot de passe
+        passwordForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            passwordToDelete = document.getElementById('password-input').value;
+            if (passwordToDelete) {
+                closeModal(passwordModal);
+                openModal(deleteModal);
+            }
+        });
 
-                    fetch(`/admin/events/delete/${eventId}`, {
-                        method: 'POST',
-                        headers: {
-                            'X-CSRFToken': '{{ csrf_token() }}'
-                        }
-                    })
-                    .then(response => response.json())
-                    .then(result => {
-                        if (result.success) {
-                            alert(result.message);
-                            window.location.reload();
-                        } else {
-                            alert('Erreur: ' + result.message);
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Erreur:', error);
-                        alert('Une erreur est survenue lors de la suppression.');
-                    });
+        // 3. Clic sur la confirmation finale
+        confirmDeleteBtn.addEventListener('click', async () => {
+            if (!eventIdToDelete || !passwordToDelete) return;
+
+            try {
+                const response = await fetch(`/admin/event/${eventIdToDelete}/delete`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': window.csrfToken
+                    },
+                    body: JSON.stringify({ password: passwordToDelete })
                 });
+
+                const result = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(result.message || 'Une erreur est survenue.');
+                }
+
+                // Succès !
+                closeModal(deleteModal);
+                alert(result.message); // Ou une notification plus élégante
+
+                // Si on est sur la page de détail, on redirige
+                if (window.location.pathname.includes(`/admin/event/${eventIdToDelete}`)) {
+                    window.location.href = "{{ url_for('admin.dashboard') }}";
+                } else {
+                    // Sinon, on supprime la ligne du tableau
+                    const row = document.querySelector(`#events-table-body tr[class*="bg-white"]:first-child`); // Simple selector for now
+                    // A more robust selector would be needed if we had multiple rows.
+                    // For now, let's just reload for simplicity.
+                    window.location.reload();
+                }
+
+            } catch (error) {
+                closeModal(deleteModal);
+                alert(`Erreur : ${error.message}`);
+            } finally {
+                eventIdToDelete = null;
+                passwordToDelete = null;
             }
         });
     });

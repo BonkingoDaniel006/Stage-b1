@@ -2,10 +2,11 @@ from flask_login import UserMixin
 from ext import get_db_connection, bcrypt, login_manager
 
 class User(UserMixin):
-    def __init__(self, id, email, password_hash):
+    def __init__(self, id, email, password_hash, username=None):
         self.id = id
         self.email = email
         self.password = password_hash
+        self.username = username or self.email.split('@')[0]
 
     def set_password(self, password):
         """Crée un hash du mot de passe."""
@@ -25,7 +26,7 @@ class User(UserMixin):
         cursor.close()
         conn.close()
         if user_data:
-            return User(id=user_data['id'], email=user_data['email'], password_hash=user_data['password'])
+            return User(id=user_data['id'], email=user_data['email'], password_hash=user_data['password'], username=user_data.get('username'))
         return None
 
     @staticmethod
@@ -38,7 +39,7 @@ class User(UserMixin):
         cursor.close()
         conn.close()
         if user_data:
-            return User(id=user_data['id'], email=user_data['email'], password_hash=user_data['password'])
+            return User(id=user_data['id'], email=user_data['email'], password_hash=user_data['password'], username=user_data.get('username'))
         return None
 
     def save(self):
