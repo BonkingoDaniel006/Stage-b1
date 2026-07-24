@@ -195,6 +195,9 @@
           <p>Nous répondons sous 5 jours ouvrés. Pas d'urgence vitale ? Préférez le formulaire à l'appel si besoin.</p>
         </div>
         <form action="{{ url_for('index.contact') }}" method="post" class="contact-form">
+          <!-- AJOUT DU JETON CSRF ICI -->
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+
           <div class="field"><label for="name">Nom</label><input id="name" name="name" type="text" autocomplete="name"></div>
           <div class="field"><label for="email">E-mail</label><input id="email" name="email" type="email" autocomplete="email"></div>
           <div class="field"><label for="subject">Sujet</label><input id="subject" name="subject" type="text"></div>
