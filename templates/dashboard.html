@@ -255,7 +255,7 @@
                     <h2 class="text-xl font-bold text-slate-800">Modifier l'événement</h2>
                     <p class="text-sm text-slate-500">Mise à jour des informations pour "{{ event_to_edit.title }}".</p>
                 </div>
-                <form action="{{ url_for('admin.edit_event', event_id=event_to_edit.id) }}" method="POST" class="bg-white rounded-xl shadow-card border border-sky-100">
+                <form action="{{ url_for('admin.edit_event', event_id=event_to_edit.id) }}" method="POST" enctype="multipart/form-data" class="bg-white rounded-xl shadow-card border border-sky-100">
                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                     <div class="p-6 space-y-6">
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -298,7 +298,22 @@
                         </div>
                         <div>
                             <label for="image_url" class="block text-sm font-medium text-slate-700 mb-1">URL de l'image</label>
-                            <input type="text" name="image_url" id="image_url" value="{{ event_to_edit.image_url }}" placeholder="Lien vers l'affiche de l'événement" class="w-full border border-sky-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-400 bg-sky-50/50">
+                            {% if event_to_edit.image_url %}
+                            <div class="flex items-center gap-4 mb-2">
+                                <img src="{{ url_for('static', filename=event_to_edit.image_url) }}" alt="Aperçu" class="h-16 w-16 object-cover rounded-lg border border-sky-100">
+                                <div class="flex items-start">
+                                    <div class="flex items-center h-5">
+                                        <input id="remove_image" name="remove_image" type="checkbox" class="focus:ring-red-500 h-4 w-4 text-red-600 border-gray-300 rounded">
+                                    </div>
+                                    <div class="ml-3 text-sm">
+                                        <label for="remove_image" class="font-medium text-gray-700">Supprimer l'image actuelle</label>
+                                        <p class="text-gray-500">Cochez cette case pour enlever l'image de l'événement.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endif %}
+                            <input type="file" name="image_file" id="image_file" accept="image/png, image/jpeg, image/webp, image/gif" class="w-full border border-sky-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-400 bg-sky-50/50 file:mr-4 file:py-1 file:px-2 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-sky-100 file:text-sky-700 hover:file:bg-sky-200">
+                            <p class="text-xs text-slate-500 mt-1">Laissez vide pour conserver l'image actuelle. Téléversez un nouveau fichier pour la remplacer.</p>
                         </div>
                     </div>
                     <div class="p-4 bg-slate-50 rounded-b-xl flex justify-end">
@@ -319,7 +334,7 @@
                     <h2 class="text-xl font-bold text-slate-800">Ajouter un nouvel événement</h2>
                     <p class="text-sm text-slate-500">Remplissez les informations ci-dessous pour créer un événement.</p>
                 </div>
-                <form action="{{ url_for('admin.new_event') }}" method="POST" class="bg-white rounded-xl shadow-card border border-sky-100">
+                <form action="{{ url_for('admin.new_event') }}" method="POST" enctype="multipart/form-data" class="bg-white rounded-xl shadow-card border border-sky-100">
                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                     <div class="p-6 space-y-6">
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -361,8 +376,8 @@
                             </div>
                         </div>
                         <div>
-                            <label for="image_url" class="block text-sm font-medium text-slate-700 mb-1">URL de l'image</label>
-                            <input type="url" name="image_url" id="image_url" value="{{ form_data.image_url or '' }}" placeholder="https://..." class="w-full border border-sky-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-400 bg-sky-50/50">
+                            <label for="image_file" class="block text-sm font-medium text-slate-700 mb-1">Affiche de l'événement</label>
+                            <input type="file" name="image_file" id="image_file" accept="image/png, image/jpeg, image/webp, image/gif" class="w-full border border-sky-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-400 bg-sky-50/50 file:mr-4 file:py-1 file:px-2 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-sky-100 file:text-sky-700 hover:file:bg-sky-200">
                         </div>
                     </div>
                     <div class="p-4 bg-slate-50 rounded-b-xl flex justify-end">
