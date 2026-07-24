@@ -142,7 +142,7 @@ def process_login(submitted_code):
     if submitted_code == otp_data['code']:
         user = User.get(user_id)
         if user:
-            login_user(user, remember=True)
+            login_user(user, remember=False)
         session.pop('otp_login', None)
         session.pop('user_id_to_verify', None)
         return "success"
