@@ -45,7 +45,7 @@ def _envoyer_otp_brevo(email_destinataire, prenom, code_otp):
             current_app.logger.info(f"OTP envoyé avec succès à {email_destinataire}")
             return True
         else:
-            current_app.logger.error(f"Erreur de l'API Brevo ({response.status_code}) : {response.text}")
+            current_app.logger.error(f"Erreur de l'API Brevo lors de l'envoi d'OTP à {email_destinataire}. Status: {response.status_code}")
             return False
     except Exception as e:
         current_app.logger.error(f"Exception lors de l'envoi HTTP à Brevo : {str(e)}")
@@ -55,7 +55,7 @@ def _envoyer_email_alerte(sujet, contenu_html):
     """Envoie un email d'alerte à l'administrateur."""
     url = "https://api.brevo.com/v3/smtp/email"
     api_key = os.getenv("BREVO_API_KEY")
-    admin_email = "112689@ecole-it.com"
+    admin_email = os.getenv("ADMIN_EMAIL_ALERT")
 
     if not api_key:
         current_app.logger.error("BREVO_API_KEY n'est pas configurée.")

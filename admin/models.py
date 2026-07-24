@@ -63,19 +63,18 @@ class Event:
         if not data.get('title') or not data.get('event_date'):
             raise ValueError("Le titre et la date de l'événement sont obligatoires.")
 
-        # Liste des champs autorisés à l'insertion
+        # Liste des champs autorisés pour l'insertion
         allowed_fields = ['title', 'description', 'event_date', 'location', 'organizer', 'price_info', 'tag', 'image_url', 'max_attendees']
         
-        fields_to_insert = []
-        values = []
-        placeholders = []
+        # Filtrer les données pour ne garder que les champs autorisés et non vides
+        event_data = {field: (data[field] if data[field] != '' else None) for field in allowed_fields if field in data}
 
-        for field in allowed_fields:
-            if field in data:
-                fields_to_insert.append(f"`{field}`")
-                placeholders.append('%s')
-                # Gère le cas où un champ non obligatoire est vide (ex: max_attendees)
-                values.append(data[field] if data[field] != '' else None)
+        if not event_data:
+            return None # Rien à insérer
+
+        fields_to_insert = [f"`{field}`" for field in event_data.keys()]
+        placeholders = ['%s'] * len(event_data)
+        values = list(event_data.values())
 
         query = f"INSERT INTO evenements ({', '.join(fields_to_insert)}) VALUES ({', '.join(placeholders)})"
 
@@ -97,17 +96,17 @@ class Event:
         allowed_fields = ['title', 'description', 'event_date', 'location', 'organizer', 'price_info', 'tag', 'image_url', 'max_attendees']
         
         # Construction dynamique de la requête SQL
-        fields_to_update = []
-        values = []
-        for field in allowed_fields:
-            if field in data:
-                fields_to_update.append(f"{field} = %s")
-                values.append(data[field])
+        update_data = {
+            field: (data[field] if data[field] != '' else None)
+            for field in allowed_fields
+            if field in data and data[field] is not None
+        }
 
-        if not fields_to_update:
+        if not update_data:
             return # Rien à mettre à jour
-
-        values.append(self.id)
+        
+        fields_to_update = [f"`{field}` = %s" for field in update_data.keys()]
+        values = list(update_data.values()) + [self.id]
         query = f"UPDATE evenements SET {', '.join(fields_to_update)} WHERE id = %s"
 
         conn = get_db_connection()
