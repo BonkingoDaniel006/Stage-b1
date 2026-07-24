@@ -38,7 +38,7 @@ def connexion():
         user = User.find_by_email(email)
         if user and user.check_password(form.password.data):
             # Connexion directe de l'utilisateur
-            login_user(user, remember=True)
+            login_user(user, remember=False)
             flash('Vous êtes maintenant connecté.', 'success')
             return redirect(url_for('admin.dashboard'))
         else:
