@@ -126,3 +126,125 @@ class Event:
         conn.commit()
         cursor.close()
         conn.close()
+
+
+
+class Message:
+    def __init__(self, **kwargs):
+        """Initialise dynamiquement les attributs à partir des données de la BDD."""
+        # Assure que tous les champs de la BDD deviennent des attributs de l'objet
+        for key, value in kwargs.items():
+            setattr(self, key, value)
+
+    @staticmethod
+    def get_all():
+        """Récupère tous les messages de la base de données, les plus récents en premier."""
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+        # Renommer les colonnes pour correspondre aux attributs de l'objet
+        cursor.execute("""
+            SELECT id, sender_name, sender_email, subject, content, is_read, created_at 
+            FROM messages 
+            ORDER BY created_at DESC
+        """)
+        messages_data = cursor.fetchall()
+        cursor.close()
+        conn.close()
+        return [Message(**data) for data in messages_data]
+
+    @staticmethod
+    def get_by_id(message_id):
+        """Récupère un message par son ID."""
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute("SELECT * FROM messages WHERE id = %s", (message_id,))
+        message_data = cursor.fetchone()
+        cursor.close()
+        conn.close()
+        if message_data:
+            return Message(**message_data)
+        return None
+
+
+    @staticmethod
+    def get_conversation(message_id):
+        """Récupère le message original et toutes ses réponses."""
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+        # Le message original est celui où l'ID et le conversation_id sont identiques
+        # Les réponses ont le même conversation_id
+        cursor.execute("""
+            SELECT * FROM messages WHERE conversation_id = (SELECT conversation_id FROM messages WHERE id = %s)
+            ORDER BY created_at ASC
+        """, (message_id,))
+        messages_data = cursor.fetchall()
+        cursor.close()
+        conn.close()
+        return [Message(**data) for data in messages_data]
+
+    @staticmethod
+    def create(name, email, subject, message_content):
+        """Crée un nouveau message dans la base de données."""
+        query = """
+            INSERT INTO messages (sender_name, sender_email, subject, content, is_read) 
+            VALUES (%s, %s, %s, %s, FALSE)
+        """
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        try:
+            cursor.execute(query, (name, email, subject, message_content))
+            new_id = cursor.lastrowid
+            # Le premier message définit l'ID de la conversation
+            cursor.execute("UPDATE messages SET conversation_id = %s WHERE id = %s", (new_id, new_id))
+            conn.commit()
+            return new_id
+        finally:
+            cursor.close()
+            conn.close()
+
+    @staticmethod
+    def reply(conversation_id, admin_user, recipient_email, subject, content):
+        """Enregistre la réponse d'un administrateur."""
+        query = """
+            INSERT INTO messages (conversation_id, sender_name, sender_email, subject, content, sender_type) 
+            VALUES (%s, %s, %s, %s, %s, 'admin')
+        """
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        try:
+            cursor.execute(query, (conversation_id, admin_user.username, admin_user.email, subject, content))
+            conn.commit()
+            return cursor.lastrowid
+        finally:
+            cursor.close()
+            conn.close()
+
+    def mark_as_read(self):
+        """Marque le message comme lu dans la base de données."""
+        if not self.id:
+            return
+        query = "UPDATE messages SET is_read = TRUE WHERE id = %s"
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        try:
+            cursor.execute(query, (self.id,))
+            conn.commit()
+            self.is_read = True
+        finally:
+            cursor.close()
+            conn.close()
+
+    def to_dict(self):
+        """Convertit l'objet en dictionnaire pour l'API JSON."""
+        # Récupérer tous les attributs de l'instance
+        data = self.__dict__.copy()
+        return {
+            "id": self.id,
+            "name": self.sender_name,
+            "email": self.sender_email,
+            "subject": self.subject,
+            "message": self.content,
+            "is_read": self.is_read,
+            "date": self.created_at.isoformat(),
+            "sender_type": data.get('sender_type', 'visitor') # Assurer une valeur par défaut
+        }

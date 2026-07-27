@@ -447,8 +447,40 @@
                     <h2 class="text-xl font-bold text-slate-800">Messages de Contact</h2>
                     <p class="text-sm text-slate-500">Consultez les messages envoyés via le formulaire de contact.</p>
                 </div>
-                 <div class="bg-white rounded-xl shadow-card border border-sky-100 p-6">
-                    <p class="text-slate-500">Cette section est en cours de développement.</p>
+                <div class="bg-white rounded-xl shadow-card border border-sky-100 overflow-x-auto">
+                    <ul id="message-list" class="divide-y divide-sky-100">
+                        {% for message in messages %}
+                        <li class="message-item cursor-pointer hover:bg-sky-50/50 p-4 sm:p-6"
+                            data-message-id="{{ message.id }}"
+                            data-name="{{ message.sender_name }}" 
+                            data-email="{{ message.sender_email }}" 
+                            data-subject="{{ message.subject }}" 
+                            data-date="{{ message.created_at.isoformat() }}" 
+                            data-message="{{ message.content }}">
+                            <div class="flex items-center gap-4">
+                                <div class="w-10 h-10 rounded-full bg-sky-100 text-sky-600 flex items-center justify-center font-semibold shrink-0">
+                                    {{ message.sender_name[0]|upper if message.sender_name else '?' }}
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <div class="flex items-center justify-between">
+                                        <p class="text-sm truncate {% if not message.is_read %}font-semibold text-slate-800{% else %}font-medium text-slate-600{% endif %}">
+                                            {{ message.sender_name }}
+                                        </p>
+                                        <p class="text-xs text-slate-400 shrink-0 ml-4">{{ message.created_at.strftime('%d/%m/%Y') }}</p>
+                                    </div>
+                                    <p class="text-sm truncate {% if not message.is_read %}text-slate-600{% else %}text-slate-500{% endif %}">
+                                        {{ message.subject }}
+                                    </p>
+                                </div>
+                                <span class="w-2.5 h-2.5 rounded-full shrink-0 {% if not message.is_read %}bg-sky-500{% else %}bg-transparent{% endif %}" title="{% if not message.is_read %}Non lu{% else %}Lu{% endif %}"></span>
+                            </div>
+                        </li>
+                        {% else %}
+                        <li class="p-6 text-center text-slate-500">
+                            Vous n'avez aucun nouveau message.
+                        </li> 
+                        {% endfor %}
+                    </ul>
                 </div>
             </section>
 
@@ -488,6 +520,41 @@
         </main>
 
         <!-- ================= MODALS ================= -->
+
+        <!-- Modal de conversation (messagerie) -->
+        <div id="message-modal" class="hidden fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+            <div class="bg-white rounded-xl shadow-2xl w-full max-w-2xl transform transition-all opacity-0 -translate-y-10">
+                <!-- En-tête de la modale -->
+                <div class="p-4 sm:p-5 border-b border-sky-100">
+                    <h3 id="message-modal-subject" class="text-lg font-semibold text-slate-800">Sujet du message</h3>
+                    <p class="text-sm text-slate-500">De : <span id="message-modal-sender"></span></p>
+                </div>
+                <!-- Corps de la modale (zone de conversation) -->
+                <div id="conversation-view" class="p-4 sm:p-6 max-h-[60vh] overflow-y-auto space-y-4">
+                    <!-- Les messages de la conversation seront injectés ici par JS -->
+                </div>
+                <!-- Pied de la modale (zone de réponse) -->
+                <div class="p-4 bg-slate-50/80 rounded-b-xl border-t border-sky-100">
+                    <form id="reply-form">
+                        <label for="reply-content" class="text-sm font-medium text-slate-700 mb-2 block">Votre réponse</label>
+                        <textarea id="reply-content" name="reply_content" rows="3" class="w-full border border-sky-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-400 bg-white" placeholder="Écrivez votre message ici..."></textarea>
+                        <div class="flex justify-between items-center mt-3">
+                            <p class="text-xs text-slate-400">
+                                La réponse sera envoyée à <span id="reply-recipient-email" class="font-medium"></span>.
+                            </p>
+                            <div class="flex gap-3">
+                                <button type="button" data-action="close-modal" class="bg-slate-200 hover:bg-slate-300 text-slate-700 font-semibold py-2 px-5 rounded-lg text-sm transition">Fermer</button>
+                                <button type="submit" class="bg-sky-600 hover:bg-sky-700 text-white font-semibold py-2 px-5 rounded-lg text-sm transition flex items-center">
+                                    <i class="fa-solid fa-paper-plane mr-2"></i>
+                                    Envoyer
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
 
         <!-- Modal de confirmation de mot de passe -->
         <div id="password-modal" class="hidden fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
@@ -602,7 +669,7 @@
         });
 
         // --- Gestion des Modals ---
-        const modals = document.querySelectorAll('#password-modal, #delete-modal');
+        const modals = document.querySelectorAll('#password-modal, #delete-modal, #message-modal');
         let eventIdToDelete = null;
         let passwordToDelete = null;
 
@@ -616,28 +683,30 @@
             setTimeout(() => modal.classList.add('hidden'), 300);
         };
 
-        document.querySelectorAll('[data-action="close-modal"]').forEach(btn => {
-            btn.addEventListener('click', () => closeModal(btn.closest('.fixed')));
-        });
-
-        // --- Logique de Suppression ---
+        // --- Logique de Suppression et fermeture des modales ---
         const passwordModal = document.getElementById('password-modal');
         const deleteModal = document.getElementById('delete-modal');
         const passwordForm = document.getElementById('password-form');
         const confirmDeleteBtn = document.getElementById('confirm-delete-btn');
 
-        // 1. Clic sur un bouton "Supprimer"
+        // On utilise la délégation d'événement sur `document.body` pour gérer les clics
+        // sur les éléments qui peuvent être ajoutés dynamiquement (comme le bouton fermer du formulaire de réponse).
         document.body.addEventListener('click', (e) => {
-            if (e.target.closest('[data-action="delete"]')) {
-                const button = e.target.closest('[data-action="delete"]');
-                eventIdToDelete = button.dataset.eventId;
+            const closeButton = e.target.closest('[data-action="close-modal"]');
+            if (closeButton) {
+                closeModal(closeButton.closest('.fixed'));
+            }
+
+            const deleteButton = e.target.closest('[data-action="delete"]');
+            if (deleteButton) {
+                eventIdToDelete = deleteButton.dataset.eventId;
                 passwordForm.reset();
                 openModal(passwordModal);
                 document.getElementById('password-input').focus();
             }
         });
 
-        // 2. Soumission du mot de passe
+        // Soumission du mot de passe
         passwordForm.addEventListener('submit', (e) => {
             e.preventDefault();
             passwordToDelete = document.getElementById('password-input').value;
@@ -647,7 +716,7 @@
             }
         });
 
-        // 3. Clic sur la confirmation finale
+        // Clic sur la confirmation finale
         confirmDeleteBtn.addEventListener('click', async () => {
             if (!eventIdToDelete || !passwordToDelete) return;
 
@@ -689,6 +758,119 @@
                 eventIdToDelete = null;
                 passwordToDelete = null;
             }
+        });
+
+        // --- Logique pour la modale des messages ---
+        const messageModal = document.getElementById('message-modal');
+        const messageItems = document.querySelectorAll('.message-item');
+
+        const openMessageModal = async (item) => {
+            const messageId = item.dataset.messageId;
+            const name = item.dataset.name;
+            const email = item.dataset.email;
+
+            // Marquer le message comme lu (visuellement et via API)
+            const markAsRead = async () => {
+                const unreadIndicator = item.querySelector('[title="Non lu"]');
+                if (unreadIndicator) {
+                    try {
+                        const response = await fetch(`/admin/message/${messageId}/read`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRFToken': window.csrfToken
+                            }
+                        });
+                        if (response.ok) {
+                            unreadIndicator.classList.replace('bg-sky-500', 'bg-transparent');
+                            unreadIndicator.title = 'Lu';
+                            item.querySelector('.font-semibold')?.classList.replace('font-semibold', 'font-medium');
+                            item.querySelector('.text-slate-800')?.classList.replace('text-slate-800', 'text-slate-600');
+                        }
+                    } catch (error) {
+                        console.error("Erreur lors du marquage du message comme lu:", error);
+                    }
+                }
+
+            };
+
+            // Charger la conversation
+            const loadConversation = async () => {
+                try {
+                    const response = await fetch(`/admin/message/${messageId}/conversation`);
+                    const data = await response.json();
+                    if (!data.success) throw new Error(data.message);
+
+                    const conversationView = document.getElementById('conversation-view');
+                    conversationView.innerHTML = ''; // Vider la vue
+
+                    const originalMessage = data.conversation[0];
+                    document.getElementById('message-modal-subject').textContent = originalMessage.subject;
+                    document.getElementById('message-modal-sender').textContent = `${originalMessage.name} (${originalMessage.email})`;
+                    document.getElementById('reply-recipient-email').textContent = originalMessage.email;
+
+                    data.conversation.forEach(msg => {
+                        const isAdmin = msg.sender_type === 'admin';
+                        const bubbleClass = isAdmin ? 'bg-sky-100 text-slate-800 self-end' : 'bg-slate-100 text-slate-700 self-start';
+                        const senderName = isAdmin ? 'Vous' : msg.name;
+                        const msgDate = new Date(msg.date).toLocaleString('fr-FR', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' });
+
+                        const messageEl = document.createElement('div');
+                        messageEl.className = `flex flex-col ${isAdmin ? 'items-end' : 'items-start'}`;
+                        messageEl.innerHTML = `
+                            <div class="max-w-lg w-auto rounded-xl px-4 py-3 ${bubbleClass}">
+                                <p class="whitespace-pre-wrap">${msg.message}</p>
+                            </div>
+                            <p class="text-xs text-slate-400 mt-1 px-1">${senderName}, ${msgDate}</p>
+                        `;
+                        conversationView.appendChild(messageEl);
+                    });
+                    // Scroller en bas
+                    conversationView.scrollTop = conversationView.scrollHeight;
+                } catch (error) {
+                    console.error("Erreur lors du chargement de la conversation:", error);
+                    document.getElementById('conversation-view').innerHTML = `<p class="text-red-500">Impossible de charger la conversation.</p>`;
+                }
+            };
+
+            await markAsRead();
+            await loadConversation();
+            openModal(messageModal);
+
+            // Gérer la soumission de la réponse
+            const replyForm = document.getElementById('reply-form');
+            const replyHandler = async (e) => {
+                e.preventDefault();
+                const replyContent = document.getElementById('reply-content').value;
+                if (!replyContent.trim()) return;
+
+                try {
+                    const response = await fetch(`/admin/message/${messageId}/reply`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json', 'X-CSRFToken': window.csrfToken },
+                        body: JSON.stringify({ reply_content: replyContent })
+                    });
+                    const result = await response.json();
+                    if (!result.success) throw new Error(result.message);
+
+                    // Recharger la conversation pour afficher la nouvelle réponse
+                    document.getElementById('reply-content').value = '';
+                    await loadConversation();
+                } catch (error) {
+                    alert(`Erreur lors de l'envoi de la réponse: ${error.message}`);
+                }
+            };
+            
+            // Remplacer l'ancien écouteur pour éviter les doublons
+            const newForm = replyForm.cloneNode(true);
+            replyForm.parentNode.replaceChild(newForm, replyForm);
+            newForm.addEventListener('submit', replyHandler);
+        };
+
+        messageItems.forEach(item => {
+            item.addEventListener('click', () => {
+                openMessageModal(item);
+            });
         });
     });
     </script>

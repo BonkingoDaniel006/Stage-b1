@@ -54,9 +54,10 @@ class User(UserMixin):
                 (username, self.email, self.password)
             )
             conn.commit()
-        finally:
             cursor.close()
             conn.close()
+        finally:
+            pass # La connexion est déjà gérée dans le bloc try
 
 
 @login_manager.user_loader
