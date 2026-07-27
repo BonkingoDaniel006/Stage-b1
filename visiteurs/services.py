@@ -54,7 +54,7 @@ def process_contact_form(name, email, subject, message):
     try:
         # 1. Enregistrer le message
         Message.create(name, email, subject, message)
-        current_app.logger.info(f"Nouveau message de {name} ({email}) enregistré en BDD.")
+        current_app.logger.info(f"Nouveau message enregistré en BDD.")
 
         # 2. Envoyer la notification aux administrateurs
         admins = User.get_all_admins()
@@ -80,7 +80,7 @@ def process_contact_form(name, email, subject, message):
 
         response = requests.post(url, json=payload, headers=headers)
         response.raise_for_status() # Lèvera une exception si le statut n'est pas 2xx
-        current_app.logger.info(f"Notification de nouveau message envoyée à {len(admins)} administrateur(s).")
+        current_app.logger.info(f"Notification de nouveau message envoyée aux administrateurs avec succès.")
         return True
 
     except Exception as e:

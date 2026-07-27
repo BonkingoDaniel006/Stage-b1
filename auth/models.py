@@ -59,6 +59,18 @@ class User(UserMixin):
         finally:
             pass # La connexion est déjà gérée dans le bloc try
 
+    @staticmethod
+    def get_all_admins():
+        """Récupère tous les administrateurs de la base de données."""
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute("SELECT * FROM users")
+        users_data = cursor.fetchall()
+        cursor.close()
+        conn.close()
+        return [User(id=user_data['id'], email=user_data['email'], password_hash=user_data['password'], username=user_data.get('username')) for user_data in users_data]
+    
+
 
 @login_manager.user_loader
 def load_user(user_id):

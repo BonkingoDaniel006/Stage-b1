@@ -248,3 +248,5 @@ class Message:
             "date": self.created_at.isoformat(),
             "sender_type": data.get('sender_type', 'visitor') # Assurer une valeur par défaut
         }
+
+
