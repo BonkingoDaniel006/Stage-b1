@@ -1,7 +1,7 @@
 from flask import render_template, abort, request, jsonify, redirect, url_for, flash, current_app
 from flask_login import login_required, current_user 
 from . import admin_bp
-from .models import Event
+from .models import Event, Message
 import os
 import uuid
 from werkzeug.utils import secure_filename
@@ -18,10 +18,11 @@ def allowed_file(filename):
 @login_required
 def dashboard():
     """Affiche le tableau de bord principal."""
-    # Récupère tous les événements depuis la base de données
+    # Récupère les données pour les différents onglets
     events = Event.get_all()
-    # Passe la liste des événements au template
-    return render_template('dashboard.html', events=events)
+    messages = Message.get_all()
+    # Passe les listes au template
+    return render_template('dashboard.html', events=events, messages=messages)
 
 @admin_bp.route('/event/<int:event_id>')
 @login_required
@@ -34,8 +35,9 @@ def view_event(event_id):
     
     # On récupère aussi la liste de tous les événements pour la table en arrière-plan
     all_events = Event.get_all()
+    all_messages = Message.get_all()
     
-    return render_template('dashboard.html', events=all_events, event_to_view=event_to_view)
+    return render_template('dashboard.html', events=all_events, messages=all_messages, event_to_view=event_to_view)
 
 def _save_image(file):
     """Sécurise et sauvegarde un fichier image, puis retourne son chemin relatif."""
@@ -87,7 +89,8 @@ def new_event():
         if not data.get('title') or not data.get('event_date'):
             flash('Le titre et la date sont obligatoires.', 'error')
             all_events = Event.get_all()
-            return render_template('dashboard.html', events=all_events, event_to_create=True, form_data=data)
+            all_messages = Message.get_all()
+            return render_template('dashboard.html', events=all_events, messages=all_messages, event_to_create=True, form_data=data)
 
         # 3. Insérer dans la base de données
         new_event_id = Event.create(data)
@@ -98,7 +101,8 @@ def new_event():
 
     # Si GET, on affiche le formulaire de création
     all_events = Event.get_all()
-    return render_template('dashboard.html', events=all_events, event_to_create=True, form_data={})
+    all_messages = Message.get_all()
+    return render_template('dashboard.html', events=all_events, messages=all_messages, event_to_create=True, form_data={})
 
 @admin_bp.route('/event/<int:event_id>/edit', methods=['GET', 'POST'])
 @login_required
@@ -151,7 +155,8 @@ def edit_event(event_id):
 
     # Si GET, on affiche le formulaire de modification
     all_events = Event.get_all()
-    return render_template('dashboard.html', events=all_events, event_to_edit=event_to_edit)
+    all_messages = Message.get_all()
+    return render_template('dashboard.html', events=all_events, messages=all_messages, event_to_edit=event_to_edit)
 
 
 @admin_bp.route('/event/<int:event_id>/delete', methods=['POST'])
@@ -186,3 +191,57 @@ def delete_event(event_id):
     event.delete()
     
     return jsonify({'success': True, 'message': 'Événement supprimé avec succès.'})
+
+@admin_bp.route('/message/<int:message_id>/read', methods=['POST'])
+@login_required
+def mark_message_as_read(message_id):
+    """Marque un message comme lu."""
+    message = next((m for m in Message.get_all() if m.id == message_id), None)
+    if not message:
+        return jsonify({'success': False, 'message': 'Message non trouvé.'}), 404
+    
+    if not message.is_read:
+        message.mark_as_read()
+        return jsonify({'success': True, 'message': 'Message marqué comme lu.'})
+    
+    return jsonify({'success': True, 'message': 'Message déjà lu.'})
+
+@admin_bp.route('/message/<int:message_id>/conversation', methods=['GET'])
+@login_required
+def get_conversation(message_id):
+    """Récupère tous les messages d'une conversation."""
+    conversation = Message.get_conversation(message_id)
+    if not conversation:
+        return jsonify({'success': False, 'message': 'Conversation non trouvée.'}), 404
+    
+    # Convertir les objets en dictionnaires pour la réponse JSON
+    return jsonify({
+        'success': True,
+        'conversation': [msg.to_dict() for msg in conversation]
+    })
+
+@admin_bp.route('/message/<int:message_id>/reply', methods=['POST'])
+@login_required
+def reply_to_message(message_id):
+    """Enregistre et envoie la réponse à un message."""
+    data = request.json
+    reply_content = data.get('reply_content')
+
+    if not reply_content:
+        return jsonify({'success': False, 'message': 'La réponse ne peut pas être vide.'}), 400
+
+    original_message = Message.get_by_id(message_id)
+    if not original_message:
+        return jsonify({'success': False, 'message': 'Message original non trouvé.'}), 404
+
+    # Importer ici pour éviter la dépendance circulaire
+    from visiteurs.services import send_admin_reply
+
+    # 1. Enregistrer la réponse en BDD
+    subject = f"Re: {original_message.subject}"
+    Message.reply(original_message.conversation_id, current_user, original_message.sender_email, subject, reply_content)
+
+    # 2. Envoyer la réponse par email au visiteur
+    send_admin_reply(original_message.sender_name, original_message.sender_email, subject, reply_content)
+
+    return jsonify({'success': True, 'message': 'Réponse envoyée avec succès.'})

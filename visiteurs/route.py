@@ -1,7 +1,6 @@
 from flask import Blueprint, render_template, redirect, url_for,flash, request, current_app
 from visiteurs.model import Event
 from visiteurs.model import Details_event
-from visiteurs.services import envoyer_email
 
 index_bp = Blueprint('index', __name__)
 
@@ -36,7 +35,10 @@ def contact():
         flash("Tous les champs sont requis.", "error")
         return redirect(url_for('index.index') + '#contact')
 
-    if envoyer_email(name, email, subject, message):
+    # Importer ici pour éviter les dépendances circulaires potentielles
+    from visiteurs.services import process_contact_form
+
+    if process_contact_form(name, email, subject, message):
         flash("Votre message a été envoyé avec succès.", "success")
     else:
         flash("Une erreur est survenue lors de l'envoi de votre message. Veuillez réessayer plus tard.", "error")
