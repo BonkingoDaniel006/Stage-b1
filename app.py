@@ -4,9 +4,7 @@ from ext import init_extensions
 import os
 
 def create_app(config_class=Config):
-    """
-    Application Factory: Crée et configure l'application Flask.
-    """
+    
     app = Flask(__name__)
     
     # 1. Charger la configuration
