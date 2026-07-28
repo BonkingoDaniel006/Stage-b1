@@ -4,23 +4,33 @@ from datetime import timedelta
 
 load_dotenv()
 
-class Config:
-    SECRET_KEY = os.environ.get('SECRET_KEY')
-    FLASK_DEBUG = os.environ.get('FLASK_DEBUG', 'False').lower() in ('true', '1', 't')
-    WTF_CSRF_ENABLED = True
+import os
+from datetime import timedelta
 
-    PERMANENT_SESSION_LIFETIME = timedelta(minutes=30) #deconnexion automatique après 30 minutes d'inactivité
+class Config:
+    # 1. Sécurité & Clé secrète (Génère une clé par défaut si absente du .env pour éviter le crash)
+    SECRET_KEY = os.environ.get('SECRET_KEY', 'votre_cle_secrete_par_defaut_a_changer')
+    FLASK_DEBUG = os.environ.get('FLASK_DEBUG', 'False').lower() in ('true', '1', 't')
     
+    # 2. Protection CSRF & Configuration des Cookies de Session (Crucial pour Render)
+    WTF_CSRF_ENABLED = True
+    SESSION_COOKIE_SECURE = True       # Oblige l'envoi des cookies uniquement via HTTPS
+    SESSION_COOKIE_HTTPONLY = True     # Empêche le JavaScript d'accéder au cookie de session
+    SESSION_COOKIE_SAMESITE = 'Lax'    # 'Lax' si front & back sont sur le même domaine, 'None' si front séparé
+    
+    PERMANENT_SESSION_LIFETIME = timedelta(minutes=30) # Déconnexion après 30 minutes
+    
+    # 3. Base de données
     DB_HOST = os.environ.get('DB_HOST')
     DB_USER = os.environ.get('DB_USER')
     DB_PASSWORD = os.environ.get('DB_PASSWORD')
     DB_NAME = os.environ.get('DB_NAME')
 
-    # Configuration de Redis pour le rate limiting
+    # 4. Redis pour le rate limiting
     REDIS_HOST = os.environ.get('REDIS_HOST', 'localhost')
     REDIS_PORT = int(os.environ.get('REDIS_PORT', 6379))
 
-    #configuariotn des mails
+    # 5. Configuration des Mails
     MAIL_SERVER = os.environ.get('MAIL_SERVER')
     MAIL_PORT = int(os.environ.get('MAIL_PORT', 465))
     MAIL_USE_SSL = os.environ.get('MAIL_USE_SSL', 'True').lower() in ('true', '1', 't')

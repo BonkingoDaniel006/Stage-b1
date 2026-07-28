@@ -47,9 +47,9 @@ L'architecture a été pensée pour être modulaire, évolutive et facile à mai
 La sécurité est un aspect central de ce projet, en particulier pour la partie administration.
 
 1.  **Authentification à Deux Facteurs (2FA / OTP) :**
-    *   La connexion administrateur ne se fait pas seulement avec un mot de passe. Après une première validation réussie, un **code à usage unique (OTP)** est envoyé par email (via Brevo).
-    *   Ce code a une durée de vie limitée (20 minutes) et un nombre de tentatives restreint (3 essais) pour être validé.
-    *   *Fichiers concernés : `auth/routes.py`, `auth/services.py`.*
+    *   Le système d'authentification à deux facteurs (OTP par email) est implémenté mais **actuellement désactivé** sur la route de connexion (`/connexion`). La connexion se fait directement avec email et mot de passe.
+    *   La logique pour envoyer et vérifier les codes OTP est présente et peut être réactivée si nécessaire.
+    *   *Fichiers concernés : `auth/routes.py` (route `connexion`), `auth/services.py` (fonctions `process_login`, `_envoyer_otp_brevo`).*
 
 2.  **Protection contre les Attaques par Force Brute :**
     *   Le système utilise **Redis** pour suivre les tentatives de connexion échouées par adresse email.
@@ -57,7 +57,7 @@ La sécurité est un aspect central de ce projet, en particulier pour la partie 
     *   *Fichiers concernés : `auth/services.py` (fonctions `check_login_lockout` et `handle_failed_login`).*
 
 3.  **Alertes de Sécurité :**
-    *   Lorsqu'un compte est verrouillé suite à trop de tentatives, un **email d'alerte est automatiquement envoyé** à l'administrateur principal du site.
+    *   Lorsqu'un compte est verrouillé suite à trop de tentatives, un **email d'alerte est automatiquement envoyé** à l'adresse email définie dans la variable d'environnement `ADMIN_EMAIL_ALERT`.
     *   *Fichier concerné : `auth/services.py` (fonction `_envoyer_email_alerte`).*
 
 4.  **Hachage Sécurisé des Mots de Passe :**
@@ -113,22 +113,19 @@ Une fois l'application lancée, voici comment l'utiliser.
 
 ### 5.1. Création du premier compte administrateur
 
-1.  Naviguez vers l'URL `/inscription` (ex: `http://127.0.0.1:5000/inscription`).
-2.  Remplissez le formulaire avec une adresse email valide et un mot de passe fort.
-3.  Une fois le compte créé, vous serez redirigé vers la page de connexion.
+La route publique `/inscription` est actuellement désactivée dans le code (`auth/routes.py`) pour des raisons de sécurité. Pour créer le premier administrateur (ou tout nouvel administrateur), il est recommandé d'utiliser une commande Flask dédiée.
 
-**Note de sécurité importante :** La route `/inscription` est ouverte par défaut. Pour un site en production, il est fortement recommandé de la désactiver ou de la protéger après la création du premier compte administrateur pour empêcher la création de comptes non autorisés.
+**Recommandation :** Implémentez une commande `flask create-admin <email> <password>` pour gérer la création des utilisateurs de manière sécurisée depuis le terminal du serveur.
 
 ### 5.2. Connexion au tableau de bord
 
 1.  Naviguez vers l'URL `/connexion`.
 2.  Entrez l'email et le mot de passe de votre compte administrateur.
-3.  Si les identifiants sont corrects, vous serez redirigé vers une page de vérification. Un **code à 6 chiffres (OTP)** vous sera envoyé par email.
-4.  Entrez ce code sur la page de vérification pour finaliser la connexion et accéder au tableau de bord.
+3.  Si les identifiants sont corrects, vous serez directement connecté et redirigé vers le tableau de bord.
 
 ### 5.3. Fonctionnalités du tableau de bord
 
-Le tableau de bord est une application monopage (SPA) organisée par onglets :
+Le tableau de bord est une application monopage (SPA-like) organisée par onglets :
 
 *   **Tableau de bord :** Affiche une vue d'ensemble et des statistiques clés sur le contenu du site.
 *   **Événements :** Permet de créer, lister, modifier et supprimer les événements de l'association.
@@ -155,6 +152,10 @@ DB_NAME=autisme_hdf_db
 # Configuration pour l'envoi d'e-mails via Brevo
 BREVO_API_KEY=votre_cle_api_brevo
 MAIL_USERNAME=adresse_email_expediteur@domaine.com
+
+# Email pour recevoir les alertes de sécurité (compte verrouillé, etc.)
+# Il est recommandé d'utiliser un email différent de celui de l'expéditeur.
+ADMIN_EMAIL_ALERT=votre_email_admin@domaine.com
 
 # Configuration de Redis
 REDIS_HOST=localhost
