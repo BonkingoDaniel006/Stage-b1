@@ -15,6 +15,16 @@ def evenements():
     events = Event.get_all_events()
     return render_template('evenements.html', events=events)
 
+@index_bp.route('/mentions-legales')
+def legal():
+    """Affiche la page des mentions légales."""
+    return render_template('legal.html')
+
+@index_bp.route('/politique-de-confidentialite')
+def privacy_policy():
+    """Affiche la page de politique de confidentialité."""
+    return render_template('privacy.html')
+
 @index_bp.route('/evenements/<int:event_id>')
 def evenement(event_id):
     details = Details_event.get_event_by_id(event_id)

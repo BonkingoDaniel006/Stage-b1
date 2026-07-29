@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Politique de Confidentialité - Autisme Hauts-de-France</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/footer.css') }}"> 
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        .legal-content { padding: 60px 0; }
+        .legal-content .wrap { max-width: 800px; }
+        .legal-content h1 { font-size: 2.5rem; margin-bottom: 30px; color: var(--navy-deep); }
+        .legal-content h2 { font-size: 1.8rem; margin-top: 40px; margin-bottom: 20px; color: var(--navy); border-bottom: 2px solid var(--line); padding-bottom: 10px; }
+        .legal-content h3 { font-size: 1.3rem; margin-top: 25px; margin-bottom: 15px; color: var(--navy-deep); font-family: 'Baloo 2'; }
+        .legal-content p, .legal-content li { color: #3a4f6b; }
+        .legal-content ul { list-style-type: disc; padding-left: 20px; }
+        .legal-content li { margin-bottom: 10px; }
+        .legal-content strong { color: var(--navy-deep); }
+    </style>
+</head>
+<body>
+
+<a href="#main" class="skip-link">Aller au contenu principal</a>
+
+<header>
+    <div class="nav wrap">
+        <a href="{{ url_for('index.index') }}" class="logo">
+            <img src="{{ url_for('static', filename='/uploads/logo.png') }}" alt="Logo Autisme Hauts-de-France">
+        </a>
+        <div class="nav-menu" id="nav-menu">
+            <nav aria-label="Navigation principale">
+                <ul>
+                    <li><a href="{{ url_for('index.index') }}#mission">Notre mission</a></li>
+                    <li><a href="{{ url_for('index.index') }}#actions">Nos actions</a></li>
+                    <li><a href="{{ url_for('index.index') }}#temoignages">Témoignages</a></li>
+                    <li><a href="{{ url_for('index.index') }}#ressources">Ressources</a></li>
+                    <li><a href="{{ url_for('index.index') }}#contact">Contact</a></li>
+                    <li><a href="{{ url_for('index.evenements') }}">Événements</a></li>
+                </ul>
+            </nav>
+            <a href="https://paypal.me/DanielBokingo" class="nav-cta" target="_blank" rel="noopener noreferrer"><i class="fa-solid fa-hand-holding-heart"></i> Faire un don</a>
+        </div>
+        <button class="nav-toggle" id="nav-toggle" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="nav-menu"><span class="hamburger"></span></button>
+    </div>
+</header>
+
+<main id="main" class="legal-content">
+    <div class="wrap">
+        <h1>Politique de Confidentialité</h1>
+        <p><strong>Dernière mise à jour :</strong> [DATE DE LA DERNIÈRE MISE À JOUR]</p>
+        <p>L'association, en tant que responsable de traitement, s'engage à ce que la collecte et le traitement de vos données, effectués à partir de ce site, soient conformes au Règlement Général sur la Protection des Données (RGPD) et à la loi Informatique et Libertés.</p>
+
+        <h2>Gestion et Protection des Données Personnelles (RGPD)</h2>
+        <h3>Finalités de la collecte des données</h3>
+        <p>Les données personnelles sont collectées pour des finalités déterminées, explicites et légitimes :</p>
+        <ul>
+            <li><strong>Formulaire de contact :</strong> Gérer et répondre aux demandes d'information, de contact ou d'accompagnement.</li>
+            <li><strong>Gestion des dons et réservations (via PayPal) :</strong> Traiter les informations relatives à la transaction pour la confirmation et la gestion.</li>
+            <li><strong>Création et gestion de compte administrateur :</strong> Gérer l'accès sécurisé au panneau d'administration.</li>
+            <li><strong>Sécurité du site :</strong> Protéger le site contre les accès non autorisés.</li>
+        </ul>
+
+        <h3>Destinataires des données</h3>
+        <p>Les données collectées sont destinées aux services internes de l'association et peuvent être transmises à nos prestataires techniques (sous-traitants) comme Brevo (emails) et Render (hébergement).</p>
+
+        <h3>Durée de conservation</h3>
+        <ul>
+            <li><strong>Données des formulaires de contact :</strong> 3 ans à compter du dernier contact.</li>
+            <li><strong>Données de connexion des administrateurs :</strong> Tant que le compte est actif.</li>
+            <li><strong>Données de journalisation (sécurité) :</strong> 12 mois maximum.</li>
+        </ul>
+
+        <h3>Vos droits sur vos données</h3>
+        <p>Conformément à la réglementation, vous disposez des droits d'accès, de rectification, d'effacement, de limitation du traitement, de portabilité et d'opposition. Pour exercer ces droits, vous pouvez contacter notre Délégué à la Protection des Données (DPO) :</p>
+        <ul>
+            <li><strong>Par e-mail :</strong> [ADRESSE E-MAIL DU DPO OU DU RESPONSABLE RGPD]</li>
+            <li><strong>Par courrier postal :</strong> [NOM DE L'ASSOCIATION], À l'attention du Délégué à la Protection des Données, [ADRESSE COMPLÈTE DU SIÈGE SOCIAL]</li>
+        </ul>
+        <p>Si vous estimez que vos droits ne sont pas respectés, vous pouvez adresser une réclamation à la CNIL.</p>
+
+        <h2>Cookies et Traceurs</h2>
+        <p>Ce site utilise des cookies pour assurer son bon fonctionnement et améliorer votre expérience.</p>
+        <ul>
+            <li><strong>Cookies techniques (essentiels) :</strong> `session` (gestion de la connexion administrateur) et `csrf_token` (sécurité des formulaires). Ces cookies ne nécessitent pas votre consentement.</li>
+            <li><strong>Services tiers :</strong> Google Fonts et les CDN (Tailwind, FontAwesome) peuvent collecter des données techniques comme votre adresse IP pour des raisons de performance.</li>
+        </ul>
+        <p>Le site n'utilise pas de cookies de mesure d'audience ou de cookies publicitaires.</p>
+    </div>
+</main>
+
+{% include '_footer.html' %}
+
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+
+</body>
+</html>
