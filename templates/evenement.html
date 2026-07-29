@@ -6,6 +6,7 @@
     <title>Détail de l'événement - Autisme Hauts-de-France</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/footer.css') }}"> 
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet">
@@ -87,43 +88,7 @@
   </section>
 </main>
 
-<footer>
-  <div class="wrap">
-    <div class="footer-grid">
-      <img src="{{ url_for('static', filename='/uploads/logo.png') }}" alt="Logo Autisme Hauts-de-France" class="logo">
-      <div class="footer-cols">
-        <div class="footer-col">
-          <h4>Association</h4>
-          <ul>
-            <li><a href="{{ url_for('index.index') }}#mission">Notre mission</a></li>
-            <li><a href="{{ url_for('index.index') }}#actions">Nos actions</a></li>
-            <li><a href="{{ url_for('index.index') }}#equipe">Équipe</a></li>
-            <li><a href="{{ url_for('index.index') }}#rapports">Rapports annuels</a></li>
-          </ul>
-        </div>
-        <div class="footer-col">
-          <h4>Ressources</h4>
-          <ul>
-            <li><a href="{{ url_for('index.index') }}#ressources">Ressources</a></li>
-            <li><a href="{{ url_for('index.index') }}#temoignages">Témoignages</a></li>
-          </ul>
-        </div>
-        <div class="footer-col">
-          <h4>Nous suivre</h4>
-          <ul>
-            <li><a href="#">Instagram</a></li>
-            <li><a href="#">LinkedIn</a></li>
-            <li><a href="#">Newsletter</a></li>
-          </ul>
-        </div>
-      </div>
-    </div>
-    <div class="footer-bottom">
-      <span>© 2026 Autisme Hauts-de-France — Association loi 1901</span>
-      <span>Mentions légales · Accessibilité · Confidentialité</span>
-    </div>
-  </div>
-</footer>
+{% include '_footer.html' %}
 <script src="{{ url_for('static', filename='js/main.js') }}"></script>
 </body>
 </html>

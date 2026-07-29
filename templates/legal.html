@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mentions Légales & Politique de Confidentialité - Autisme Hauts-de-France</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/footer.css') }}"> 
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        .legal-content { padding: 60px 0; }
+        .legal-content .wrap { max-width: 800px; }
+        .legal-content h1 { font-size: 2.5rem; margin-bottom: 30px; color: var(--navy-deep); }
+        .legal-content h2 { font-size: 1.8rem; margin-top: 40px; margin-bottom: 20px; color: var(--navy); border-bottom: 2px solid var(--line); padding-bottom: 10px; }
+        .legal-content h3 { font-size: 1.3rem; margin-top: 25px; margin-bottom: 15px; color: var(--navy-deep); font-family: 'Baloo 2'; }
+        .legal-content p, .legal-content li { color: #3a4f6b; }
+        .legal-content ul { list-style-type: disc; padding-left: 20px; }
+        .legal-content li { margin-bottom: 10px; }
+        .legal-content strong { color: var(--navy-deep); }
+    </style>
+</head>
+<body>
+
+<a href="#main" class="skip-link">Aller au contenu principal</a>
+
+<header>
+    <div class="nav wrap">
+        <a href="{{ url_for('index.index') }}" class="logo">
+            <img src="{{ url_for('static', filename='/uploads/logo.png') }}" alt="Logo Autisme Hauts-de-France">
+        </a>
+        <div class="nav-menu" id="nav-menu">
+            <nav aria-label="Navigation principale">
+                <ul>
+                    <li><a href="{{ url_for('index.index') }}#mission">Notre mission</a></li>
+                    <li><a href="{{ url_for('index.index') }}#actions">Nos actions</a></li>
+                    <li><a href="{{ url_for('index.index') }}#temoignages">Témoignages</a></li>
+                    <li><a href="{{ url_for('index.index') }}#ressources">Ressources</a></li>
+                    <li><a href="{{ url_for('index.index') }}#contact">Contact</a></li>
+                    <li><a href="{{ url_for('index.evenements') }}">Événements</a></li>
+                </ul>
+            </nav>
+            <a href="https://paypal.me/DanielBokingo" class="nav-cta" target="_blank" rel="noopener noreferrer"><i class="fa-solid fa-hand-holding-heart"></i> Faire un don</a>
+        </div>
+        <button class="nav-toggle" id="nav-toggle" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="nav-menu"><span class="hamburger"></span></button>
+    </div>
+</header>
+
+<main id="main" class="legal-content">
+    <div class="wrap">
+        <h1>Mentions Légales & Politique de Confidentialité</h1>
+        <p><strong>Dernière mise à jour :</strong> [DATE DE LA DERNIÈRE MISE À JOUR]</p>
+        <p>Conformément aux dispositions des articles 6-III et 19 de la Loi n° 2004-575 du 21 juin 2004 pour la Confiance dans l'économie numérique, dite L.C.E.N., il est porté à la connaissance des utilisateurs et visiteurs du site `[URL DE VOTRE SITE WEB]` les présentes mentions légales.</p>
+
+        <h2>1. Éditeur du site</h2>
+        <p>Le site `[URL DE VOTRE SITE WEB]` est édité par :</p>
+        <p><strong>[NOM DE L'ASSOCIATION OU DE L'ENTREPRISE]</strong></p>
+        <ul>
+            <li><strong>Statut juridique :</strong> [Ex: Association loi 1901, SAS, SARL, etc.]</li>
+            <li><strong>Adresse du siège social :</strong> [ADRESSE COMPLÈTE DU SIÈGE SOCIAL]</li>
+            <li><strong>Numéro SIRET :</strong> [VOTRE NUMÉRO DE SIRET]</li>
+            <li><strong>Numéro RNA (pour les associations) :</strong> [VOTRE NUMÉRO RNA]</li>
+            <li><strong>Adresse e-mail :</strong> [VOTRE ADRESSE E-MAIL DE CONTACT OFFICIEL]</li>
+            <li><strong>Numéro de téléphone :</strong> [VOTRE NUMÉRO DE TÉLÉPHONE]</li>
+        </ul>
+        <p><strong>Directeur de la publication :</strong> [PRÉNOM NOM DU DIRECTEUR/PRÉSIDENT], en sa qualité de [FONCTION, ex: Président(e) de l'association].</p>
+
+        <h2>2. Hébergeur du site</h2>
+        <p>Le site est hébergé par la société <strong>Render</strong>.</p>
+        <ul>
+            <li><strong>Raison sociale :</strong> Render (Render.com)</li>
+            <li><strong>Siège social :</strong> 525 Brannan St, San Francisco, CA 94107, États-Unis.</li>
+            <li><strong>Contact :</strong> via leur site web `https://render.com/contact`.</li>
+        </ul>
+        <p>Les données du site sont hébergées dans le centre de données de Francfort (Allemagne), au sein de l'Union Européenne, afin de se conformer au RGPD.</p>
+
+        <h2>3. Propriété Intellectuelle</h2>
+        <p>L'ensemble de ce site, incluant les textes, logos, images, photographies, et autres éléments graphiques, relève de la législation française et internationale sur le droit d'auteur et la propriété intellectuelle.</p>
+        <ul>
+            <li><strong>Marque et Logo :</strong> Le logo et le nom "Autisme Hauts-de-France" sont la propriété de l'association. Toute reproduction, même partielle, sans autorisation préalable est interdite.</li>
+            <li><strong>Contenus :</strong> Tous les textes, articles et guides présents sur le site sont la propriété intellectuelle de l'association. Ils ne peuvent être reproduits sans l'accord explicite de l'éditeur.</li>
+            <li><strong>Crédits visuels :</strong> Les images et illustrations utilisées sur le site sont soit la propriété de l'association, soit issues de banques d'images libres de droits, soit utilisées avec l'autorisation de leurs auteurs. [SI VOUS AVEZ DES CRÉDITS SPÉCIFIQUES, LISTEZ-LES ICI].</li>
+        </ul>
+        <p>Toute reproduction, représentation, modification, publication, adaptation de tout ou partie des éléments du site, quel que soit le moyen ou le procédé utilisé, est interdite, sauf autorisation écrite préalable de l'éditeur.</p>
+
+        <h2>4. Gestion et Protection des Données Personnelles (RGPD)</h2>
+        <p>L'association, en tant que responsable de traitement, s'engage à ce que la collecte et le traitement de vos données, effectués à partir de ce site, soient conformes au Règlement Général sur la Protection des Données (RGPD) et à la loi Informatique et Libertés.</p>
+        <h3>4.1. Finalités de la collecte des données</h3>
+        <p>Les données personnelles sont collectées pour des finalités déterminées, explicites et légitimes :</p>
+        <ul>
+            <li><strong>Formulaire de contact :</strong> Gérer et répondre aux demandes d'information, de contact ou d'accompagnement. Les données (nom, email, sujet, message) sont enregistrées dans notre base de données pour assurer le suivi de la conversation.</li>
+            <li><strong>Gestion des dons et réservations (via PayPal) :</strong> Le processus de paiement est géré par le service tiers PayPal. Nous ne collectons ni ne stockons vos informations bancaires. Nous pouvons être amenés à traiter les informations relatives à la transaction (nom, email, montant) pour la confirmation de réservation ou l'émission de reçus.</li>
+            <li><strong>Création et gestion de compte administrateur :</strong> Gérer l'accès sécurisé au panneau d'administration du site.</li>
+            <li><strong>Sécurité du site :</strong> Protéger le site contre les accès non autorisés et les attaques par force brute (notamment par le suivi des tentatives de connexion via l'adresse e-mail).</li>
+        </ul>
+        <h3>4.2. Destinataires des données</h3>
+        <p>Les données collectées sont destinées aux services internes de l'association (membres du bureau, administrateurs) habilités à répondre à vos demandes. Elles peuvent également être transmises à des prestataires techniques (sous-traitants) pour les besoins des finalités mentionnées ci-dessus :</p>
+        <ul>
+            <li><strong>Brevo (ex-Sendinblue) :</strong> Pour l'envoi des e-mails transactionnels.</li>
+            <li><strong>Render :</strong> Notre hébergeur, qui stocke la base de données du site.</li>
+        </ul>
+        <h3>4.3. Durée de conservation</h3>
+        <ul>
+            <li><strong>Données des formulaires de contact :</strong> Conservées pendant une durée de 3 ans à compter du dernier contact.</li>
+            <li><strong>Données de connexion des administrateurs :</strong> Conservées tant que le compte est actif.</li>
+            <li><strong>Données de journalisation (sécurité) :</strong> Conservées pour une durée maximale de 12 mois.</li>
+        </ul>
+        <h3>4.4. Vos droits sur vos données</h3>
+        <p>Conformément à la réglementation, vous disposez des droits d'accès, de rectification, d'effacement, de limitation du traitement, de portabilité et d'opposition. Pour exercer ces droits, vous pouvez contacter notre Délégué à la Protection des Données (DPO) :</p>
+        <ul>
+            <li><strong>Par e-mail :</strong> [ADRESSE E-MAIL DU DPO OU DU RESPONSABLE RGPD]</li>
+            <li><strong>Par courrier postal :</strong> [NOM DE L'ASSOCIATION], À l'attention du Délégué à la Protection des Données, [ADRESSE COMPLÈTE DU SIÈGE SOCIAL]</li>
+        </ul>
+        <p>Si vous estimez que vos droits ne sont pas respectés, vous pouvez adresser une réclamation à la CNIL.</p>
+
+        <h2>5. Cookies et Traceurs</h2>
+        <p>Ce site utilise des cookies pour assurer son bon fonctionnement et améliorer votre expérience.</p>
+        <ul>
+            <li><strong>Cookies techniques (essentiels) :</strong> `session` (gestion de la connexion administrateur) et `csrf_token` (sécurité des formulaires). Ces cookies ne nécessitent pas votre consentement.</li>
+            <li><strong>Services tiers :</strong> Google Fonts et les CDN (Tailwind, FontAwesome) peuvent collecter des données techniques comme votre adresse IP pour des raisons de performance.</li>
+        </ul>
+        <p>Le site n'utilise pas de cookies de mesure d'audience ou de cookies publicitaires.</p>
+
+        <h2>6. Limitation de responsabilité</h2>
+        <p>L'éditeur du site s'efforce d'assurer l'exactitude des informations diffusées mais ne peut garantir leur complétude. L'utilisateur reconnaît utiliser ces informations sous sa responsabilité exclusive. Le site peut contenir des liens vers des sites externes dont l'association n'est pas responsable.</p>
+
+        <h2>7. Droit applicable</h2>
+        <p>Tout litige en relation avec l’utilisation du site est soumis au droit français. Il est fait attribution exclusive de juridiction aux tribunaux compétents de [VILLE DU TRIBUNAL COMPÉTENT, ex: Lille].</p>
+    </div>
+</main>
+
+{% include '_footer.html' %}
+
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+
+</body>
+</html>
