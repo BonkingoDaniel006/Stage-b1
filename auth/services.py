@@ -24,9 +24,9 @@ def _envoyer_otp_brevo(email_destinataire, prenom, code_otp):
 
     greeting = f"Bonjour {prenom}," if prenom else "Bonjour,"
     payload = {
-        "sender": {"name": "Elikya", "email": os.getenv("MAIL_USERNAME")},
+        "sender": {"name": "Autisme-hf Connect", "email": os.getenv("MAIL_USERNAME")},
         "to": [{"email": email_destinataire}],
-        "subject": "Code de vérification Elikya",
+        "subject": "Code de vérification Autisme-hf",
         "htmlContent": f"""
             <h3>{greeting}</h3>
             <p>Votre code de vérification unique est : <strong>{code_otp}</strong></p>
@@ -62,7 +62,7 @@ def _envoyer_email_alerte(sujet, contenu_html):
         return
 
     payload = {
-        "sender": {"name": "Alerte Sécurité Elikya", "email": os.getenv("MAIL_USERNAME")},
+        "sender": {"name": "Alerte Sécurité Autisme-hf", "email": os.getenv("MAIL_USERNAME")},
         "to": [{"email": admin_email}],
         "subject": sujet,
         "htmlContent": contenu_html
