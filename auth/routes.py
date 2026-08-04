@@ -6,7 +6,7 @@ from .forms import LoginForm, RegistrationForm
 from .models import User
 from .services import process_login, check_login_lockout, handle_failed_login
 
-# route d'incription. je la debloque uniquement quand on a un nouvel emplyé pour l'inscrire
+"""# route d'incription. je la debloque uniquement quand on a un nouvel emplyé pour l'inscrire
 @auth_bp.route('/inscription', methods=['GET', 'POST'])
 def inscription():
     if current_user.is_authenticated:
@@ -21,7 +21,7 @@ def inscription():
         return redirect(url_for('auth.connexion'))
 
     # Pour réutiliser le template existant sans le modifier
-    return render_template('inscription.html', form=form)
+    return render_template('inscription.html', form=form)"""
 
 @auth_bp.route('/connexion', methods=['GET', 'POST'])
 def connexion():
