@@ -113,6 +113,24 @@ def handle_failed_login(email):
     else:
         flash('Connexion échouée. Veuillez vérifier votre e-mail et mot de passe.', 'danger')
 
+def start_otp_verification(user):
+    """
+    Génère un code OTP, l'envoie par e-mail et initialise la session pour la vérification.
+    """
+    if not user:
+        return False
+
+    code_otp = _generer_code_verification()
+    prenom = user.username or user.email.split('@')[0]
+
+    if _envoyer_otp_brevo(user.email, prenom, code_otp):
+        session['otp_login'] = {'code': code_otp, 'expires_at': time.time() + 1200, 'attempts': 0} # 20 minutes
+        session['user_id_to_verify'] = user.id
+        current_app.logger.info(f"Démarrage de la vérification OTP pour l'utilisateur {user.id}")
+        return True
+    
+    return False
+
 def process_registration(form_data):
     if User.find_by_email(form_data['email']):
         flash("Cet email est déjà utilisé. Veuillez en choisir un autre.", "error")

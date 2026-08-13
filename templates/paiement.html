@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sélection du Paiement — Autisme Hauts-de-France</title>
+
+    <!-- Tailwind CSS pour la structure et le style -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome pour les icônes -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <style>
+        /* Style pour l'état sélectionné des cartes de paiement */
+        input[type="radio"]:checked + label {
+            border-color: #0ea5e9; /* sky-500 */
+            box-shadow: 0 0 0 2px rgba(14, 165, 233, 0.2);
+        }
+        /* Transition douce pour les éléments */
+        .transition-all {
+            transition-property: all;
+            transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+            transition-duration: 300ms;
+        }
+        /* Animation pour le formulaire de carte bancaire */
+        .form-collapsible {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease-in-out;
+        }
+        .form-collapsible.open {
+            max-height: 500px; /* Hauteur suffisante pour le formulaire */
+        }
+    </style>
+    <script>
+      // Configuration de Tailwind pour correspondre à la charte graphique
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ['Atkinson Hyperlegible', 'sans-serif'],
+              baloo: ['Baloo 2', 'cursive']
+            },
+            colors: {
+              sky: {
+                50: '#f0f9ff', 100: '#e0f2fe', 200: '#bae6fd', 300: '#7dd3fc', 400: '#38bdf8',
+                500: '#0ea5e9', 600: '#0284c7', 700: '#0369a1', 800: '#075985', 900: '#0c4a6e'
+              }
+            },
+            boxShadow: {
+              'card': '0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px -1px rgba(0, 0, 0, 0.05)'
+            }
+          }
+        }
+      }
+    </script>
+</head>
+
+<body class="bg-sky-50 text-slate-700 min-h-screen font-sans">
+
+    <!-- ================= HEADER (similaire au dashboard) ================= -->
+    <header class="h-16 bg-white border-b border-sky-100 flex items-center justify-center px-4 lg:px-8 sticky top-0 z-30">
+        <div class="flex items-center gap-3">
+            <img src="/static/uploads/logo.png" alt="Logo Autisme HDF" class="h-8">
+            <div class="leading-tight">
+                <p class="font-bold text-slate-800 text-sm tracking-wide">AUTISME HDF</p>
+                <p class="text-[11px] text-sky-500">Espace de Paiement Sécurisé</p>
+            </div>
+        </div>
+    </header>
+
+    <!-- ================= CONTENU PRINCIPAL ================= -->
+    <main class="flex-1 p-4 sm:p-6 lg:p-8">
+        <div class="max-w-4xl mx-auto">
+            <h1 class="text-2xl sm:text-3xl font-bold text-slate-800 mb-2">Finalisez votre commande</h1>
+            <p class="text-slate-500 mb-8">Veuillez sélectionner votre méthode de paiement préférée.</p>
+
+            <div class="flex flex-col lg:flex-row gap-8">
+
+                <!-- Section principale : Méthodes de paiement -->
+                <div class="flex-1">
+                    <form id="payment-form">
+                        <div class="space-y-4">
+                            <!-- Option 1: Carte Bancaire -->
+                            <div>
+                                <input type="radio" name="payment_method" id="card" value="card" class="hidden" checked>
+                                <label for="card" class="payment-option-label flex items-center p-4 border-2 border-sky-200 rounded-lg cursor-pointer hover:border-sky-400 transition-all">
+                                    <div class="flex-1">
+                                        <h3 class="font-semibold text-slate-800">Carte Bancaire</h3>
+                                        <p class="text-sm text-slate-500">Payez avec votre carte Visa, Mastercard, CB.</p>
+                                    </div>
+                                    <div class="flex items-center gap-2 text-2xl text-slate-400">
+                                        <i class="fa-brands fa-cc-visa"></i>
+                                        <i class="fa-brands fa-cc-mastercard"></i>
+                                    </div>
+                                </label>
+                                <!-- Sous-formulaire pour la carte bancaire -->
+                                <div id="card-details" class="form-collapsible open bg-white/50 p-5 mt-2 rounded-lg border border-sky-100 space-y-4">
+                                    <div class="form-group">
+                                        <label for="card_name" class="block text-sm font-medium text-slate-700 mb-1">Nom sur la carte</label>
+                                        <input type="text" id="card_name" class="w-full border border-sky-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-400 bg-white" placeholder="Jean Dupont">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="card_number" class="block text-sm font-medium text-slate-700 mb-1">Numéro de carte</label>
+                                        <input type="text" id="card_number" class="w-full border border-sky-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-400 bg-white" placeholder="•••• •••• •••• ••••">
+                                    </div>
+                                    <div class="grid grid-cols-2 gap-4">
+                                        <div>
+                                            <label for="card_expiry" class="block text-sm font-medium text-slate-700 mb-1">Expiration (MM/AA)</label>
+                                            <input type="text" id="card_expiry" class="w-full border border-sky-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-400 bg-white" placeholder="MM/AA">
+                                        </div>
+                                        <div>
+                                            <label for="card_cvc" class="block text-sm font-medium text-slate-700 mb-1">CVC</label>
+                                            <input type="text" id="card_cvc" class="w-full border border-sky-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-400 bg-white" placeholder="•••">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Option 2: PayPal -->
+                            <div>
+                                <input type="radio" name="payment_method" id="paypal" value="paypal" class="hidden">
+                                <label for="paypal" class="payment-option-label flex items-center p-4 border-2 border-sky-200 rounded-lg cursor-pointer hover:border-sky-400 transition-all">
+                                    <div class="flex-1">
+                                        <h3 class="font-semibold text-slate-800">PayPal</h3>
+                                        <p class="text-sm text-slate-500">Paiement rapide et sécurisé via votre compte PayPal.</p>
+                                    </div>
+                                    <i class="fa-brands fa-paypal text-3xl text-blue-800"></i>
+                                </label>
+                            </div>
+
+                            <!-- Option 3: Apple/Google Pay -->
+                            <div>
+                                <input type="radio" name="payment_method" id="mobilepay" value="mobilepay" class="hidden">
+                                <label for="mobilepay" class="payment-option-label flex items-center p-4 border-2 border-sky-200 rounded-lg cursor-pointer hover:border-sky-400 transition-all">
+                                    <div class="flex-1">
+                                        <h3 class="font-semibold text-slate-800">Paiement mobile</h3>
+                                        <p class="text-sm text-slate-500">Utilisez Apple Pay ou Google Pay.</p>
+                                    </div>
+                                    <div class="flex items-center gap-3 text-3xl text-slate-600">
+                                        <i class="fa-brands fa-apple-pay"></i>
+                                        <i class="fa-brands fa-google-pay"></i>
+                                    </div>
+                                </label>
+                            </div>
+
+                            
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Section latérale : Récapitulatif de commande -->
+                <aside class="w-full lg:w-80">
+                    <div class="bg-white rounded-xl p-6 shadow-card border border-sky-100 sticky top-24">
+                        <h2 class="text-lg font-semibold text-slate-800 mb-4">Récapitulatif</h2>
+                        <div class="space-y-3 text-sm">
+                            <div class="flex justify-between">
+                                <span class="text-slate-500">Adhésion annuelle</span>
+                                <span class="font-medium text-slate-700">30,00 €</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-slate-500">Frais de service</span>
+                                <span class="font-medium text-slate-700">1,50 €</span>
+                            </div>
+                            <div class="border-t border-sky-100 my-3"></div>
+                            <div class="flex justify-between font-bold text-base">
+                                <span class="text-slate-800">Total à payer</span>
+                                <span class="text-sky-600">31,50 €</span>
+                            </div>
+                        </div>
+                        <button type="submit" form="payment-form" class="mt-6 w-full bg-sky-600 hover:bg-sky-700 text-white font-semibold py-3 px-5 rounded-lg text-base transition-all">
+                            <i class="fa-solid fa-lock mr-2"></i>
+                            Payer 31,50 €
+                        </button>
+                        <p class="text-xs text-slate-400 text-center mt-4">
+                            Vos informations sont protégées et sécurisées.
+                        </p>
+                    </div>
+                </aside>
+
+            </div>
+        </div>
+    </main>
+
+    <!-- ================= FOOTER ================= -->
+    <footer class="text-center text-xs text-slate-400 py-6">
+        Autisme Hauts-de-France &copy; 2024 — Paiement Sécurisé
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const paymentMethodRadios = document.querySelectorAll('input[name="payment_method"]');
+            const cardDetailsSection = document.getElementById('card-details');
+
+            paymentMethodRadios.forEach(radio => {
+                radio.addEventListener('change', (event) => {
+                    if (event.target.value === 'card') {
+                        cardDetailsSection.classList.add('open');
+                    } else {
+                        cardDetailsSection.classList.remove('open');
+                    }
+                });
+            });
+        });
+    </script>
+
+</body>
+</html>
+
