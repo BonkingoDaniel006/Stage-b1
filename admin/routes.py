@@ -4,6 +4,7 @@ from . import admin_bp
 from .models import Event, Message
 import os
 import uuid
+import stripe
 from werkzeug.utils import secure_filename
 
 # Configuration pour l'upload de fichiers

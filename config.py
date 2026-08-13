@@ -37,3 +37,7 @@ class Config:
     MAIL_USE_TLS = os.environ.get('MAIL_USE_TLS', 'False').lower() in ('true', '1', 't')
     MAIL_USERNAME = os.environ.get('MAIL_USERNAME')
     MAIL_DEFAULT_SENDER = os.environ.get('MAIL_DEFAULT_SENDER', MAIL_USERNAME)
+
+    # 6. Clés API Stripe
+    STRIPE_PUBLIC_KEY = os.environ.get('public_stripe')
+    STRIPE_SECRET_KEY = os.environ.get('secret_stripe')

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Faire un don — Autisme Hauts-de-France</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/footer.css') }}"> 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        .payment-section {
+            padding: 80px 0;
+            background-color: #f0f9ff; /* bg-sky-50 */
+        }
+        .payment-card {
+            max-width: 500px;
+            margin: auto;
+            background: white;
+            border-radius: 12px;
+            padding: 32px;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            border: 1px solid #e0f2fe; /* border-sky-100 */
+        }
+        .flash-messages {
+            max-width: 500px;
+            margin: 0 auto 20px auto;
+        }
+        .flash-message {
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        .flash-success { background-color: #d1fae5; border-left: 4px solid #10b981; color: #065f46; }
+        .flash-info { background-color: #e0f2fe; border-left: 4px solid #3b82f6; color: #1e40af; }
+        .flash-error { background-color: #fee2e2; border-left: 4px solid #ef4444; color: #991b1b; }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="nav wrap">
+        <a href="{{ url_for('index.index') }}" class="logo">
+            <img src="{{ url_for('static', filename='/uploads/logo.png') }}" alt="Logo Autisme Hauts-de-France">
+        </a>
+        <nav aria-label="Navigation principale">
+            <ul>
+                <li><a href="{{ url_for('index.index') }}">Retour à l'accueil</a></li>
+            </ul>
+        </nav>
+    </div>
+</header>
+
+<main id="main">
+    <section class="payment-section">
+        <div class="wrap">
+            <div class="flash-messages">
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% for category, message in messages %}
+                        <div class="flash-message flash-{{ category }}">{{ message }}</div>
+                    {% endfor %}
+                {% endwith %}
+            </div>
+            <div class="payment-card">
+                <h1 style="font-size: 1.8rem; font-weight: bold; color: #075985; margin-bottom: 8px;">Soutenez nos actions</h1>
+                <p style="color: #475569; margin-bottom: 24px;">Votre don nous aide à financer nos permanences gratuites et nos ateliers.</p>
+                
+                <form action="{{ url_for('index.create_checkout_session') }}" method="POST">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                    <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center;">Faire un don de 20,00 €</button>
+                </form>
+                <p style="font-size: 0.75rem; text-align: center; color: #64748b; margin-top: 16px;">Paiement sécurisé par <i class="fa-brands fa-stripe"></i> Stripe. Vous serez redirigé.</p>
+            </div>
+        </div>
+    </section>
+</main>
+
+{% include '_footer.html' %}
+
+</body>
+</html>
