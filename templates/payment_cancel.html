@@ -40,7 +40,11 @@
             <div class="icon-wrapper icon-cancel"><i class="fa-solid fa-xmark text-3xl"></i></div>
             <h1 style="font-size: 1.8rem; font-weight: bold; color: #075985; margin-bottom: 8px;">Le paiement a été annulé.</h1>
             <p style="color: #475569; margin-bottom: 24px;">Votre transaction n'a pas été finalisée. Vous pouvez réessayer à tout moment.</p>
+            {% if event %}
+            <a href="{{ url_for('index.reserver_evenement', event_id=event.id) }}" class="btn btn-secondary">Réessayer la réservation</a>
+            {% else %}
             <a href="{{ url_for('index.don') }}" class="btn btn-secondary">Réessayer le paiement</a>
+            {% endif %}
         </div>
     </section>
 </main>

@@ -37,10 +37,17 @@
 <main id="main">
     <section class="status-section">
         <div class="status-card">
-            <div class="icon-wrapper icon-success"><i class="fa-solid fa-check text-3xl"></i></div>
-            <h1 style="font-size: 1.8rem; font-weight: bold; color: #075985; margin-bottom: 8px;">Paiement réussi !</h1>
-            <p style="color: #475569; margin-bottom: 24px;">Merci beaucoup pour votre don. Votre soutien est précieux pour notre association.</p>
+            {% if event %}
+            <div class="icon-wrapper icon-success"><i class="fa-solid fa-calendar-check text-3xl"></i></div>
+            <h1 style="font-size: 1.8rem; font-weight: bold; color: #075985; margin-bottom: 8px;">Réservation confirmée !</h1>
+            <p style="color: #475569; margin-bottom: 24px;">Votre place pour l'événement <strong>"{{ event.title }}"</strong> a bien été réservée. Vous recevrez bientôt un e-mail de confirmation.</p>
+            <a href="{{ url_for('index.evenement', event_id=event.id) }}" class="btn btn-primary">Retourner à l'événement</a>
+            {% else %}
+            <div class="icon-wrapper icon-success"><i class="fa-solid fa-hand-holding-heart text-3xl"></i></div>
+            <h1 style="font-size: 1.8rem; font-weight: bold; color: #075985; margin-bottom: 8px;">Merci pour votre don !</h1>
+            <p style="color: #475569; margin-bottom: 24px;">Votre soutien est précieux pour notre association et nous aide à poursuivre nos actions.</p>
             <a href="{{ url_for('index.index') }}" class="btn btn-primary">Retourner à l'accueil</a>
+            {% endif %}
         </div>
     </section>
 </main>

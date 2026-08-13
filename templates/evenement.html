@@ -79,7 +79,7 @@
             <div class="info-line"><i class="fa-solid fa-map-marker-alt"></i> <span>{{ details.location }}</span></div>
             <div class="info-line"><i class="fa-solid fa-tag"></i> <span>Prix : <strong>{{ details.price_info if details.price_info else 'Gratuit' }}</strong></span></div>
             <div class="info-line"><i class="fa-solid fa-users"></i> <span>{{ details.max_attendees }} places disponibles</span></div>
-            <a href="{{ url_for('index.don') }}" class="btn btn-primary" style="width: 100%; justify-content: center; margin-top: 20px;">Faire une réservation</a>
+            <a href="{{ url_for('index.reserver_evenement', event_id=details.id) }}" class="btn btn-primary" style="width: 100%; justify-content: center; margin-top: 20px;">Faire une réservation</a>
           </div>
         </aside>
 

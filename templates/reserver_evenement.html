@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Faire un don — Autisme Hauts-de-France</title>
+    <title>Réserver {{ event.title }} — Autisme Hauts-de-France</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/footer.css') }}"> 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
@@ -45,7 +45,7 @@
         </a>
         <nav aria-label="Navigation principale">
             <ul>
-                <li><a href="{{ url_for('index.index') }}">Retour à l'accueil</a></li>
+                <li><a href="{{ url_for('index.evenement', event_id=event.id) }}">Retour à l'événement</a></li>
             </ul>
         </nav>
     </div>
@@ -62,12 +62,12 @@
                 {% endwith %}
             </div>
             <div class="payment-card">
-                <h1 style="font-size: 1.8rem; font-weight: bold; color: #075985; margin-bottom: 8px;">Soutenez nos actions</h1>
-                <p style="color: #475569; margin-bottom: 24px;">Votre don nous aide à financer nos permanences gratuites et nos ateliers.</p>
+                <h1 style="font-size: 1.8rem; font-weight: bold; color: #075985; margin-bottom: 8px;">Réserver : {{ event.title }}</h1>
+                <p style="color: #475569; margin-bottom: 24px;">Confirmez votre réservation pour l'événement.</p>
                 
-                <form action="{{ url_for('index.create_donation_checkout_session') }}" method="POST">
+                <form action="{{ url_for('index.create_event_checkout_session', event_id=event.id) }}" method="POST">
                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-                    <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center;">Faire un don de 20,00 €</button>
+                    <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center;">Payer {{ event.price_info }}</button>
                 </form>
                 <p style="font-size: 0.75rem; text-align: center; color: #64748b; margin-top: 16px;">Paiement sécurisé par <i class="fa-brands fa-stripe"></i> Stripe. Vous serez redirigé.</p>
             </div>
