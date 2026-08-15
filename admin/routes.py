@@ -1,9 +1,10 @@
 from flask import render_template, abort, request, jsonify, redirect, url_for, flash, current_app
 from flask_login import login_required, current_user 
 from . import admin_bp
-from .models import Event, Message
+from .models import Event, Message, Reservation
 import os
 import uuid
+import stripe
 from werkzeug.utils import secure_filename
 
 # Configuration pour l'upload de fichiers
@@ -20,9 +21,19 @@ def dashboard():
     """Affiche le tableau de bord principal."""
     # Récupère les données pour les différents onglets
     events = Event.get_all()
+    reservations = Reservation.get_all()
     messages = Message.get_all()
-    # Passe les listes au template
-    return render_template('dashboard.html', events=events, messages=messages)
+    # Passe toutes les listes au template
+    return render_template('dashboard.html', 
+                           events=events, 
+                           reservations=reservations, 
+                           messages=messages,
+                           event_to_view=None,
+                           event_to_edit=None,
+                           event_to_create=None,
+                           reservation_to_view=None,
+                           reservation_to_edit=None,
+                           reservation_to_create=None)
 
 @admin_bp.route('/event/<int:event_id>')
 @login_required
@@ -35,9 +46,10 @@ def view_event(event_id):
     
     # On récupère aussi la liste de tous les événements pour la table en arrière-plan
     all_events = Event.get_all()
+    all_reservations = Reservation.get_all()
     all_messages = Message.get_all()
     
-    return render_template('dashboard.html', events=all_events, messages=all_messages, event_to_view=event_to_view)
+    return render_template('dashboard.html', events=all_events, reservations=all_reservations, messages=all_messages, event_to_view=event_to_view)
 
 def _save_image(file):
     """Sécurise et sauvegarde un fichier image, puis retourne son chemin relatif."""
@@ -89,8 +101,9 @@ def new_event():
         if not data.get('title') or not data.get('event_date'):
             flash('Le titre et la date sont obligatoires.', 'error')
             all_events = Event.get_all()
+            all_reservations = Reservation.get_all()
             all_messages = Message.get_all()
-            return render_template('dashboard.html', events=all_events, messages=all_messages, event_to_create=True, form_data=data)
+            return render_template('dashboard.html', events=all_events, reservations=all_reservations, messages=all_messages, event_to_create=True, form_data=data)
 
         # 3. Insérer dans la base de données
         new_event_id = Event.create(data)
@@ -101,8 +114,9 @@ def new_event():
 
     # Si GET, on affiche le formulaire de création
     all_events = Event.get_all()
+    all_reservations = Reservation.get_all()
     all_messages = Message.get_all()
-    return render_template('dashboard.html', events=all_events, messages=all_messages, event_to_create=True, form_data={})
+    return render_template('dashboard.html', events=all_events, reservations=all_reservations, messages=all_messages, event_to_create=True, form_data={})
 
 @admin_bp.route('/event/<int:event_id>/edit', methods=['GET', 'POST'])
 @login_required
@@ -155,8 +169,9 @@ def edit_event(event_id):
 
     # Si GET, on affiche le formulaire de modification
     all_events = Event.get_all()
+    all_reservations = Reservation.get_all()
     all_messages = Message.get_all()
-    return render_template('dashboard.html', events=all_events, messages=all_messages, event_to_edit=event_to_edit)
+    return render_template('dashboard.html', events=all_events, reservations=all_reservations, messages=all_messages, event_to_edit=event_to_edit)
 
 
 @admin_bp.route('/event/<int:event_id>/delete', methods=['POST'])
@@ -191,6 +206,84 @@ def delete_event(event_id):
     event.delete()
     
     return jsonify({'success': True, 'message': 'Événement supprimé avec succès.'})
+
+# --- CRUD pour les Réservations ---
+
+@admin_bp.route('/reservation/<int:reservation_id>')
+@login_required
+def view_reservation(reservation_id):
+    """Affiche les détails d'une réservation."""
+    reservation_to_view = Reservation.get_by_id(reservation_id)
+    if not reservation_to_view:
+        abort(404)
+    
+    all_events = Event.get_all()
+    all_reservations = Reservation.get_all()
+    all_messages = Message.get_all()
+    
+    return render_template('dashboard.html', events=all_events, reservations=all_reservations, messages=all_messages, reservation_to_view=reservation_to_view)
+
+@admin_bp.route('/reservation/new', methods=['GET', 'POST'])
+@login_required
+def new_reservation():
+    """Crée une nouvelle réservation manuellement."""
+    if request.method == 'POST':
+        data = request.form.to_dict()
+        if not all([data.get('nom'), data.get('prenom'), data.get('email'), data.get('id_evenement')]):
+            flash('Les champs Nom, Prénom, Email et Événement sont obligatoires.', 'error')
+            return redirect(url_for('admin.new_reservation'))
+        
+        new_id = Reservation.create(data)
+        flash('Réservation créée avec succès.', 'success')
+        return redirect(url_for('admin.view_reservation', reservation_id=new_id))
+
+    # Pour le formulaire GET
+    all_events = Event.get_all()
+    all_reservations = Reservation.get_all()
+    all_messages = Message.get_all()
+    return render_template('dashboard.html', events=all_events, reservations=all_reservations, messages=all_messages, reservation_to_create=True)
+
+@admin_bp.route('/reservation/<int:reservation_id>/edit', methods=['GET', 'POST'])
+@login_required
+def edit_reservation(reservation_id):
+    """Modifie une réservation."""
+    reservation_to_edit = Reservation.get_by_id(reservation_id)
+    if not reservation_to_edit:
+        abort(404)
+
+    if request.method == 'POST':
+        data = request.form.to_dict()
+        if not all([data.get('nom'), data.get('prenom'), data.get('email'), data.get('id_evenement')]):
+            flash('Les champs Nom, Prénom, Email et Événement sont obligatoires.', 'error')
+            return redirect(url_for('admin.edit_reservation', reservation_id=reservation_id))
+        
+        reservation_to_edit.update(data)
+        flash('Réservation mise à jour avec succès.', 'success')
+        return redirect(url_for('admin.view_reservation', reservation_id=reservation_id))
+
+    # Pour le formulaire GET
+    all_events = Event.get_all()
+    all_reservations = Reservation.get_all()
+    all_messages = Message.get_all()
+    return render_template('dashboard.html', events=all_events, reservations=all_reservations, messages=all_messages, reservation_to_edit=reservation_to_edit)
+
+@admin_bp.route('/reservation/<int:reservation_id>/delete', methods=['POST'])
+@login_required
+def delete_reservation(reservation_id):
+    """Supprime une réservation après vérification du mot de passe."""
+    password = request.json.get('password')
+
+    if not password or not current_user.check_password(password):
+        return jsonify({'success': False, 'message': 'Mot de passe incorrect.'}), 403
+
+    reservation = Reservation.get_by_id(reservation_id)
+    if not reservation:
+        return jsonify({'success': False, 'message': 'Réservation non trouvée.'}), 404
+    
+    reservation.delete()
+    
+    return jsonify({'success': True, 'message': 'Réservation supprimée avec succès.'})
+
 
 @admin_bp.route('/message/<int:message_id>/read', methods=['POST'])
 @login_required

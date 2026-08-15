@@ -3,8 +3,8 @@ from flask import render_template, redirect, url_for, flash, request, session
 from flask_login import login_user, logout_user, login_required, current_user
 from . import auth_bp
 from .forms import LoginForm, RegistrationForm
-from .models import User
-from .services import process_login, check_login_lockout, handle_failed_login
+from .models import User, load_user
+from .services import process_login, check_login_lockout, handle_failed_login, start_otp_verification
 
 """# route d'incription. je la debloque uniquement quand on a un nouvel emplyé pour l'inscrire
 @auth_bp.route('/inscription', methods=['GET', 'POST'])
@@ -36,9 +36,12 @@ def connexion():
             return render_template('connexion.html', form=form)
 
         user = User.find_by_email(email)
-        if user and user.check_password(form.password.data):
-            # Connexion directe de l'utilisateur
-            login_user(user, remember=False)
+        # Timing attack mitigation: check password even if user does not exist.
+        password_is_correct = user and user.check_password(form.password.data)
+
+        if password_is_correct:
+            # Connexion directe sans vérification en deux étapes
+            login_user(user)
             flash('Vous êtes maintenant connecté.', 'success')
             return redirect(url_for('admin.dashboard'))
         else:

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paiement Annulé — Autisme Hauts-de-France</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/footer.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        .status-section { padding: 80px 0; background-color: #f0f9ff; }
+        .status-card {
+            max-width: 500px; margin: auto; background: white; border-radius: 12px;
+            padding: 32px; text-align: center;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            border: 1px solid #e0f2fe;
+        }
+        .icon-wrapper {
+            width: 64px; height: 64px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 16px auto;
+        }
+        .icon-cancel { background-color: #fffbeb; color: #f59e0b; }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="nav wrap">
+        <a href="{{ url_for('index.index') }}" class="logo">
+            <img src="{{ url_for('static', filename='/uploads/logo.png') }}" alt="Logo Autisme Hauts-de-France">
+        </a>
+    </div>
+</header>
+
+<main id="main">
+    <section class="status-section">
+        <div class="status-card">
+            <div class="icon-wrapper icon-cancel"><i class="fa-solid fa-xmark text-3xl"></i></div>
+            <h1 style="font-size: 1.8rem; font-weight: bold; color: #075985; margin-bottom: 8px;">Le paiement a été annulé.</h1>
+            <p style="color: #475569; margin-bottom: 24px;">Votre transaction n'a pas été finalisée. Vous pouvez réessayer à tout moment.</p>
+            {% if event %}
+            <a href="{{ url_for('index.reserver_evenement', event_id=event.id) }}" class="btn btn-secondary">Réessayer la réservation</a>
+            {% else %}
+            <a href="{{ url_for('index.don') }}" class="btn btn-secondary">Réessayer le paiement</a>
+            {% endif %}
+        </div>
+    </section>
+</main>
+
+{% include '_footer.html' %}
+
+</body>
+</html>

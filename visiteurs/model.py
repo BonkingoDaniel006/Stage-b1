@@ -1,5 +1,6 @@
 from ext import get_db_connection
-
+from flask import current_app
+from datetime import datetime
 
 class Event:
     def __init__(self, id, title, description, event_date,location, organizer, price_info, tag, image_url, max_attendees, created_at=None):
@@ -58,3 +59,28 @@ class Details_event:
             return cls(**event_data)
         else:
             return None
+
+class Reservation:
+    @staticmethod
+    def create(nom, prenom, age, id_evenement, email):
+        """Crée une nouvelle réservation dans la base de données."""
+        connection = get_db_connection()
+        try:
+            with connection.cursor() as cursor:
+                sql = """
+                    INSERT INTO reservations (nom, prenom, age, id_evenement, email, date_reservation)
+                    VALUES (%s, %s, %s, %s, %s, NOW())
+                """
+                # Utiliser la date et l'heure actuelles pour la réservation
+                date_reservation = datetime.now()
+                cursor.execute(sql, (nom, prenom, age, id_evenement, email))
+            connection.commit()
+            current_app.logger.info(f"Nouvelle réservation créée pour l'événement {id_evenement} par {prenom} {nom}.")
+            return cursor.lastrowid
+        except Exception as e:
+            connection.rollback()
+            current_app.logger.error(f"Erreur lors de la création de la réservation : {e}")
+            return None
+        finally:
+            if connection.is_connected():
+                connection.close()

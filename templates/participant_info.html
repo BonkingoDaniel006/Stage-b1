@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Informations du participant — {{ event.title }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/footer.css') }}"> 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        .form-section { padding: 80px 0; background-color: #f0f9ff; }
+        .form-card {
+            max-width: 500px; margin: auto; background: white; border-radius: 12px;
+            padding: 32px; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            border: 1px solid #e0f2fe;
+        }
+        .flash-messages { max-width: 500px; margin: 0 auto 20px auto; }
+        .flash-message { padding: 1rem; border-radius: 0.5rem; margin-bottom: 1rem; }
+        .flash-error { background-color: #fee2e2; border-left: 4px solid #ef4444; color: #991b1b; }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="nav wrap">
+        <a href="{{ url_for('index.index') }}" class="logo">
+            <img src="{{ url_for('static', filename='/uploads/logo.png') }}" alt="Logo Autisme Hauts-de-France">
+        </a>
+        <nav aria-label="Navigation principale">
+            <ul>
+                <li><a href="{{ url_for('index.evenement', event_id=event.id) }}">Retour à l'événement</a></li>
+            </ul>
+        </nav>
+    </div>
+</header>
+
+<main id="main">
+    <section class="form-section">
+        <div class="wrap">
+            <div class="flash-messages">
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% for category, message in messages %}
+                        <div class="flash-message flash-{{ category }}">{{ message }}</div>
+                    {% endfor %}
+                {% endwith %}
+            </div>
+            <div class="form-card">
+                <h1 style="font-size: 1.8rem; font-weight: bold; color: #075985; margin-bottom: 8px;">Étape 1 : Participant</h1>
+                <p style="color: #475569; margin-bottom: 24px;">Veuillez renseigner les informations pour la réservation de l'événement <strong>"{{ event.title }}"</strong>.</p>
+                
+                <form action="{{ url_for('index.reserver_evenement', event_id=event.id) }}" method="POST">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                    
+                    <div class="field">
+                        <label for="nom_complet">Nom complet du participant</label>
+                        <input type="text" id="nom_complet" name="nom_complet" required>
+                    </div>
+                    <div class="field">
+                        <label for="email">Adresse e-mail</label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+                    <div class="field">
+                        <label for="age">Âge du participant</label>
+                        <input type="number" id="age" name="age" min="1" required>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center; margin-top: 1rem;">
+                        Continuer vers le paiement
+                    </button>
+                </form>
+            </div>
+        </div>
+    </section>
+</main>
+
+{% include '_footer.html' %}
+
+</body>
+</html>

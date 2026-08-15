@@ -17,27 +17,26 @@
 <a href="#main" class="skip-link">Aller au contenu principal</a>
 
 <header>
-  <div class="nav wrap">
-    <a href="{{ url_for('index.index') }}" class="logo">
-      <img src="{{ url_for('static', filename='/uploads/logo.png') }}" alt="Logo Autisme Hauts-de-France">
-    </a>
-    <div class="nav-menu" id="nav-menu">
-      <nav aria-label="Navigation principale">
-        <ul>
-          <li><a href="#mission">Notre mission</a></li>
-          <li><a href="#actions">Nos actions</a></li>
-          <li><a href="#temoignages">Témoignages</a></li>
-          <li><a href="#ressources">Ressources</a></li>
-          <li><a href="#contact">Contact</a></li>
-          <li><a href="{{ url_for('index.evenements') }}">Événements</a></li>
-        </ul>
-      </nav>
-      <a href="https://paypal.me/DanielBokingo" class="nav-cta" target="_blank" rel="noopener noreferrer"><i class="fa-solid fa-hand-holding-heart"></i> Faire un don</a>
+    <div class="nav wrap">
+        <a href="{{ url_for('index.index') }}" class="logo">
+            <img src="{{ url_for('static', filename='/uploads/logo.png') }}" alt="Logo Autisme Hauts-de-France">
+        </a>
+        <div class="nav-menu" id="nav-menu">
+            <nav aria-label="Navigation principale">
+                <ul>
+                    <li><a href="{{ url_for('index.index') }}#mission">Notre mission</a></li>
+                    <li><a href="{{ url_for('index.index') }}#actions">Nos actions</a></li>
+                    <li><a href="{{ url_for('index.index') }}#temoignages">Témoignages</a></li>
+                    <li><a href="{{ url_for('index.index') }}#ressources">Ressources</a></li>
+                    <li><a href="{{ url_for('index.index') }}#contact">Contact</a></li>
+                    <li><a href="{{ url_for('index.evenements') }}">Événements</a></li>
+                </ul>
+            </nav>
+            <a href="{{ url_for('index.don') }}" class="nav-cta"><i class="fa-solid fa-hand-holding-heart"></i> Faire un don</a>
+        </div>
+        <button class="nav-toggle" id="nav-toggle" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="nav-menu"><span class="hamburger"></span></button>
     </div>
-    <button class="nav-toggle" id="nav-toggle" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="nav-menu"><span class="hamburger"></span></button>
-  </div>
 </header>
-
 <main id="main">
 
   <!-- HERO -->
@@ -181,7 +180,7 @@
       <h2>Votre soutien finance nos permanences gratuites</h2>
       <p>100% des dons servent directement nos actions de terrain : écoute, accompagnement administratif et groupes de pairs.(Merci de preciser dans la rubrique message qu'il sagit d'un don)</p>
       <div class="btn-row">
-        <a href="https://paypal.me/DanielBokingo" target="_blank" rel="noopener noreferrer" class="btn btn-cyan">Faire un don ponctuel</a>
+        <a href="{{ url_for('index.don') }}" class="btn btn-cyan">Faire un don ponctuel</a>
         <a href="#" class="btn btn-ghost" style="border-color:#fff; color:#fff;">Devenir adhérent</a>
       </div>
     </div>

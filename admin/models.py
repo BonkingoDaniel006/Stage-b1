@@ -127,6 +127,102 @@ class Event:
         cursor.close()
         conn.close()
 
+class Reservation:
+    def __init__(self, **kwargs):
+        self.id = kwargs.get('id')
+        self.nom = kwargs.get('nom')
+        self.prenom = kwargs.get('prenom')
+        self.email = kwargs.get('email')
+        self.age = kwargs.get('age')
+        self.id_evenement = kwargs.get('id_evenement')
+        self.date_reservation = kwargs.get('date_reservation')
+        # Attributs supplémentaires pour l'affichage
+        self.event_title = kwargs.get('event_title', 'Événement supprimé ou inconnu')
+
+    def to_dict(self):
+        """Convertit l'objet en dictionnaire pour les formulaires."""
+        return self.__dict__
+
+    @staticmethod
+    def get_all():
+        """Récupère toutes les réservations avec le titre de l'événement associé."""
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+        query = """
+            SELECT r.*, e.title as event_title
+            FROM reservations r
+            LEFT JOIN evenements e ON r.id_evenement = e.id
+            ORDER BY r.date_reservation DESC
+        """
+        cursor.execute(query)
+        reservations_data = cursor.fetchall()
+        cursor.close()
+        conn.close()
+        return [Reservation(**data) for data in reservations_data]
+
+    @staticmethod
+    def get_by_id(reservation_id):
+        """Récupère une réservation par son ID avec le titre de l'événement."""
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+        query = """
+            SELECT r.*, e.title as event_title
+            FROM reservations r
+            LEFT JOIN evenements e ON r.id_evenement = e.id
+            WHERE r.id = %s
+        """
+        cursor.execute(query, (reservation_id,))
+        data = cursor.fetchone()
+        cursor.close()
+        conn.close()
+        return Reservation(**data) if data else None
+
+    @staticmethod
+    def create(data):
+        """Crée une nouvelle réservation."""
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        query = """
+            INSERT INTO reservations (nom, prenom, email, age, id_evenement, date_reservation)
+            VALUES (%s, %s, %s, %s, %s, NOW())
+        """
+        values = (data.get('nom'), data.get('prenom'), data.get('email'), data.get('age'), data.get('id_evenement'))
+        cursor.execute(query, values)
+        new_id = cursor.lastrowid
+        conn.commit()
+        cursor.close()
+        conn.close()
+        return new_id
+
+    def update(self, data):
+        """Met à jour une réservation."""
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        query = """
+            UPDATE reservations SET
+            nom = %s, prenom = %s, email = %s, age = %s, id_evenement = %s
+            WHERE id = %s
+        """
+        values = (
+            data.get('nom'), data.get('prenom'), data.get('email'),
+            data.get('age'), data.get('id_evenement'), self.id
+        )
+        cursor.execute(query, values)
+        conn.commit()
+        cursor.close()
+        conn.close()
+
+    def delete(self):
+        """Supprime une réservation."""
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        # On pourrait aussi supprimer les réservations liées à un événement supprimé
+        # avec ON DELETE CASCADE dans la BDD.
+        cursor.execute("DELETE FROM reservations WHERE id = %s", (self.id,))
+        conn.commit()
+        cursor.close()
+        conn.close()
+
 
 
 class Message:
@@ -248,5 +344,3 @@ class Message:
             "date": self.created_at.isoformat(),
             "sender_type": data.get('sender_type', 'visitor') # Assurer une valeur par défaut
         }
-
-

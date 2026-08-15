@@ -31,7 +31,7 @@
                     <li><a href="{{ url_for('index.evenements') }}">Événements</a></li>
                 </ul>
             </nav>
-            <a href="https://paypal.me/DanielBokingo" class="nav-cta" target="_blank" rel="noopener noreferrer"><i class="fa-solid fa-hand-holding-heart"></i> Faire un don</a>
+            <a href="{{ url_for('index.don') }}" class="nav-cta"><i class="fa-solid fa-hand-holding-heart"></i> Faire un don</a>
         </div>
         <button class="nav-toggle" id="nav-toggle" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="nav-menu"><span class="hamburger"></span></button>
     </div>
@@ -77,9 +77,9 @@
             <div class="info-line"><i class="fa-solid fa-calendar-days"></i> <span>{{ details.event_date }}</span></div>
             <div class="info-line"><i class="fa-solid fa-clock"></i> <span>14:00 – 17:00</span></div>
             <div class="info-line"><i class="fa-solid fa-map-marker-alt"></i> <span>{{ details.location }}</span></div>
-            <div class="info-line"><i class="fa-solid fa-tag"></i> <span>Prix : <strong>{{ details.price_info }}</strong></span></div>
+            <div class="info-line"><i class="fa-solid fa-tag"></i> <span>Prix : <strong>{{ details.price_info if details.price_info else 'Gratuit' }}</strong></span></div>
             <div class="info-line"><i class="fa-solid fa-users"></i> <span>{{ details.max_attendees }} places disponibles</span></div>
-            <a href="https://paypal.me/DanielBokingo" target="_blank" class="btn btn-primary" style="width: 100%; justify-content: center; margin-top: 20px;">Faire une réservation</a>
+            <a href="{{ url_for('index.reserver_evenement', event_id=details.id) }}" class="btn btn-primary" style="width: 100%; justify-content: center; margin-top: 20px;">Faire une réservation</a>
           </div>
         </aside>
 

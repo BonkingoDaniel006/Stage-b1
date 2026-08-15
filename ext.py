@@ -4,6 +4,7 @@ from flask_wtf import CSRFProtect
 from flask_login import LoginManager
 import mysql.connector.pooling
 import redis
+import stripe
 
 import os
 # Instanciation des extensions Flask
@@ -33,6 +34,13 @@ def init_extensions(app):
     bcrypt.init_app(app)
     csrf.init_app(app)
     login_manager.init_app(app)
+
+    # Initialisation de Stripe
+    if app.config.get('STRIPE_SECRET_KEY'):
+        stripe.api_key = app.config['STRIPE_SECRET_KEY']
+        app.logger.info("Stripe API key configured.")
+    else:
+        app.logger.warning("Stripe secret key is not configured. Payment functionality will be disabled.")
 
     # Configuration du dossier d'upload
     upload_folder = os.path.join(app.static_folder, 'uploads')
