@@ -40,12 +40,10 @@ def connexion():
         password_is_correct = user and user.check_password(form.password.data)
 
         if password_is_correct:
-            # Ne pas connecter l'utilisateur directement.
-            # Démarrer le processus de vérification OTP.
-            if start_otp_verification(user):
-                return redirect(url_for('auth.verification'))
-            else:
-                flash("Une erreur est survenue lors de l'envoi du code de vérification.", 'danger')
+            # Connexion directe sans vérification en deux étapes
+            login_user(user)
+            flash('Vous êtes maintenant connecté.', 'success')
+            return redirect(url_for('admin.dashboard'))
         else:
             # 2. Gérer la tentative échouée
             handle_failed_login(email)
