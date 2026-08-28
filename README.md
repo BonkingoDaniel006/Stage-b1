@@ -14,6 +14,7 @@ Le projet est construit sur une stack moderne et robuste, choisie pour sa flexib
     *   **Cache & Tâches en mémoire :** Redis - Utilisé pour les fonctionnalités de sécurité critiques comme le suivi des tentatives de connexion et le verrouillage de comptes.
     *   **Authentification :** `Flask-Login` pour la gestion des sessions, `Flask-Bcrypt` pour le hachage sécurisé des mots de passe.
     *   **Emails Transactionnels :** API HTTP de Brevo - Pour l'envoi des codes de vérification (OTP) et des alertes de sécurité, déchargeant la complexité de la délivrabilité email.
+    *   **Paiements et vérification d'identité :** Stripe Checkout pour les dons et les réservations d'événements, et Stripe Identity pour la vérification de documents.
 
 *   **Frontend :**
     *   **Site Vitrine :** HTML5, CSS3 (méthodologie BEM), JavaScript (ES6+).
@@ -132,6 +133,17 @@ Le tableau de bord est une application monopage (SPA-like) organisée par onglet
 *   **Témoignages & Messages :** Sections prévues pour gérer les témoignages de la page d'accueil et les messages reçus via le formulaire de contact.
 *   **Profil :** Permet à l'administrateur de gérer son propre compte (ex: changer son mot de passe).
 
+### 5.4. Paiements avec Stripe
+
+Stripe est utilisé pour sécuriser les paiements en ligne :
+
+*   **Dons :** création d'une session Stripe Checkout depuis la page de don.
+*   **Réservations :** création d'une session Stripe Checkout avec le montant, l'événement et les informations du participant transmises dans les métadonnées Stripe.
+*   **Confirmation :** les pages de succès récupèrent la session Stripe et enregistrent la réservation correspondante. En production, le webhook `/stripe-webhook` permet également de traiter les événements `checkout.session.completed` de manière fiable.
+*   **Vérification d'identité :** Stripe Identity peut créer une session de vérification de document depuis l'espace administrateur.
+
+Les informations bancaires sont saisies directement sur l'interface Stripe et ne sont pas stockées par l'application.
+
 ---
 
 ## 6. Variables d'Environnement (`.env`)
@@ -157,7 +169,15 @@ MAIL_USERNAME=adresse_email_expediteur@domaine.com
 # Il est recommandé d'utiliser un email différent de celui de l'expéditeur.
 ADMIN_EMAIL_ALERT=votre_email_admin@domaine.com
 
+# Configuration Stripe
+# Noms attendus par config.py
+public_stripe=pk_test_votre_cle_publique
+secret_stripe=sk_test_votre_cle_secrete
+STRIPE_WEBHOOK_SECRET=whsec_votre_secret_webhook
+
 # Configuration de Redis
 REDIS_HOST=localhost
 REDIS_PORT=6379
 ```
+
+Le webhook Stripe doit pointer vers l'URL publique `<URL_DE_L_APPLICATION>/stripe-webhook`. Son secret de signature doit être renseigné dans `STRIPE_WEBHOOK_SECRET`.
