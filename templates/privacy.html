@@ -42,7 +42,7 @@
                     <li><a href="{{ url_for('index.evenements') }}">Événements</a></li>
                 </ul>
             </nav>
-            <a href="https://paypal.me/DanielBokingo" class="nav-cta" target="_blank" rel="noopener noreferrer"><i class="fa-solid fa-hand-holding-heart"></i> Faire un don</a>
+            <a href="{{ url_for('index.don') }}" class="nav-cta"><i class="fa-solid fa-hand-holding-heart"></i> Faire un don</a>
         </div>
         <button class="nav-toggle" id="nav-toggle" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="nav-menu"><span class="hamburger"></span></button>
     </div>
@@ -51,7 +51,7 @@
 <main id="main" class="legal-content">
     <div class="wrap">
         <h1>Politique de Confidentialité</h1>
-        <p><strong>Dernière mise à jour :</strong> Mardi, le 14/08/2026.</p>
+        <p><strong>Dernière mise à jour :</strong> Vendredi, le 28/08/20226.</p>
         <p>L'association, en tant que responsable de traitement, s'engage à ce que la collecte et le traitement de vos données, effectués à partir de ce site, soient conformes au Règlement Général sur la Protection des Données (RGPD) et à la loi Informatique et Libertés.</p>
 
         <h2>Gestion et Protection des Données Personnelles (RGPD)</h2>
@@ -59,7 +59,7 @@
         <p>Les données personnelles sont collectées pour des finalités déterminées, explicites et légitimes :</p>
         <ul>
             <li><strong>Formulaire de contact :</strong> Gérer et répondre aux demandes d'information, de contact ou d'accompagnement.</li>
-            <li><strong>Gestion des dons et réservations (via PayPal) :</strong> Traiter les informations relatives à la transaction pour la confirmation et la gestion.</li>
+            <li><strong>Gestion des dons et réservations (via stripe) :</strong> Traiter les informations relatives à la transaction pour la confirmation et la gestion.</li>
             <li><strong>Création et gestion de compte administrateur :</strong> Gérer l'accès sécurisé au panneau d'administration.</li>
             <li><strong>Sécurité du site :</strong> Protéger le site contre les accès non autorisés.</li>
         </ul>

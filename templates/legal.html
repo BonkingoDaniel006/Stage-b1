@@ -42,7 +42,7 @@
                     <li><a href="{{ url_for('index.evenements') }}">Événements</a></li>
                 </ul>
             </nav>
-            <a href="https://paypal.me/DanielBokingo" class="nav-cta" target="_blank" rel="noopener noreferrer"><i class="fa-solid fa-hand-holding-heart"></i> Faire un don</a>
+            <a href="{{ url_for('index.don') }}" class="nav-cta"><i class="fa-solid fa-hand-holding-heart"></i> Faire un don</a>
         </div>
         <button class="nav-toggle" id="nav-toggle" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="nav-menu"><span class="hamburger"></span></button>
     </div>
@@ -51,7 +51,7 @@
 <main id="main" class="legal-content">
     <div class="wrap">
         <h1>Mentions Légales</h1>
-        <p><strong>Dernière mise à jour :</strong> Mardi, le 04/08/2026.</p>
+        <p><strong>Dernière mise à jour :</strong> Vendredi, le 28/08/2026.</p>
         <p>Conformément aux dispositions des articles 6-III et 19 de la Loi n° 2004-575 du 21 juin 2004 pour la Confiance dans l'économie numérique, dite L.C.E.N., il est porté à la connaissance des utilisateurs et visiteurs du site `https://autisme-hf-hfte.onrender.com` les présentes mentions légales.</p>
 
         <h2>1. Éditeur du site</h2>
@@ -90,7 +90,7 @@
         <p>Les données personnelles sont collectées pour des finalités déterminées, explicites et légitimes :</p>
         <ul>
             <li><strong>Formulaire de contact :</strong> Gérer et répondre aux demandes d'information, de contact ou d'accompagnement. Les données (nom, email, sujet, message) sont enregistrées dans notre base de données pour assurer le suivi de la conversation.</li>
-            <li><strong>Gestion des dons et réservations (via PayPal) :</strong> Le processus de paiement est géré par le service tiers PayPal. Nous ne collectons ni ne stockons vos informations bancaires. Nous pouvons être amenés à traiter les informations relatives à la transaction (nom, email, montant) pour la confirmation de réservation ou l'émission de reçus.</li>
+            <li><strong>Gestion des dons et réservations (via stripe) :</strong> Le processus de paiement est géré par le service tiers stripe. Nous ne collectons ni ne stockons vos informations bancaires. Nous pouvons être amenés à traiter les informations relatives à la transaction (nom, email, montant) pour la confirmation de réservation ou l'émission de reçus.</li>
             <li><strong>Création et gestion de compte administrateur :</strong> Gérer l'accès sécurisé au panneau d'administration du site.</li>
             <li><strong>Sécurité du site :</strong> Protéger le site contre les accès non autorisés et les attaques par force brute (notamment par le suivi des tentatives de connexion via l'adresse e-mail).</li>
         </ul>
@@ -100,7 +100,7 @@
             <li><strong>Brevo (ex-Sendinblue) :</strong> Pour l'envoi des e-mails transactionnels.</li>
             <li><strong>Render :</strong> Notre hébergeur, celui-ci a accès à toutes les données qui transitent par le site.</li>
             <li><strong>Alwaysdata :</strong> Hébergeur de données, celui-ci a accès aux informations stockées sur le site.</li>
-            <li><strong>PayPal :</strong> Pour le traitement des paiements et la gestion des dons.</li>
+            <li><strong>Stripe :</strong> Pour le traitement des paiements et la gestion des dons.</li>
 
         </ul>
         <h3>4.3. Durée de conservation</h3>

@@ -5,6 +5,7 @@ from flask_login import LoginManager
 import mysql.connector.pooling
 import redis
 import stripe
+from config import Config
 
 import os
 # Instanciation des extensions Flask
@@ -38,6 +39,7 @@ def init_extensions(app):
     # Initialisation de Stripe
     if app.config.get('STRIPE_SECRET_KEY'):
         stripe.api_key = app.config['STRIPE_SECRET_KEY']
+        stripe.api_version = app.config['STRIPE_API_VERSION']
         app.logger.info("Stripe API key configured.")
     else:
         app.logger.warning("Stripe secret key is not configured. Payment functionality will be disabled.")

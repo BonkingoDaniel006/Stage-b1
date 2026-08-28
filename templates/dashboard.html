@@ -63,7 +63,7 @@
                 {% if event_to_view and not event_to_edit and not event_to_create %}
                 <!-- VUE DÉTAIL D'UN ÉVÉNEMENT -->
                 <div>
-                    <a href="{{ url_for('admin.dashboard') }}" class="text-sm text-sky-600 hover:underline flex items-center gap-2 mb-4">
+                    <a href="{{ url_for('admin.dashboard') }}#events" class="text-sm text-sky-600 hover:underline flex items-center gap-2 mb-4">
                         <i class="fa-solid fa-arrow-left"></i>
                         Retour à la liste des événements
                     </a>
@@ -627,6 +627,16 @@
         // --- Gestion de la navigation par onglets ---
         const navButtons = document.querySelectorAll('.nav-btn');
         const tabPanels = document.querySelectorAll('.tab-panel');
+
+        const requestedTab = window.location.hash.slice(1);
+        if (requestedTab && document.getElementById(`tab-${requestedTab}`)) {
+            tabPanels.forEach(panel => {
+                panel.classList.toggle('active', panel.id === `tab-${requestedTab}`);
+            });
+            document.querySelectorAll(`.nav-btn[data-tab="${requestedTab}"]`).forEach(button => {
+                button.classList.add('active');
+            });
+        }
 
         navButtons.forEach(button => {
             button.addEventListener('click', () => {

@@ -338,3 +338,32 @@ def reply_to_message(message_id):
     send_admin_reply(original_message.sender_name, original_message.sender_email, subject, reply_content)
 
     return jsonify({'success': True, 'message': 'Réponse envoyée avec succès.'})
+
+# --- Stripe Identity ---
+
+@admin_bp.route('/create-verification-session', methods=['POST'])
+@login_required
+def create_verification_session():
+    """
+    Crée une session de vérification d'identité Stripe pour l'utilisateur connecté.
+    """
+    try:
+        # Création de la session de vérification sur Stripe
+        session = stripe.identity.VerificationSession.create(
+            type='document',
+            metadata={
+                'user_id': current_user.id,
+            },
+            # URL de retour une fois la vérification terminée ou abandonnée
+            return_url=url_for('admin.dashboard', _external=True)
+        )
+
+        # On renvoie l'URL de redirection générée par Stripe au client
+        return jsonify({'success': True, 'url': session.url})
+
+    except stripe.error.StripeError as e:
+        current_app.logger.error(f"Erreur Stripe lors de la création de la session de vérification: {e}")
+        return jsonify({'success': False, 'message': "Erreur lors de la création de la session de vérification. Veuillez réessayer."}), 500
+    except Exception as e:
+        current_app.logger.error(f"Erreur inattendue lors de la création de la session de vérification: {e}")
+        return jsonify({'success': False, 'message': "Une erreur inattendue est survenue."}), 500

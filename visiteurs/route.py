@@ -2,6 +2,7 @@ from flask import Blueprint, render_template, redirect, url_for,flash, request, 
 from visiteurs.model import Event
 from visiteurs.model import Details_event
 from visiteurs.model import Reservation
+from auth.models import User
 import re # Import pour le parsing des prix
 import stripe
 
@@ -246,7 +247,7 @@ def stripe_webhook():
     """
     payload = request.data
     sig_header = request.headers.get('Stripe-Signature')
-    endpoint_secret = os.environ.get('STRIPE_WEBHOOK_SECRET') # À ajouter dans vos variables d'environnement
+    endpoint_secret = current_app.config.get('STRIPE_WEBHOOK_SECRET')
 
     if not endpoint_secret:
         current_app.logger.error("Le secret du webhook Stripe n'est pas configuré.")
@@ -261,18 +262,43 @@ def stripe_webhook():
         # Signature invalide
         return 'Signature invalide', 400
 
-    # Gérer l'événement checkout.session.completed
+    # --- Gérer l'événement checkout.session.completed (Paiements) ---
     if event['type'] == 'checkout.session.completed':
         session = event['data']['object']
         metadata = session.get('metadata')
+        current_app.logger.info(f"Webhook reçu: {event['type']} pour la session {session.id}")
 
         if metadata and 'id_evenement' in metadata:
             nom_complet = metadata.get('nom_complet', '').split(' ', 1)
             prenom = nom_complet[0]
             nom = nom_complet[1] if len(nom_complet) > 1 else ''
             email = session.get('customer_details', {}).get('email')
+            
+            try:
+                # Crée la réservation (le même code que dans payment_success)
+                Reservation.create(nom=nom, prenom=prenom, age=metadata.get('age'), id_evenement=metadata.get('id_evenement'), email=email)
+                current_app.logger.info(f"Réservation créée via webhook pour l'email {email}")
+            except Exception as e:
+                current_app.logger.error(f"Erreur lors de la création de la réservation via webhook: {e}")
 
-            # Crée la réservation (le même code que dans payment_success)
-            Reservation.create(nom=nom, prenom=prenom, age=metadata.get('age'), id_evenement=metadata.get('id_evenement'), email=email)
+    # --- Gérer les événements Stripe Identity ---
+    elif event['type'] == 'identity.verification_session.verified':
+        session = event['data']['object']
+        user_id = session.get('metadata', {}).get('user_id')
+        current_app.logger.info(f"Webhook reçu: {event['type']} pour l'utilisateur {user_id}")
+        if user_id:
+            user = User.get(user_id)
+            if user:
+                user.set_identity_verified()
+                current_app.logger.info(f"L'identité de l'utilisateur {user_id} a été vérifiée et marquée en BDD.")
+
+    elif event['type'] == 'identity.verification_session.requires_input':
+        session = event['data']['object']
+        user_id = session.get('metadata', {}).get('user_id')
+        current_app.logger.warning(f"Webhook reçu: {event['type']} pour l'utilisateur {user_id}. Une action est requise.")
+        # Ici, vous pourriez envoyer une notification à l'utilisateur ou à un admin.
+    
+    else:
+        current_app.logger.info(f"Webhook reçu pour un événement non géré: {event['type']}")
 
     return 'OK', 200
