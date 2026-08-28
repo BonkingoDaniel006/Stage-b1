@@ -41,3 +41,6 @@ class Config:
     # 6. Clés API Stripe
     STRIPE_PUBLIC_KEY = os.environ.get('public_stripe')
     STRIPE_SECRET_KEY = os.environ.get('secret_stripe')
+    # Version d'API Stripe spécifiée pour la compatibilité (ex: Identity)
+    STRIPE_API_VERSION = "2024-06-20" # Version stable la plus récente, Dahlia n'est pas une version réelle.
+    STRIPE_WEBHOOK_SECRET = os.environ.get('STRIPE_WEBHOOK_SECRET')

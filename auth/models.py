@@ -2,19 +2,20 @@ from flask_login import UserMixin
 from ext import get_db_connection, bcrypt, login_manager
 
 class User(UserMixin):
-    def __init__(self, id, email, password_hash, username=None):
+    def __init__(self, id, email, password_hash, username=None, identity_verified=False):
         self.id = id
         self.email = email
-        self.password = password_hash
-        self.username = username or self.email.split('@')[0]
+        self.password_hash = password_hash
+        self.username = username or email.split('@')[0]
+        self.identity_verified = identity_verified
 
     def set_password(self, password):
         """Crée un hash du mot de passe."""
-        self.password = bcrypt.generate_password_hash(password).decode('utf-8')
+        self.password_hash = bcrypt.generate_password_hash(password).decode('utf-8')
 
     def check_password(self, password):
         """Vérifie si le mot de passe fourni correspond au hash."""
-        return bcrypt.check_password_hash(self.password, password)
+        return bcrypt.check_password_hash(self.password_hash, password)
 
     @staticmethod
     def find_by_email(email):
@@ -26,8 +27,23 @@ class User(UserMixin):
         cursor.close()
         conn.close()
         if user_data:
-            return User(id=user_data['id'], email=user_data['email'], password_hash=user_data['password'], username=user_data.get('username'))
+            # On charge maintenant la valeur de identity_verified depuis la BDD
+            return User(id=user_data['id'], email=user_data['email'], password_hash=user_data['password'], username=user_data.get('username'), identity_verified=user_data.get('identity_verified', False))
         return None
+
+    def set_identity_verified(self): # <--- Cette méthode met à jour la colonne
+        """Marque l'identité de l'utilisateur comme vérifiée dans la base de données."""
+        if not self.id:
+            return
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        try:
+            cursor.execute("UPDATE users SET identity_verified = TRUE WHERE id = %s", (self.id,))
+            conn.commit()
+            self.identity_verified = True
+        finally:
+            cursor.close()
+            conn.close()
 
     @staticmethod
     def get(user_id):
@@ -39,7 +55,7 @@ class User(UserMixin):
         cursor.close()
         conn.close()
         if user_data:
-            return User(id=user_data['id'], email=user_data['email'], password_hash=user_data['password'], username=user_data.get('username'))
+            return User(id=user_data['id'], email=user_data['email'], password_hash=user_data['password'], username=user_data.get('username'), identity_verified=user_data.get('identity_verified', False))
         return None
 
     def save(self):
@@ -51,13 +67,12 @@ class User(UserMixin):
         try:
             cursor.execute(
                 "INSERT INTO users (username, email, password) VALUES (%s, %s, %s)",
-                (username, self.email, self.password)
+                (username, self.email, self.password_hash)
             )
             conn.commit()
+        finally:
             cursor.close()
             conn.close()
-        finally:
-            pass # La connexion est déjà gérée dans le bloc try
 
     @staticmethod
     def get_all_admins():
@@ -67,8 +82,8 @@ class User(UserMixin):
         cursor.execute("SELECT * FROM users")
         users_data = cursor.fetchall()
         cursor.close()
-        conn.close()
-        return [User(id=user_data['id'], email=user_data['email'], password_hash=user_data['password'], username=user_data.get('username')) for user_data in users_data]
+        conn.close() # On charge aussi le statut de vérification ici
+        return [User(id=user_data['id'], email=user_data['email'], password_hash=user_data['password'], username=user_data.get('username'), identity_verified=user_data.get('identity_verified', False)) for user_data in users_data]
     
 
 
